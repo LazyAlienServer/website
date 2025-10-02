@@ -51,17 +51,18 @@ const App = () => {
   return (
     <div className="min-h-screen bg-black text-white overflow-x-hidden">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-gray-800">
-        <div className="container mx-auto px-6 py-4">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-black/33 backdrop-blur-md border-b border-gray-800">
+        <div className="container mx-4 p-4 pt-6 w-full">
           <div className="flex justify-between items-center">
             {/* Logo */}
-            <img src="/logo.svg" alt="LAS Logo" className="h-10" />
+            <img src="/logo-simplified.svg" alt="LAS Logo" className="h-10" />
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex space-x-8">
+            <div className="hidden md:flex space-x-6">
               {navItems.map((item) => (
                 <button
                   key={item.id}
+                  // TODO: Routing
                   onClick={() => scrollToSection(item.id)}
                   className={`relative group transition-colors duration-300 ${activeSection === item.id ? 'text-blue-400' : 'text-white hover:text-blue-300'
                     }`}
@@ -71,7 +72,7 @@ const App = () => {
                   {activeSection === item.id && (
                     <motion.div
                       layoutId="underline"
-                      className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400"
+                      className="absolute -bottom-2 left-0 w-full h-0.5 bg-blue-400"
                       initial={{ scaleX: 0 }}
                       animate={{ scaleX: 1 }}
                       transition={{ type: "spring", stiffness: 300, damping: 30 }}
@@ -118,9 +119,11 @@ const App = () => {
       </nav >
 
       {/* Home Section */}
-      < section id="home" className="h-screen w-screen relative flex items-center justify-center overflow-hidden" >
-        {/* Background Image */}
-        < div className="absolute inset-0" >
+      < section id="home" className="h-screen w-screen relative overflow-hidden flex flex-row space-end items-end-safe content-between gap-12 p-12" >
+
+        {/* Background */}
+        <div className="absolute inset-0 " >
+          {/* Image */}
           <img
             src="/cathedral-bg.png"
             alt="Cathedral Background"
@@ -130,53 +133,22 @@ const App = () => {
           <div className="absolute inset-0 bg-black/50"></div>
         </div >
 
-        {/* Content */}
-        <div className="relative z-10 container mx-auto px-6 text-center">
-          <div className="mb-8">
-            <div className="inline-block bg-blue-500/20 rounded-lg px-4 py-2 mb-4">
-              <span className="text-blue-400 font-semibold">LAZY ALIEN SERVER</span>
-            </div>
-            <h1 className="text-5xl md:text-7xl font-bold mb-4">
-              LAZYALIEN
-              <br />
-              <span className="text-blue-400">SERVER</span>
-            </h1>
-            <div className="flex justify-center gap-2 mb-8">
-              {[...Array(5)].map((_, i) => (
-                <div key={i} className="w-4 h-1 bg-blue-400 rounded-full"></div>
-              ))}
-            </div>
-          </div>
-
+        {/* Text */}
+        <div className="relative z-10 container mx-auto flex-1 pointer-events-auto text-right">
           <div className="max-w-2xl mx-auto">
             <p className="text-xl mb-6">
               与LAS的成员们，携手并进
               <br />
-              <span className="text-sm opacity-70">「LAS生电服务器 - CatCoinZHSM & tanh_Heng」</span>
+              <span className="text-sm opacity-70">by CatCoinZHSM & tanh_Heng</span>
             </p>
             <button
               onClick={() => scrollToSection('about')}
-              className="mt-8 px-8 py-3 bg-blue-500 hover:bg-blue-600 rounded-full font-semibold transition-colors duration-300 flex items-center mx-auto"
+              className="px-8 py-3 bg-blue-500 hover:bg-blue-600 rounded-full font-semibold transition-colors duration-300 flex items-center mx-auto"
             >
               了解更多 <ArrowDown size={16} className="ml-2" />
             </button>
           </div>
-        </div >
-
-        {/* Floating Elements */}
-        < div className="absolute top-10 right-10 hidden md:block" >
-          <div className="space-y-4">
-            <div className="bg-gray-800 p-3 rounded-lg">
-              <div className="w-8 h-8 bg-blue-400 rounded-full"></div>
-            </div>
-            <div className="bg-gray-800 p-3 rounded-lg">
-              <div className="w-8 h-8 bg-blue-400 rounded-full"></div>
-            </div>
-            <div className="bg-gray-800 p-3 rounded-lg">
-              <div className="w-8 h-8 bg-blue-400 rounded-full"></div>
-            </div>
-          </div>
-        </div >
+        </div>
       </section >
 
       {/* About Us Section */}
@@ -191,7 +163,6 @@ const App = () => {
                     LAS
                   </div>
                   <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-                    <div className="w-24 h-24 bg-blue-400 rounded-full"></div>
                   </div>
                 </div>
                 <div className="mt-8">
@@ -211,24 +182,13 @@ const App = () => {
             {/* Right Side - Title */}
             <div className="lg:w-1/2">
               <div className="relative">
-                <div className="absolute -top-10 -right-10 w-20 h-20 bg-blue-400/20 rounded-full"></div>
-                <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-blue-400/20 rounded-full"></div>
-
                 <div className="bg-gray-900 p-8 rounded-lg">
                   <div className="flex items-center mb-4">
-                    <div className="w-8 h-8 bg-blue-400 mr-4"></div>
                     <h2 className="text-4xl md:text-5xl font-bold">关于我们</h2>
                   </div>
                   <div className="flex items-center">
-                    <div className="w-4 h-4 bg-blue-400 mr-2"></div>
                     <span className="text-xl opacity-70">ABOUT US</span>
                   </div>
-                </div>
-
-                <div className="mt-8 grid grid-cols-2 gap-4">
-                  {[...Array(8)].map((_, i) => (
-                    <div key={i} className="w-6 h-6 bg-blue-400/20 rounded-full"></div>
-                  ))}
                 </div>
               </div>
             </div>
@@ -243,16 +203,12 @@ const App = () => {
             {/* Left Side - Text */}
             <div className="lg:w-1/2">
               <div className="relative">
-                <div className="absolute -top-10 -left-10 w-20 h-20 bg-blue-400/20 rounded-full"></div>
-                <div className="absolute -bottom-10 -right-10 w-16 h-16 bg-blue-400/20 rounded-full"></div>
-
                 <div className="bg-gray-900 p-8 rounded-lg">
                   <div className="mb-6">
                     <div className="text-6xl font-bold mb-4">
                       DREAM
                     </div>
                     <div className="flex items-center mb-4">
-                      <div className="w-20 h-1 bg-blue-400 mr-4"></div>
                       <div className="text-sm opacity-70">图册 / 珍珠炮</div>
                     </div>
                   </div>
@@ -263,13 +219,13 @@ const App = () => {
                       现实的梦
                     </h2>
                     <div className="flex items-center mb-4">
-                      <div className="w-20 h-1 bg-blue-400 mr-4"></div>
                       <span className="text-xl opacity-70">HAVE A REALISTIC DREAM.</span>
                     </div>
                   </div>
 
                   <div className="mb-6">
                     <div className="text-2xl font-bold mb-2">
+                      {/* TODO: Dynamic Timer */}
                       1012天21小时31分15秒
                     </div>
                     <div className="text-sm opacity-70">LAZY ALIEN SERVER</div>
@@ -296,22 +252,6 @@ const App = () => {
                   className="w-full h-auto rounded-lg shadow-2xl"
                 />
                 <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-transparent to-black/50 rounded-lg"></div>
-
-                <div className="absolute top-4 right-4 flex flex-col space-y-2">
-                  <div className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center">
-                    <div className="w-4 h-4 bg-blue-400 rounded-full"></div>
-                  </div>
-                  <div className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center">
-                    <div className="w-4 h-4 bg-blue-400 rounded-full"></div>
-                  </div>
-                  <div className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center">
-                    <div className="w-4 h-4 bg-blue-400 rounded-full"></div>
-                  </div>
-                </div>
-
-                <div className="absolute bottom-4 right-4 w-12 h-12 bg-blue-400 rounded-lg flex items-center justify-center">
-                  <div className="w-6 h-6 bg-black rounded-full"></div>
-                </div>
               </div>
             </div>
           </div>
@@ -322,7 +262,7 @@ const App = () => {
       < footer className="py-8 bg-gray-900 border-t border-gray-800" >
         <div className="container mx-auto px-6 text-center">
           <p className="text-gray-400">
-            © 2024 Lazy Alien Server. All rights reserved.
+            {/* TODO: Footer text */}
           </p>
         </div>
       </footer >
