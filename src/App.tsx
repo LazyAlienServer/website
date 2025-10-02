@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { ArrowDown, Menu, X } from 'lucide-react';
+import PixelBlast from './pixel-blast';
 
 const App = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -131,7 +132,36 @@ const App = () => {
           />
           {/* Darken Overlay */}
           <div className="absolute inset-0 bg-black/50"></div>
+          {/* Pixel Effects */}
+          <div className="absolute inset-0 ">
+            <PixelBlast
+              variant="square"
+              pixelSize={4}
+              pixelSizeJitter={1.5}
+              color="#6096E6"
+              patternScale={5}
+              patternDensity={0.75}
+              enableRipples
+              rippleSpeed={0.33}
+              rippleThickness={0.06}
+              rippleIntensityScale={0.6}
+              speed={1}
+              edgeFade={0.1}
+              transparent
+            />
+          </div>
         </div >
+
+        {/* Hero */}
+        <div className="relative container pointer-events-none flex-2">
+          <span className="text-[192px] font-bold leading-[114px] tracking-[-0.12em] select-none">
+            <span className="relative left-2">LAZY</span>
+            <br />
+            <span className="">ALIEN</span>
+            <br />
+            <span className="text-blue-400">SERVER</span>
+          </span>
+        </div>
 
         {/* Text */}
         <div className="relative z-10 container mx-auto flex-1 pointer-events-auto text-right">
