@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+.transparent-button { background: none; background-color: transparent; border: none; padding: 0; -webkit-appearance: none; appearance: none; }
+
+.transparent-button:focus {
+  outline: none;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

@@ -35,12 +35,19 @@ const Navbar: React.FC<Props> = ({ activeSection, scrollToSection }) => {
                         {navItems.map((item) => (
                             <button
                                 key={item.id}
+                                className={`relative group transparent-button transition-colors duration-300 ${activeSection === item.id ?
+                                    'text-blue-400' :
+                                    'text-white hover:text-blue-300'}`}
                                 onClick={() => handleClick(item.id)}
-                                className={`relative group transition-colors duration-300 ${activeSection === item.id ? 'text-blue-400' : 'text-white hover:text-blue-300'
-                                    }`}
+
                             >
-                                <span className="block">{item.label}</span>
-                                <span className="block text-xs opacity-70">{item.subLabel}</span>
+                                <span className="block text-xs text-left leading-none">
+                                    {item.label}
+                                    <br />
+                                    <span className="opacity-66 text-[smaller]">
+                                        {item.subLabel}
+                                    </span>
+                                </span>
                                 {activeSection === item.id && (
                                     <motion.div
                                         layoutId="underline"
@@ -55,6 +62,7 @@ const Navbar: React.FC<Props> = ({ activeSection, scrollToSection }) => {
                     </div>
 
                     {/* Mobile Menu Button */}
+                    {/* TODO: Various visual fixes are required when desktop ver. completed */}
                     <button
                         className="md:hidden text-white"
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
