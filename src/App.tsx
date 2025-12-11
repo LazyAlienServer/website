@@ -45,7 +45,7 @@ const App = () => {
       <Navbar activeSection={activeSection} scrollToSection={scrollToSection} />
 
       {/* Home Section */}
-      < section id="home" className="h-screen w-screen relative overflow-hidden flex flex-row space-end items-end-safe content-between gap-12 p-12" >
+      <section id="home" className="h-screen w-screen relative overflow-hidden p-12">
 
         {/* Background */}
         <div className="absolute inset-0 " >
@@ -77,25 +77,29 @@ const App = () => {
           </div>
         </div >
 
-        {/* Hero & Text */}
-        <div>
-          <span className="text-[192px] font-bold leading-[114px] tracking-[-0.12em] select-none relative left-2 pointer-events-none">
-            LAZY
-            <br />
-            ALIEN
-            <br />
-            <span className="text-blue-400">SERVER</span>
-          </span>
+        {/* Space */}
+        <div className="h-1/4"></div>
 
-          <div className="relative z-10 mx-auto ">
-            <p className="text-xl mb-6">
-              与LAS的成员们，携手并进
-              <br />
-              <span className="text-sm opacity-70 italic">
-                by CatCoinZHSM & tanh_Heng
-              </span>
-            </p>
-          </div>
+        {/* Hero */}
+        <div className="text-[192px] font-bold leading-[135px] tracking-[-0.12em] select-none pointer-events-none relative">
+          LAZY
+          <br />
+          ALIEN
+          <br />
+          <span className="text-blue-400">
+            SERVER
+          </span>
+        </div>
+
+        {/* Slogan */}
+        <div className="mt-12 relative">
+          <p className="text-xl">
+            与LAS的成员们，携手并进
+            <br />
+            <span className="text-sm opacity-70 italic">
+              by CatCoinZHSM & tanh_Heng
+            </span>
+          </p>
         </div>
 
         {/* Scroll Down Indicator */}
