@@ -81,7 +81,7 @@ const App = () => {
         <div className="h-1/4"></div>
 
         {/* Hero */}
-        <div className="text-[192px] font-bold leading-[135px] tracking-[-0.12em] select-none pointer-events-none relative">
+        <div className="relative text-[192px] font-bold leading-[135px] tracking-[-0.12em]    left-1/12 select-none pointer-events-none ">
           LAZY
           <br />
           ALIEN
@@ -92,7 +92,7 @@ const App = () => {
         </div>
 
         {/* Slogan */}
-        <div className="mt-12 relative">
+        <div className="relative mt-12 left-1/12">
           <p className="text-xl">
             与LAS的成员们，携手并进
             <br />

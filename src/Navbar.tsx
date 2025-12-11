@@ -24,8 +24,8 @@ const Navbar: React.FC<Props> = ({ activeSection, scrollToSection }) => {
     };
 
     return (
-        <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-black/20 backdrop-blur-md border border-blue-600/50 rounded-xl shadow-lg w-11/12 max-w-5xl">
-            <div className="px-4 py-3 w-full">
+        <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-black/20 backdrop-blur-md border border-blue-600/33 rounded-full shadow-lg w-11/12 max-w-5xl">
+            <div className="px-12 py-3 w-full">
                 <div className="flex justify-between items-center">
                     {/* Logo */}
                     <img src="/logo-simplified.svg" alt="LAS Logo" className="h-10" />
