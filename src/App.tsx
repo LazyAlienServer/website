@@ -78,17 +78,15 @@ const App = () => {
         </div >
 
         {/* Space */}
-        <div className="h-1/4"></div>
+        <div className="h-1/5"></div>
 
         {/* Hero */}
-        <div className="relative text-[192px] font-bold leading-[135px] tracking-[-0.12em]    left-1/12 select-none pointer-events-none ">
+        <div className="relative text-[192px] font-bold leading-[135px] tracking-[-0.12em] left-1/12 select-none pointer-events-none">
           LAZY
           <br />
-          ALIEN
+          <span className="text-blue-400">ALI</span>EN
           <br />
-          <span className="text-blue-400">
-            SERVER
-          </span>
+          <span className="text-blue-400">SERVER</span>
         </div>
 
         {/* Slogan */}
@@ -110,30 +108,19 @@ const App = () => {
       </section >
 
       {/* About Us Section */}
-      < section id="about" className="py-20 bg-black" >
+      < section id="about" className="py-20 bg-blue-600" >
         <div className="container mx-auto px-6">
           <div className="flex flex-col lg:flex-row items-center gap-12">
-            {/* Left Side - Logo and Text */}
             <div className="lg:w-1/2">
-              <div className="mb-8">
-                <div className="relative">
-                  <div className="text-[12rem] font-bold text-blue-400 leading-none">
-                    LAS
-                  </div>
-                  <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-                  </div>
-                </div>
-                <div className="mt-8">
-                  <div className="bg-blue-500/20 inline-block px-4 py-2 rounded-lg mb-4">
-                    <span className="text-blue-400 font-semibold">Lazy Alien Server 简称LAS~</span>
-                  </div>
-                  <p className="text-gray-300 leading-relaxed">
-                    是以学生群体为主的技术交流向Minecraft服务器<br />
-                    我们充分鼓励技术探索与交流，并欢迎有能力的玩家加入。<br /><br />
-                    我们为成员提供强大的硬件支持，依托于高性能物理机和完善的存储与备份方案，我们能够提供充足的性能并保障数据安全。<br /><br />
-                    除此之外，我们还设有开发团队，并有多个自主开发的模组和
+              <div className="mb-8 mt-8">
+                <div >
+                  <p className="text-gray-300 font-semibold">
+                    Lazy Alien Server 简称LAS~
                   </p>
                 </div>
+                <p className="text-gray-300 leading-relaxed">
+                  是以学生群体为主的技术交流向Minecraft服务器我们充分鼓励技术探索与交流，并欢迎有能力的玩家加入。我们为成员提供强大的硬件支持，依托于高性能物理机和完善的存储与备份方案，我们能够提供充足的性能并保障数据安全。除此之外，我们还设有开发团队，并有多个自主开发的模组和插件。
+                </p>
               </div>
             </div>
 
