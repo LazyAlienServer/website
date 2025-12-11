@@ -1,28 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { motion, useAnimation } from 'framer-motion';
-import { ArrowDown, Menu, X } from 'lucide-react';
+import { ArrowDown } from 'lucide-react';
 import PixelBlast from './pixel-blast';
+import Navbar from './Navbar';
 
 const App = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
 
-  // Navigation items
-  const navItems = [
-    { id: 'home', label: '首页', subLabel: 'HOME' },
-    { id: 'join', label: '加入我们', subLabel: 'JOIN US' },
-    { id: 'album', label: '画廊', subLabel: 'ALBUM' },
-    { id: 'map', label: '地图', subLabel: 'MAP' },
-    { id: 'rules', label: '规章制度', subLabel: 'RULES' }
-  ];
 
   // Scroll to section function
-  const scrollToSection = (sectionId: any) => {
+  const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
       setActiveSection(sectionId);
-      setIsMenuOpen(false);
     }
   };
 
@@ -52,72 +42,7 @@ const App = () => {
   return (
     <div className="min-h-screen bg-black text-white overflow-x-hidden">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-black/33 backdrop-blur-md border-b border-gray-800">
-        <div className="container mx-4 p-4 pt-6 w-full">
-          <div className="flex justify-between items-center">
-            {/* Logo */}
-            <img src="/logo-simplified.svg" alt="LAS Logo" className="h-10" />
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex space-x-6">
-              {navItems.map((item) => (
-                <button
-                  key={item.id}
-                  // TODO: Routing
-                  onClick={() => scrollToSection(item.id)}
-                  className={`relative group transition-colors duration-300 ${activeSection === item.id ? 'text-blue-400' : 'text-white hover:text-blue-300'
-                    }`}
-                >
-                  <span className="block">{item.label}</span>
-                  <span className="block text-xs opacity-70">{item.subLabel}</span>
-                  {activeSection === item.id && (
-                    <motion.div
-                      layoutId="underline"
-                      className="absolute -bottom-2 left-0 w-full h-0.5 bg-blue-400"
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: 1 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    />
-                  )}
-                </button>
-              ))}
-            </div>
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden text-white"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        {
-          isMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden bg-black/95 border-t border-gray-800"
-            >
-              <div className="container mx-auto px-6 py-4 flex flex-col space-y-4">
-                {navItems.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => scrollToSection(item.id)}
-                    className={`py-2 text-left transition-colors duration-300 ${activeSection === item.id ? 'text-blue-400' : 'text-white'
-                      }`}
-                  >
-                    <span className="block">{item.label}</span>
-                    <span className="block text-xs opacity-70">{item.subLabel}</span>
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          )
-        }
-      </nav >
+      <Navbar activeSection={activeSection} scrollToSection={scrollToSection} />
 
       {/* Home Section */}
       < section id="home" className="h-screen w-screen relative overflow-hidden flex flex-row space-end items-end-safe content-between gap-12 p-12" >
@@ -155,11 +80,13 @@ const App = () => {
         {/* Hero */}
         <div className="relative container pointer-events-none flex-2">
           <span className="text-[192px] font-bold leading-[114px] tracking-[-0.12em] select-none">
-            <span className="relative left-2">LAZY</span>
-            <br />
-            <span className="">ALIEN</span>
-            <br />
-            <span className="text-blue-400">SERVER</span>
+            <span className="relative left-2">
+              LAZY
+              <br />
+              ALIEN
+              <br />
+              <span className="text-blue-400">SERVER</span>
+            </span>
           </span>
         </div>
 
