@@ -77,35 +77,32 @@ const App = () => {
           </div>
         </div >
 
-        {/* Hero */}
-        <div className="relative container pointer-events-none flex-2">
-          <span className="text-[192px] font-bold leading-[114px] tracking-[-0.12em] select-none">
-            <span className="relative left-2">
-              LAZY
-              <br />
-              ALIEN
-              <br />
-              <span className="text-blue-400">SERVER</span>
-            </span>
+        {/* Hero & Text */}
+        <div>
+          <span className="text-[192px] font-bold leading-[114px] tracking-[-0.12em] select-none relative left-2 pointer-events-none">
+            LAZY
+            <br />
+            ALIEN
+            <br />
+            <span className="text-blue-400">SERVER</span>
           </span>
-        </div>
 
-        {/* Text */}
-        <div className="relative z-10 container mx-auto flex-1 pointer-events-auto text-right">
-          <div className="max-w-2xl mx-auto">
+          <div className="relative z-10 mx-auto ">
             <p className="text-xl mb-6">
               与LAS的成员们，携手并进
               <br />
-              <span className="text-sm opacity-70">by CatCoinZHSM & tanh_Heng</span>
+              <span className="text-sm opacity-70 italic">
+                by CatCoinZHSM & tanh_Heng
+              </span>
             </p>
-            <button
-              onClick={() => scrollToSection('about')}
-              className="px-8 py-3 bg-blue-500 hover:bg-blue-600 rounded-full font-semibold transition-colors duration-300 flex items-center mx-auto"
-            >
-              了解更多 <ArrowDown size={16} className="ml-2" />
-            </button>
           </div>
         </div>
+
+        {/* Scroll Down Indicator */}
+        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center cursor-pointer" onClick={() => scrollToSection('about')}>
+          <ArrowDown className="animate-bounce text-white opacity-70" size={32} />
+        </div>
+
       </section >
 
       {/* About Us Section */}
