@@ -24,8 +24,8 @@ const Navbar: React.FC<Props> = ({ activeSection, scrollToSection }) => {
     };
 
     return (
-        <nav className="fixed top-0 left-0 right-0 z-50 bg-black/33 backdrop-blur-md border-b border-gray-800">
-            <div className="container mx-4 p-4 pt-6 w-full">
+        <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-black/20 backdrop-blur-md border border-blue-600/50 rounded-xl shadow-lg w-11/12 max-w-5xl">
+            <div className="px-4 py-3 w-full">
                 <div className="flex justify-between items-center">
                     {/* Logo */}
                     <img src="/logo-simplified.svg" alt="LAS Logo" className="h-10" />
@@ -70,9 +70,9 @@ const Navbar: React.FC<Props> = ({ activeSection, scrollToSection }) => {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="md:hidden bg-black/95 border-t border-gray-800"
+                    className="md:hidden bg-black/95 border-t border-gray-800 rounded-b-xl overflow-hidden"
                 >
-                    <div className="container mx-auto px-6 py-4 flex flex-col space-y-4">
+                    <div className="w-full px-6 py-4 flex flex-col space-y-4">
                         {navItems.map((item) => (
                             <button
                                 key={item.id}
