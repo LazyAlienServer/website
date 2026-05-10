@@ -24,3 +24,11 @@ dist-ssr
 *.sw?
 
 img
+
+# agents
+.agents
+.opencode
+.sisyphus
+.claude
+.codex
+.playwright-mcp
