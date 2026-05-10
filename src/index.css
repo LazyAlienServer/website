@@ -1,6 +1,13 @@
 @import "tailwindcss";
 
-.transparent-button { background: none; background-color: transparent; border: none; padding: 0; -webkit-appearance: none; appearance: none; }
+.transparent-button {
+  background: none;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
 
 .transparent-button:focus {
   outline: none;

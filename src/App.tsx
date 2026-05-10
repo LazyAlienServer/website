@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowDown } from 'lucide-react';
-import PixelBlast from './pixel-blast';
-import Navbar from './Navbar';
+import React, { useState, useEffect } from "react";
+import { ArrowDown } from "lucide-react";
+import PixelBlast from "./pixel-blast";
+import Navbar from "./Navbar";
 
 const App = () => {
-  const [activeSection, setActiveSection] = useState('home');
-
+  const [activeSection, setActiveSection] = useState("home");
 
   // Scroll to section function
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: "smooth" });
       setActiveSection(sectionId);
     }
   };
@@ -19,8 +18,8 @@ const App = () => {
   // Handle scroll to update active section
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['home', 'about', 'dream'];
-      let currentSection = 'home';
+      const sections = ["home", "about", "dream"];
+      let currentSection = "home";
 
       for (let i = 0; i < sections.length; i++) {
         const section = document.getElementById(sections[i]);
@@ -35,8 +34,8 @@ const App = () => {
       setActiveSection(currentSection);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
@@ -45,10 +44,12 @@ const App = () => {
       <Navbar activeSection={activeSection} scrollToSection={scrollToSection} />
 
       {/* Home Section */}
-      <section id="home" className="h-screen w-screen relative overflow-hidden p-12">
-
+      <section
+        id="home"
+        className="h-screen w-screen relative overflow-hidden p-12"
+      >
         {/* Background */}
-        <div className="absolute inset-0 " >
+        <div className="absolute inset-0 ">
           {/* Image */}
           <img
             src="/cathedral-bg.png"
@@ -75,7 +76,7 @@ const App = () => {
               transparent
             />
           </div>
-        </div >
+        </div>
 
         {/* Space */}
         <div className="h-1/5"></div>
@@ -101,19 +102,24 @@ const App = () => {
         </div>
 
         {/* Scroll Down Indicator */}
-        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center cursor-pointer" onClick={() => scrollToSection('about')}>
-          <ArrowDown className="animate-bounce text-white opacity-70" size={32} />
+        <div
+          className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center cursor-pointer"
+          onClick={() => scrollToSection("about")}
+        >
+          <ArrowDown
+            className="animate-bounce text-white opacity-70"
+            size={32}
+          />
         </div>
-
-      </section >
+      </section>
 
       {/* About Us Section */}
-      < section id="about" className="py-20 bg-blue-600" >
+      <section id="about" className="py-20 bg-blue-600">
         <div className="container mx-auto px-6">
           <div className="flex flex-col lg:flex-row items-center gap-12">
             <div className="lg:w-1/2">
               <div className="mb-8 mt-8">
-                <div >
+                <div>
                   <p className="text-gray-300 font-semibold">
                     Lazy Alien Server 简称LAS~
                   </p>
@@ -139,10 +145,10 @@ const App = () => {
             </div>
           </div>
         </div>
-      </section >
+      </section>
 
       {/* Dream Section */}
-      < section id="dream" className="py-20 bg-black" >
+      <section id="dream" className="py-20 bg-black">
         <div className="container mx-auto px-6">
           <div className="flex flex-col lg:flex-row items-center gap-12">
             {/* Left Side - Text */}
@@ -150,9 +156,7 @@ const App = () => {
               <div className="relative">
                 <div className="bg-gray-900 p-8 rounded-lg">
                   <div className="mb-6">
-                    <div className="text-6xl font-bold mb-4">
-                      DREAM
-                    </div>
+                    <div className="text-6xl font-bold mb-4">DREAM</div>
                     <div className="flex items-center mb-4">
                       <div className="text-sm opacity-70">图册 / 珍珠炮</div>
                     </div>
@@ -160,11 +164,14 @@ const App = () => {
 
                   <div className="mb-6">
                     <h2 className="text-4xl md:text-5xl font-bold mb-4">
-                      做一场<br />
+                      做一场
+                      <br />
                       现实的梦
                     </h2>
                     <div className="flex items-center mb-4">
-                      <span className="text-xl opacity-70">HAVE A REALISTIC DREAM.</span>
+                      <span className="text-xl opacity-70">
+                        HAVE A REALISTIC DREAM.
+                      </span>
                     </div>
                   </div>
 
@@ -180,7 +187,7 @@ const App = () => {
                     {[...Array(4)].map((_, i) => (
                       <div
                         key={i}
-                        className={`w-8 h-1 rounded-full ${i === 0 ? 'bg-blue-400' : 'bg-gray-600'}`}
+                        className={`w-8 h-1 rounded-full ${i === 0 ? "bg-blue-400" : "bg-gray-600"}`}
                       ></div>
                     ))}
                   </div>
@@ -201,17 +208,15 @@ const App = () => {
             </div>
           </div>
         </div>
-      </section >
+      </section>
 
       {/* Footer */}
-      < footer className="py-8 bg-gray-900 border-t border-gray-800" >
+      <footer className="py-8 bg-gray-900 border-t border-gray-800">
         <div className="container mx-auto px-6 text-center">
-          <p className="text-gray-400">
-            {/* TODO: Footer text */}
-          </p>
+          <p className="text-gray-400">{/* TODO: Footer text */}</p>
         </div>
-      </footer >
-    </div >
+      </footer>
+    </div>
   );
 };
 
