@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ArrowDown } from "lucide-react";
-import PixelBlast from "./pixel-blast";
-import Navbar from "./Navbar";
+import Navbar from "../components/Navbar";
+import PixelBlast from "../components/PixelBlast";
 
 const App = () => {
   const [activeSection, setActiveSection] = useState("home");
