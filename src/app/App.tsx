@@ -82,7 +82,7 @@ const App = () => {
         <div className="h-1/5"></div>
 
         {/* Hero */}
-        <div className="relative text-[192px] font-bold leading-[135px] tracking-[-0.12em] left-1/12 select-none pointer-events-none">
+        <div className="relative text-[192px] font-bold leading-33.75 tracking-[-0.12em] left-1/12 select-none pointer-events-none">
           LAZY
           <br />
           <span className="text-blue-400">ALI</span>EN
@@ -203,7 +203,7 @@ const App = () => {
                   alt="Dream Structure"
                   className="w-full h-auto rounded-lg shadow-2xl"
                 />
-                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-transparent to-black/50 rounded-lg"></div>
+                <div className="absolute top-0 left-0 w-full h-full bg-linear-to-br from-transparent to-black/50 rounded-lg"></div>
               </div>
             </div>
           </div>
