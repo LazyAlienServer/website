@@ -102,15 +102,17 @@ const App = () => {
         </div>
 
         {/* Scroll Down Indicator */}
-        <div
-          className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center cursor-pointer"
+        <button
+          type="button"
+          aria-label="Scroll to about section"
+          className="transparent-button absolute bottom-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center cursor-pointer"
           onClick={() => scrollToSection("about")}
         >
           <ArrowDown
             className="animate-bounce text-white opacity-70"
             size={32}
           />
-        </div>
+        </button>
       </section>
 
       {/* About Us Section */}
