@@ -71,6 +71,7 @@ const Navbar: React.FC<Props> = ({ activeSection, items, scrollToSection }) => {
           src={publicAsset("logo-simplified.svg")}
           alt=""
           aria-hidden="true"
+          onError={(e) => (e.currentTarget.style.display = "none")}
         />
         <span>
           <strong>Lazy Alien</strong>

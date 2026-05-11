@@ -364,13 +364,14 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const visibilityRef = useRef({ visible: true });
   const speedRef = useRef(speed);
+  const [webglAvailable, setWebglAvailable] = React.useState(true);
 
   const threeRef = useRef<{
     renderer: THREE.WebGLRenderer;
     scene: THREE.Scene;
     camera: THREE.OrthographicCamera;
     material: THREE.ShaderMaterial;
-    clock: THREE.Clock;
+    startTime: number;
     clickIx: number;
     uniforms: {
       uResolution: { value: THREE.Vector2 };
@@ -428,7 +429,10 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
       }
       const canvas = document.createElement("canvas");
       const gl = canvas.getContext("webgl2", { antialias, alpha: true });
-      if (!gl) return;
+      if (!gl) {
+        setWebglAvailable(false);
+        return;
+      }
       const renderer = new THREE.WebGLRenderer({
         canvas,
         context: gl as WebGL2RenderingContext,
@@ -475,7 +479,7 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
       const quadGeom = new THREE.PlaneGeometry(2, 2);
       const quad = new THREE.Mesh(quadGeom, material);
       scene.add(quad);
-      const clock = new THREE.Clock();
+      const startTime = performance.now();
       const setSize = () => {
         const w = container.clientWidth || 1;
         const h = container.clientHeight || 1;
@@ -584,7 +588,7 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
           return;
         }
         uniforms.uTime.value =
-          timeOffset + clock.getElapsedTime() * speedRef.current;
+          timeOffset + (performance.now() - startTime) * 0.001 * speedRef.current;
         if (liquidEffect)
           (liquidEffect as any).uniforms.get("uTime").value =
             uniforms.uTime.value;
@@ -608,7 +612,7 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
         scene,
         camera,
         material,
-        clock,
+        startTime,
         clickIx: 0,
         uniforms,
         resizeObserver: ro,
@@ -680,13 +684,31 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
     speed,
   ]);
 
+  useEffect(() => {
+    if (!autoPauseOffscreen || !containerRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        visibilityRef.current.visible = entry.isIntersecting;
+      },
+      { threshold: 0 }
+    );
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [autoPauseOffscreen]);
+
   return (
     <div
       ref={containerRef}
       className={`w-full h-full relative overflow-hidden ${className ?? ""}`}
       style={style}
-      aria-label="PixelBlast interactive background"
-    />
+      aria-hidden="true"
+    >
+      {!webglAvailable && (
+        <div className="w-full h-full flex items-center justify-center text-gray-400">
+          WebGL not available
+        </div>
+      )}
+    </div>
   );
 };
 

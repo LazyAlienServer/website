@@ -151,6 +151,7 @@ const App = () => {
               width={1920}
               height={1080}
               className="hero-image"
+              onError={(e) => (e.currentTarget.style.display = "none")}
             />
             <div className="hero-shade" />
             <div className="hero-pixels">
@@ -222,9 +223,9 @@ const App = () => {
                   <span>SERVER NODE</span>
                   <span>ONLINE</span>
                 </div>
-                <img src={publicAsset("logo.svg")} alt="Lazy Alien Server" />
+                <img src={publicAsset("logo.svg")} alt="Lazy Alien Server" onError={(e) => (e.currentTarget.style.display = "none")} />
                 <div className="orbit-preview">
-                  <img src={publicAsset("cathedral-bg-small.png")} alt="" width={1920} height={1080} />
+                  <img src={publicAsset("cathedral-bg-small.png")} alt="" width={1920} height={1080} onError={(e) => (e.currentTarget.style.display = "none")} />
                 </div>
                 <div className="orbit-readout">
                   <span>Minecraft</span>
@@ -276,6 +277,7 @@ const App = () => {
                     alt="Lazy Alien Server 场景"
                     width={1920}
                     height={1080}
+                    onError={(e) => (e.currentTarget.style.display = "none")}
                   />
                 </div>
                 <div className="status-panel">
@@ -376,6 +378,7 @@ const App = () => {
                 alt="Lazy Alien Server 建筑场景"
                 width={1920}
                 height={1080}
+                onError={(e) => (e.currentTarget.style.display = "none")}
               />
             </figure>
             <div className="works-layout">
@@ -436,8 +439,9 @@ const App = () => {
         <img
           src={publicAsset("logo-simplified.svg")}
           alt="Lazy Alien Server"
+          onError={(e) => (e.currentTarget.style.display = "none")}
         />
-        <span>Copyright © 2026 Lazy Alien Server</span>
+        <span>Copyright © {new Date().getFullYear()} Lazy Alien Server</span>
         <span>CatCoinZHSM & tanh_Heng</span>
       </footer>
     </div>
