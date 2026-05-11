@@ -2,8 +2,13 @@
 
 :root {
   --font-site:
-    "Avenir Next", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui,
+    "Neue Haas Grotesk Text", "Helvetica Neue", Helvetica, "Nimbus Sans",
+    "Liberation Sans", "Source Han Sans SC", "Noto Sans CJK SC", "Noto Sans SC",
     sans-serif;
+  --font-display:
+    "Neue Haas Grotesk Display", "Neue Haas Grotesk Text", "Helvetica Neue",
+    Helvetica, "Nimbus Sans", "Liberation Sans", "Source Han Sans SC",
+    "Noto Sans CJK SC", "Noto Sans SC", sans-serif;
 
   color: #f7f9ff;
   background: #050709;
@@ -126,19 +131,19 @@ a:focus-visible {
 .section-heading h2,
 .about-copy h2,
 .join-panel h2 {
-  font-family: var(--font-site);
+  font-family: var(--font-display);
   letter-spacing: 0;
 }
 
 .brand-lockup strong {
   font-size: 1.1rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .brand-lockup small {
   color: #0d6bff;
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .nav-links {
@@ -173,7 +178,7 @@ a:focus-visible {
   z-index: 1;
   display: block;
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.1;
 }
 
@@ -185,7 +190,7 @@ a:focus-visible {
   margin-top: 4px;
   color: rgba(126, 177, 255, 0.86);
   font-size: 0.66rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1;
 }
 
@@ -293,20 +298,20 @@ a:focus-visible {
   margin: 0 0 22px;
   color: #0d6bff;
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.4;
 }
 
 .eyebrow span {
   color: rgba(247, 249, 255, 0.66);
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .hero-copy h1 {
   margin: 0;
-  font-size: 7.4rem;
-  font-weight: 800;
-  line-height: 0.92;
+  font-size: 6.75rem;
+  font-weight: 700;
+  line-height: 0.98;
 }
 
 .hero-copy h1 .hero-gradient-word {
@@ -371,7 +376,7 @@ a:focus-visible {
   background: rgba(5, 9, 12, 0.56);
   color: #f7f9ff;
   font-size: 0.92rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .hero-lede {
@@ -399,7 +404,7 @@ a:focus-visible {
   gap: 8px;
   padding: 0 18px;
   border-radius: 8px;
-  font-weight: 800;
+  font-weight: 700;
   transition:
     transform 180ms ease,
     border-color 180ms ease,
@@ -513,7 +518,7 @@ a:focus-visible {
   color: rgba(247, 249, 255, 0.68);
   font-family: var(--font-site);
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .orbit-readout span:first-child {
@@ -560,9 +565,9 @@ a:focus-visible {
 .join-panel h2 {
   margin: 0;
   color: #ffffff;
-  font-size: 4rem;
-  font-weight: 800;
-  line-height: 0.96;
+  font-size: 3.6rem;
+  font-weight: 700;
+  line-height: 1.02;
 }
 
 .section-heading p:not(.eyebrow),
@@ -648,13 +653,14 @@ a:focus-visible {
 .mockup-header strong {
   margin-top: 4px;
   font-size: 1.05rem;
+  font-weight: 600;
 }
 
 .mockup-kicker {
   color: #5d9bff;
   font-family: var(--font-site);
   font-size: 0.74rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .window-dots {
@@ -722,6 +728,7 @@ a:focus-visible {
   display: block;
   margin-top: 6px;
   font-size: 1.2rem;
+  font-weight: 600;
 }
 
 .stat-grid {
@@ -744,7 +751,7 @@ a:focus-visible {
 .stat-grid strong {
   color: #5d9bff;
   font-size: 1.65rem;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1;
 }
 
@@ -838,6 +845,7 @@ a:focus-visible {
   margin: 22px 0 10px;
   color: #ffffff;
   font-size: 1.24rem;
+  font-weight: 600;
 }
 
 .module-card-content p,
@@ -874,7 +882,7 @@ a:focus-visible {
   color: #5d9bff;
   font-family: var(--font-site);
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .works-layout {
@@ -912,7 +920,7 @@ a:focus-visible {
 .work-card span {
   color: #8ebdff;
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .join-section {
@@ -932,7 +940,7 @@ a:focus-visible {
 
 .join-panel h2 {
   max-width: 760px;
-  font-size: 3.5rem;
+  font-size: 3.15rem;
 }
 
 .join-panel p {
@@ -1070,7 +1078,7 @@ a:focus-visible {
   gap: 14px;
   color: rgba(247, 249, 255, 0.74);
   font-size: 0.72rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .profile-card-band i {
@@ -1091,7 +1099,7 @@ a:focus-visible {
   gap: 12px;
   color: rgba(247, 249, 255, 0.68);
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .profile-card-heading strong {
@@ -1112,6 +1120,7 @@ a:focus-visible {
   margin: 0;
   color: #ffffff;
   font-size: 1.42rem;
+  font-weight: 600;
   line-height: 1.1;
 }
 
@@ -1137,7 +1146,7 @@ a:focus-visible {
   align-self: end;
   color: rgba(247, 249, 255, 0.38);
   font-size: 2.35rem;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 0.9;
 }
 
@@ -1162,13 +1171,14 @@ a:focus-visible {
 .profile-mini span {
   color: #8ebdff;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .profile-mini strong {
   overflow: hidden;
   color: #f7f9ff;
   font-size: 0.84rem;
+  font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1181,7 +1191,7 @@ a:focus-visible {
   border-radius: 8px;
   background: rgba(13, 107, 255, 0.8);
   color: #ffffff;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .site-footer {
@@ -1232,12 +1242,12 @@ a:focus-visible {
   }
 
   .hero-copy h1 {
-    font-size: 5.15rem;
+    font-size: 4.7rem;
   }
 
   .section-heading h2,
   .about-copy h2 {
-    font-size: 3.25rem;
+    font-size: 2.9rem;
   }
 
   .hero-orbit {
@@ -1279,7 +1289,7 @@ a:focus-visible {
   }
 
   .hero-copy h1 {
-    font-size: 3.2rem;
+    font-size: 2.95rem;
   }
 
   .hero-lede,
@@ -1311,7 +1321,7 @@ a:focus-visible {
   .section-heading h2,
   .about-copy h2,
   .join-panel h2 {
-    font-size: 2.35rem;
+    font-size: 2.1rem;
   }
 
   .platform-layout {
