@@ -148,6 +148,8 @@ const App = () => {
             <img
               src={publicAsset("cathedral-bg.png")}
               alt=""
+              width={1920}
+              height={1080}
               className="hero-image"
             />
             <div className="hero-shade" />
@@ -222,7 +224,7 @@ const App = () => {
                 </div>
                 <img src={publicAsset("logo.svg")} alt="Lazy Alien Server" />
                 <div className="orbit-preview">
-                  <img src={publicAsset("cathedral-bg-small.png")} alt="" />
+                  <img src={publicAsset("cathedral-bg-small.png")} alt="" width={1920} height={1080} />
                 </div>
                 <div className="orbit-readout">
                   <span>Minecraft</span>
@@ -272,6 +274,8 @@ const App = () => {
                   <img
                     src={publicAsset("cathedral-bg-small.png")}
                     alt="Lazy Alien Server 场景"
+                    width={1920}
+                    height={1080}
                   />
                 </div>
                 <div className="status-panel">
@@ -370,6 +374,8 @@ const App = () => {
               <img
                 src={publicAsset("cathedral-bg.png")}
                 alt="Lazy Alien Server 建筑场景"
+                width={1920}
+                height={1080}
               />
             </figure>
             <div className="works-layout">

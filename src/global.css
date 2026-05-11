@@ -321,7 +321,7 @@ a:focus-visible {
 }
 
 .eyebrow span {
-  color: rgba(247, 249, 255, 0.66);
+  color: rgba(247, 249, 255, 0.88);
   font-weight: 500;
 }
 
@@ -533,7 +533,7 @@ a:focus-visible {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  color: rgba(247, 249, 255, 0.68);
+  color: rgba(247, 249, 255, 0.88);
   font-family: var(--font-site);
   font-size: 0.78rem;
   font-weight: 600;
@@ -556,7 +556,23 @@ a:focus-visible {
   border-radius: 8px;
   background: rgba(5, 9, 12, 0.62);
   color: #5d9bff;
+  cursor: pointer;
+  transition: all 0.2s ease;
   animation: cue-drift 1.8s ease-in-out infinite;
+}
+
+.scroll-cue:hover,
+.scroll-cue:focus-visible {
+  border-color: rgba(126, 177, 255, 0.66);
+  background: rgba(13, 107, 255, 0.14);
+  color: #8ebdff;
+  transform: translateY(4px);
+  animation: none;
+}
+
+.scroll-cue:focus-visible {
+  outline: 2px solid #0d6bff;
+  outline-offset: 2px;
 }
 
 @keyframes cue-drift {
@@ -739,7 +755,7 @@ a:focus-visible {
 .status-panel span,
 .activity-list span,
 .stat-grid span {
-  color: rgba(247, 249, 255, 0.64);
+  color: rgba(247, 249, 255, 0.88);
 }
 
 .status-panel strong {
@@ -870,7 +886,7 @@ a:focus-visible {
 .principle-card p,
 .work-card p {
   margin: 0;
-  color: rgba(247, 249, 255, 0.68);
+  color: rgba(247, 249, 255, 0.88);
   line-height: 1.76;
 }
 
@@ -1115,7 +1131,7 @@ a:focus-visible {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  color: rgba(247, 249, 255, 0.68);
+  color: rgba(247, 249, 255, 0.88);
   font-size: 0.78rem;
   font-weight: 600;
 }
@@ -1144,7 +1160,7 @@ a:focus-visible {
 
 .profile-card-title p {
   margin: 8px 0 0;
-  color: rgba(247, 249, 255, 0.68);
+  color: rgba(247, 249, 255, 0.88);
   font-size: 0.92rem;
 }
 
@@ -1162,7 +1178,7 @@ a:focus-visible {
 
 .profile-card-label {
   align-self: end;
-  color: rgba(247, 249, 255, 0.38);
+  color: rgba(247, 249, 255, 0.88);
   font-size: 2.35rem;
   font-weight: 700;
   line-height: 0.9;
@@ -1220,7 +1236,7 @@ a:focus-visible {
   gap: 14px 20px;
   padding: 28px 24px 40px;
   border-top: 1px solid rgba(13, 107, 255, 0.2);
-  color: rgba(247, 249, 255, 0.58);
+  color: rgba(247, 249, 255, 0.88);
   background: #050709;
   font-size: 0.88rem;
 }
