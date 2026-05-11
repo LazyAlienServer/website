@@ -89,7 +89,9 @@ a:focus-visible {
 .section-frame {
   position: relative;
   width: 100%;
+  max-width: 100%;
   padding: 112px max(24px, calc((100vw - 1180px) / 2));
+  overflow-x: hidden;
 }
 
 .site-nav {
@@ -325,7 +327,7 @@ a:focus-visible {
 
 .hero-copy h1 {
   margin: 0;
-  font-size: 6.75rem;
+  font-size: clamp(2.95rem, 8vw, 6.75rem);
   font-weight: 700;
   line-height: 0.98;
 }
@@ -1257,9 +1259,7 @@ a:focus-visible {
     grid-template-columns: 1fr;
   }
 
-  .hero-copy h1 {
-    font-size: 4.7rem;
-  }
+
 
   .section-heading h2,
   .about-copy h2 {
@@ -1304,9 +1304,7 @@ a:focus-visible {
     display: none;
   }
 
-  .hero-copy h1 {
-    font-size: 2.95rem;
-  }
+
 
   .hero-lede,
   .section-heading p:not(.eyebrow),
