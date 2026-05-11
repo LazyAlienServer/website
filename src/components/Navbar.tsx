@@ -32,7 +32,7 @@ const Navbar: React.FC<Props> = ({ activeSection, items, scrollToSection }) => {
       >
         <img src="/logo-simplified.svg" alt="" aria-hidden="true" />
         <span>
-          <strong>LAS</strong>
+          <strong>Lazy Alien</strong>
           <small>SERVER</small>
         </span>
       </button>

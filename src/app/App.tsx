@@ -12,8 +12,12 @@ import {
   Sparkles,
   UsersRound,
 } from "lucide-react";
+import GradientText from "../components/GradientText";
 import Navbar, { type NavItem } from "../components/Navbar";
+import PixelCard from "../components/PixelCard";
 import PixelBlast from "../components/PixelBlast";
+import ProfileCard from "../components/ProfileCard";
+import SpotlightCard from "../components/SpotlightCard";
 
 const navItems: NavItem[] = [
   { id: "home", label: "首页", subLabel: "HOME" },
@@ -84,7 +88,7 @@ const works = [
 ];
 
 const serverStats = [
-  { value: "LAS", label: "Lazy Alien Server" },
+  { value: "SERVER", label: "Lazy Alien Server" },
   { value: "MC", label: "Minecraft Java" },
   { value: "DEV", label: "自研插件与模组" },
 ];
@@ -166,7 +170,13 @@ const App = () => {
               </p>
               <h1>
                 LAZY ALIEN
-                <span>SERVER</span>
+                <GradientText
+                  colors={["#f7f9ff", "#8ebdff", "#0d6bff", "#f7f9ff"]}
+                  animationSpeed={6}
+                  className="hero-gradient-word"
+                >
+                  SERVER
+                </GradientText>
               </h1>
               <div className="hero-tags" aria-label="服务器特色">
                 {heroTags.map((tag) => (
@@ -174,7 +184,7 @@ const App = () => {
                 ))}
               </div>
               <p className="hero-lede">
-                与 LAS
+                与 Lazy Alien Server
                 的成员们携手并进：建造、开发、研究生电工程，也把服务器里的创造、规则和回忆认真留下来。
               </p>
               <div className="hero-actions">
@@ -183,7 +193,7 @@ const App = () => {
                   className="primary-action"
                   onClick={() => scrollToSection("server")}
                 >
-                  了解 LAS
+                  了解服务器
                   <ChevronRight size={18} aria-hidden="true" />
                 </button>
                 <button
@@ -199,10 +209,10 @@ const App = () => {
             <div className="hero-orbit" aria-label="Lazy Alien Server 视觉标识">
               <div className="orbit-card">
                 <div className="orbit-topline">
-                  <span>LAS NODE</span>
+                  <span>SERVER NODE</span>
                   <span>ONLINE</span>
                 </div>
-                <img src="/logo.svg" alt="LAS" />
+                <img src="/logo.svg" alt="Lazy Alien Server" />
                 <div className="orbit-preview">
                   <img src="/cathedral-bg-small.png" alt="" />
                 </div>
@@ -234,7 +244,10 @@ const App = () => {
           </div>
 
           <div className="platform-layout">
-            <div className="dashboard-mockup">
+            <SpotlightCard
+              className="dashboard-mockup"
+              spotlightColor="rgba(93, 155, 255, 0.24)"
+            >
               <div className="mockup-header">
                 <div>
                   <span className="mockup-kicker">Server Brief</span>
@@ -283,18 +296,26 @@ const App = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </SpotlightCard>
 
             <div className="module-grid">
               {serverFeatures.map((module) => {
                 const Icon = module.icon;
 
                 return (
-                  <article key={module.title} className="module-card">
-                    <Icon size={24} aria-hidden="true" />
-                    <h3>{module.title}</h3>
-                    <p>{module.description}</p>
-                  </article>
+                  <PixelCard
+                    key={module.title}
+                    className="module-card"
+                    colors="#f7f9ff,#8ebdff,#0d6bff"
+                    gap={12}
+                    speed={22}
+                  >
+                    <article className="module-card-content">
+                      <Icon size={24} aria-hidden="true" />
+                      <h3>{module.title}</h3>
+                      <p>{module.description}</p>
+                    </article>
+                  </PixelCard>
                 );
               })}
             </div>
@@ -306,7 +327,7 @@ const App = () => {
             <p className="eyebrow">ABOUT US</p>
             <h2>一群认真把 Minecraft 玩成长期项目的人</h2>
             <p>
-              LAS 是以学生群体为主的技术交流向 Minecraft
+              Lazy Alien Server 是以学生群体为主的技术交流向 Minecraft
               服务器。我们鼓励技术探索、工程协作和审美表达，也欢迎有能力的玩家加入开发、建筑、生电与维护。
             </p>
             <p>
@@ -316,11 +337,16 @@ const App = () => {
 
           <div className="principle-stack">
             {principles.map((principle, index) => (
-              <article key={principle.title} className="principle-card">
+              <SpotlightCard
+                as="article"
+                key={principle.title}
+                className="principle-card"
+                spotlightColor="rgba(126, 177, 255, 0.2)"
+              >
                 <span>{String(index + 1).padStart(2, "0")}</span>
                 <h3>{principle.title}</h3>
                 <p>{principle.copy}</p>
-              </article>
+              </SpotlightCard>
             ))}
           </div>
         </section>
@@ -337,11 +363,16 @@ const App = () => {
             </figure>
             <div className="works-layout">
               {works.map((work) => (
-                <article key={work.title} className="work-card">
+                <SpotlightCard
+                  as="article"
+                  key={work.title}
+                  className="work-card"
+                  spotlightColor="rgba(13, 107, 255, 0.22)"
+                >
                   <span>{work.meta}</span>
                   <h3>{work.title}</h3>
                   <p>{work.body}</p>
-                </article>
+                </SpotlightCard>
               ))}
             </div>
           </div>
@@ -350,29 +381,42 @@ const App = () => {
         <section id="join" className="join-section section-frame">
           <div className="join-panel">
             <div>
-              <p className="eyebrow">JOIN LAS</p>
+              <p className="eyebrow">JOIN</p>
               <h2>如果你想把想法做成可运行的东西，来聊聊。</h2>
               <p>
                 我们欢迎愿意共同维护规则、记录过程、尊重他人作品的成员。无论你偏向生电、建筑、插件开发还是服务器运维，都可以在
-                LAS 找到能一起推进的人。
+                Lazy Alien Server 找到能一起推进的人。
               </p>
             </div>
-            <div className="join-actions">
-              <button type="button" className="primary-action">
-                <UsersRound size={18} aria-hidden="true" />
-                提交申请
-              </button>
-              <button type="button" className="ghost-action">
-                <Sparkles size={18} aria-hidden="true" />
-                查看规章
-              </button>
+            <div className="join-side">
+              <ProfileCard
+                avatarUrl="/logo.svg"
+                miniAvatarUrl="/logo-simplified.svg"
+                iconUrl="/cathedral-bg-small.png"
+                name="Lazy Alien Server"
+                title="Minecraft 技术交流服务器"
+                handle="lazy-alien-server"
+                status="成员招募中"
+                contactText="提交申请"
+                onContactClick={() => scrollToSection("join")}
+              />
+              <div className="join-actions">
+                <button type="button" className="primary-action">
+                  <UsersRound size={18} aria-hidden="true" />
+                  提交申请
+                </button>
+                <button type="button" className="ghost-action">
+                  <Sparkles size={18} aria-hidden="true" />
+                  查看规章
+                </button>
+              </div>
             </div>
           </div>
         </section>
       </main>
 
       <footer className="site-footer">
-        <img src="/logo-simplified.svg" alt="LAS" />
+        <img src="/logo-simplified.svg" alt="Lazy Alien Server" />
         <span>Copyright © 2026 Lazy Alien Server</span>
         <span>CatCoinZHSM & tanh_Heng</span>
       </footer>
