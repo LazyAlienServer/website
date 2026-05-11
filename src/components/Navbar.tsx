@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { publicAsset } from "../app/publicAsset";
 
@@ -88,13 +88,12 @@ const Navbar: React.FC<Props> = ({ activeSection, items, scrollToSection }) => {
           >
             <span>{item.label}</span>
             <small>{item.subLabel}</small>
-            {activeSection === item.id && (
-              <motion.span
-                layoutId="nav-pill"
-                className="nav-indicator"
-                transition={{ type: "spring", stiffness: 360, damping: 32 }}
-              />
-            )}
+            <motion.span
+              layoutId={activeSection === item.id ? "nav-pill" : undefined}
+              className="nav-indicator"
+              style={{ opacity: activeSection === item.id ? 1 : 0 }}
+              transition={{ type: "spring", stiffness: 360, damping: 32 }}
+            />
           </button>
         ))}
       </div>
@@ -110,27 +109,29 @@ const Navbar: React.FC<Props> = ({ activeSection, items, scrollToSection }) => {
         {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
       </button>
 
-      {isMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          className="mobile-menu"
-          ref={menuRef}
-        >
-          {items.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className={activeSection === item.id ? "is-active" : ""}
-              onClick={() => handleClick(item.id)}
-            >
-              <span>{item.label}</span>
-              <small>{item.subLabel}</small>
-            </button>
-          ))}
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="mobile-menu"
+            ref={menuRef}
+          >
+            {items.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className={activeSection === item.id ? "is-active" : ""}
+                onClick={() => handleClick(item.id)}
+              >
+                <span>{item.label}</span>
+                <small>{item.subLabel}</small>
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };
