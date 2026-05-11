@@ -18,6 +18,7 @@ import PixelCard from "../components/PixelCard";
 import PixelBlast from "../components/PixelBlast";
 import ProfileCard from "../components/ProfileCard";
 import SpotlightCard from "../components/SpotlightCard";
+import { publicAsset } from "./publicAsset";
 
 const navItems: NavItem[] = [
   { id: "home", label: "首页", subLabel: "HOME" },
@@ -141,7 +142,11 @@ const App = () => {
       <main>
         <section id="home" className="hero-section section-frame">
           <div className="hero-media" aria-hidden="true">
-            <img src="/cathedral-bg.png" alt="" className="hero-image" />
+            <img
+              src={publicAsset("cathedral-bg.png")}
+              alt=""
+              className="hero-image"
+            />
             <div className="hero-shade" />
             <div className="hero-pixels">
               <PixelBlast
@@ -212,9 +217,9 @@ const App = () => {
                   <span>SERVER NODE</span>
                   <span>ONLINE</span>
                 </div>
-                <img src="/logo.svg" alt="Lazy Alien Server" />
+                <img src={publicAsset("logo.svg")} alt="Lazy Alien Server" />
                 <div className="orbit-preview">
-                  <img src="/cathedral-bg-small.png" alt="" />
+                  <img src={publicAsset("cathedral-bg-small.png")} alt="" />
                 </div>
                 <div className="orbit-readout">
                   <span>Minecraft</span>
@@ -262,7 +267,7 @@ const App = () => {
               <div className="mockup-body">
                 <div className="brief-image">
                   <img
-                    src="/cathedral-bg-small.png"
+                    src={publicAsset("cathedral-bg-small.png")}
                     alt="Lazy Alien Server 场景"
                   />
                 </div>
@@ -359,7 +364,10 @@ const App = () => {
 
           <div className="works-showcase">
             <figure className="feature-image-card">
-              <img src="/cathedral-bg.png" alt="Lazy Alien Server 建筑场景" />
+              <img
+                src={publicAsset("cathedral-bg.png")}
+                alt="Lazy Alien Server 建筑场景"
+              />
             </figure>
             <div className="works-layout">
               {works.map((work) => (
@@ -390,9 +398,9 @@ const App = () => {
             </div>
             <div className="join-side">
               <ProfileCard
-                avatarUrl="/logo.svg"
-                miniAvatarUrl="/logo-simplified.svg"
-                iconUrl="/cathedral-bg-small.png"
+                avatarUrl={publicAsset("logo.svg")}
+                miniAvatarUrl={publicAsset("logo-simplified.svg")}
+                iconUrl={publicAsset("cathedral-bg-small.png")}
                 name="Lazy Alien Server"
                 title="Minecraft 技术交流服务器"
                 handle="lazy-alien-server"
@@ -416,7 +424,10 @@ const App = () => {
       </main>
 
       <footer className="site-footer">
-        <img src="/logo-simplified.svg" alt="Lazy Alien Server" />
+        <img
+          src={publicAsset("logo-simplified.svg")}
+          alt="Lazy Alien Server"
+        />
         <span>Copyright © 2026 Lazy Alien Server</span>
         <span>CatCoinZHSM & tanh_Heng</span>
       </footer>

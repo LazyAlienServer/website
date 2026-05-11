@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { publicAsset } from "../app/publicAsset";
 
 export type NavItem = {
   id: string;
@@ -30,7 +31,11 @@ const Navbar: React.FC<Props> = ({ activeSection, items, scrollToSection }) => {
         onClick={() => handleClick("home")}
         aria-label="回到首页"
       >
-        <img src="/logo-simplified.svg" alt="" aria-hidden="true" />
+        <img
+          src={publicAsset("logo-simplified.svg")}
+          alt=""
+          aria-hidden="true"
+        />
         <span>
           <strong>Lazy Alien</strong>
           <small>SERVER</small>
