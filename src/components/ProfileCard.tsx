@@ -1,5 +1,6 @@
 import {
   useCallback,
+  useEffect,
   useRef,
   type CSSProperties,
   type PointerEvent,
@@ -24,6 +25,21 @@ type ProfileCardProps = {
   onContactClick?: () => void;
 };
 
+type DeviceOrientationPermissionEvent = DeviceOrientationEventConstructor & {
+  requestPermission?: () => Promise<PermissionState>;
+};
+
+const clamp = (value: number, min: number, max: number) =>
+  Math.min(Math.max(value, min), max);
+
+const resetTilt = (node: HTMLElement) => {
+  node.style.setProperty("--profile-x", "50%");
+  node.style.setProperty("--profile-y", "50%");
+  node.style.setProperty("--profile-rotate-x", "0deg");
+  node.style.setProperty("--profile-rotate-y", "0deg");
+  node.style.setProperty("--profile-glow-opacity", "0");
+};
+
 const ProfileCard = ({
   avatarUrl,
   iconUrl,
@@ -43,6 +59,79 @@ const ProfileCard = ({
   onContactClick,
 }: ProfileCardProps) => {
   const ref = useRef<HTMLDivElement>(null);
+  const orientationEnabledRef = useRef(false);
+  const orientationPermissionRequestedRef = useRef(false);
+
+  useEffect(() => {
+    if (!enableTilt) return;
+
+    const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const mobileQuery = window.matchMedia(
+      "(hover: none) and (pointer: coarse) and (max-width: 768px)",
+    );
+    if (reduceMotionQuery.matches || !mobileQuery.matches) return;
+
+    const handleOrientation = (event: DeviceOrientationEvent) => {
+      const node = ref.current;
+      if (!node || event.beta === null || event.gamma === null) return;
+
+      const beta = clamp(event.beta, -35, 35);
+      const gamma = clamp(event.gamma, -25, 25);
+      const percentX = clamp(50 + gamma * 1.6, 18, 82);
+      const percentY = clamp(50 + beta * 1.15, 18, 82);
+      const rotateX = (beta / 35) * -6;
+      const rotateY = (gamma / 25) * 6;
+
+      node.style.setProperty("--profile-x", `${percentX}%`);
+      node.style.setProperty("--profile-y", `${percentY}%`);
+      node.style.setProperty("--profile-rotate-x", `${rotateX}deg`);
+      node.style.setProperty("--profile-rotate-y", `${rotateY}deg`);
+      node.style.setProperty("--profile-glow-opacity", "1");
+    };
+
+    const startOrientation = () => {
+      if (orientationEnabledRef.current) return;
+      orientationEnabledRef.current = true;
+      window.addEventListener("deviceorientation", handleOrientation, true);
+    };
+
+    const requestOrientationPermission = () => {
+      if (orientationPermissionRequestedRef.current) return;
+      orientationPermissionRequestedRef.current = true;
+
+      const orientationEvent = window.DeviceOrientationEvent as
+        | DeviceOrientationPermissionEvent
+        | undefined;
+      if (!orientationEvent?.requestPermission) {
+        startOrientation();
+        return;
+      }
+
+      void orientationEvent
+        .requestPermission()
+        .then((state) => {
+          if (state === "granted") startOrientation();
+        })
+        .catch(() => {
+          orientationPermissionRequestedRef.current = false;
+        });
+    };
+
+    requestOrientationPermission();
+    window.addEventListener("pointerdown", requestOrientationPermission, {
+      once: true,
+      passive: true,
+    });
+
+    return () => {
+      orientationEnabledRef.current = false;
+      window.removeEventListener("deviceorientation", handleOrientation, true);
+      window.removeEventListener("pointerdown", requestOrientationPermission);
+
+      const node = ref.current;
+      if (node) resetTilt(node);
+    };
+  }, [enableTilt]);
 
   const setPointer = useCallback(
     (event: PointerEvent<HTMLDivElement>) => {
@@ -70,11 +159,7 @@ const ProfileCard = ({
     const node = ref.current;
     if (!node) return;
 
-    node.style.setProperty("--profile-x", "50%");
-    node.style.setProperty("--profile-y", "50%");
-    node.style.setProperty("--profile-rotate-x", "0deg");
-    node.style.setProperty("--profile-rotate-y", "0deg");
-    node.style.setProperty("--profile-glow-opacity", "0");
+    resetTilt(node);
   }, []);
 
   const style = {
