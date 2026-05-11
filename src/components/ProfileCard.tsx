@@ -32,6 +32,9 @@ type DeviceOrientationPermissionEvent = DeviceOrientationEventConstructor & {
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
 
+const applyDeadZone = (value: number, threshold: number) =>
+  Math.abs(value) < threshold ? 0 : value;
+
 const resetTilt = (node: HTMLElement) => {
   node.style.setProperty("--profile-x", "50%");
   node.style.setProperty("--profile-y", "50%");
@@ -69,22 +72,59 @@ const ProfileCard = ({
     const mobileQuery = window.matchMedia("(hover: none), (pointer: coarse)");
     if (reduceMotionQuery.matches || !mobileQuery.matches) return;
 
-    const handleOrientation = (event: DeviceOrientationEvent) => {
-      const node = ref.current;
-      if (!node || event.beta === null || event.gamma === null) return;
+    let frame = 0;
+    let baselineBeta: number | null = null;
+    let baselineGamma: number | null = null;
+    let targetBeta = 0;
+    let targetGamma = 0;
+    let smoothBeta = 0;
+    let smoothGamma = 0;
 
-      const beta = clamp(event.beta, -35, 35);
-      const gamma = clamp(event.gamma, -25, 25);
-      const percentX = clamp(50 + gamma * 1.6, 18, 82);
-      const percentY = clamp(50 + beta * 1.15, 18, 82);
-      const rotateX = (beta / 35) * -6;
-      const rotateY = (gamma / 25) * 6;
+    const writeOrientationTilt = () => {
+      frame = 0;
+
+      const node = ref.current;
+      if (!node) return;
+
+      smoothBeta += (targetBeta - smoothBeta) * 0.22;
+      smoothGamma += (targetGamma - smoothGamma) * 0.22;
+
+      const beta = applyDeadZone(smoothBeta, 1.25);
+      const gamma = applyDeadZone(smoothGamma, 1.25);
+      const normalizedBeta = clamp(beta / 18, -1, 1);
+      const normalizedGamma = clamp(gamma / 14, -1, 1);
+      const rotateX = normalizedBeta * -5.5;
+      const rotateY = normalizedGamma * 5.5;
+      const percentX = clamp(50 + normalizedGamma * 28, 22, 78);
+      const percentY = clamp(50 + normalizedBeta * 24, 24, 76);
 
       node.style.setProperty("--profile-x", `${percentX}%`);
       node.style.setProperty("--profile-y", `${percentY}%`);
       node.style.setProperty("--profile-rotate-x", `${rotateX}deg`);
       node.style.setProperty("--profile-rotate-y", `${rotateY}deg`);
-      node.style.setProperty("--profile-glow-opacity", "1");
+      node.style.setProperty("--profile-glow-opacity", beta === 0 && gamma === 0 ? "0" : "1");
+
+      if (Math.abs(targetBeta - smoothBeta) > 0.1 || Math.abs(targetGamma - smoothGamma) > 0.1) {
+        frame = window.requestAnimationFrame(writeOrientationTilt);
+      }
+    };
+
+    const handleOrientation = (event: DeviceOrientationEvent) => {
+      if (event.beta === null || event.gamma === null) return;
+
+      if (baselineBeta === null || baselineGamma === null) {
+        baselineBeta = event.beta;
+        baselineGamma = event.gamma;
+        targetBeta = 0;
+        targetGamma = 0;
+        smoothBeta = 0;
+        smoothGamma = 0;
+      } else {
+        targetBeta = clamp(event.beta - baselineBeta, -24, 24);
+        targetGamma = clamp(event.gamma - baselineGamma, -18, 18);
+      }
+
+      if (!frame) frame = window.requestAnimationFrame(writeOrientationTilt);
     };
 
     const startOrientation = () => {
@@ -134,6 +174,7 @@ const ProfileCard = ({
     return () => {
       orientationEnabledRef.current = false;
       window.removeEventListener("deviceorientation", handleOrientation, true);
+      if (frame) window.cancelAnimationFrame(frame);
       window.removeEventListener("touchend", requestOrientationPermission);
       window.removeEventListener("click", requestOrientationPermission);
 
