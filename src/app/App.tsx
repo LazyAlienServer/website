@@ -133,13 +133,16 @@ const App = () => {
 
   return (
     <div className="site-shell">
+      <a href="#main-content" className="skip-link">
+        跳转到主要内容
+      </a>
       <Navbar
         activeSection={activeSection}
         items={navItems}
         scrollToSection={scrollToSection}
       />
 
-      <main>
+      <main id="main-content">
         <section id="home" className="hero-section section-frame">
           <div className="hero-media" aria-hidden="true">
             <img

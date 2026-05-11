@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { publicAsset } from "../app/publicAsset";
@@ -17,11 +17,47 @@ type Props = {
 
 const Navbar: React.FC<Props> = ({ activeSection, items, scrollToSection }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const handleClick = (id: string) => {
     scrollToSection(id);
     setIsMenuOpen(false);
   };
+
+  useEffect(() => {
+    if (!isMenuOpen) return;
+
+    const firstButton = menuRef.current?.querySelector('button');
+    firstButton?.focus();
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsMenuOpen(false);
+        menuButtonRef.current?.focus();
+        return;
+      }
+
+      if (e.key === 'Tab') {
+        const buttons = menuRef.current?.querySelectorAll('button');
+        if (!buttons?.length) return;
+
+        const firstButton = buttons[0];
+        const lastButton = buttons[buttons.length - 1];
+
+        if (e.shiftKey && document.activeElement === firstButton) {
+          e.preventDefault();
+          lastButton.focus();
+        } else if (!e.shiftKey && document.activeElement === lastButton) {
+          e.preventDefault();
+          firstButton.focus();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isMenuOpen]);
 
   return (
     <nav className="site-nav" aria-label="主导航">
@@ -69,6 +105,7 @@ const Navbar: React.FC<Props> = ({ activeSection, items, scrollToSection }) => {
         onClick={() => setIsMenuOpen((value) => !value)}
         aria-label={isMenuOpen ? "关闭导航" : "打开导航"}
         aria-expanded={isMenuOpen}
+        ref={menuButtonRef}
       >
         {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
       </button>
@@ -79,6 +116,7 @@ const Navbar: React.FC<Props> = ({ activeSection, items, scrollToSection }) => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           className="mobile-menu"
+          ref={menuRef}
         >
           {items.map((item) => (
             <button
