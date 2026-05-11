@@ -1,222 +1,380 @@
-import React, { useState, useEffect } from "react";
-import { ArrowDown } from "lucide-react";
-import Navbar from "../components/Navbar";
+import { useEffect, useState } from "react";
+import {
+  ArrowDown,
+  BookOpenText,
+  ChevronRight,
+  Cpu,
+  HardDrive,
+  Image,
+  MapPinned,
+  MessageSquareText,
+  ShieldCheck,
+  Sparkles,
+  UsersRound,
+} from "lucide-react";
+import Navbar, { type NavItem } from "../components/Navbar";
 import PixelBlast from "../components/PixelBlast";
+
+const navItems: NavItem[] = [
+  { id: "home", label: "首页", subLabel: "HOME" },
+  { id: "server", label: "服务器", subLabel: "SERVER" },
+  { id: "about", label: "关于", subLabel: "ABOUT" },
+  { id: "dream", label: "图册", subLabel: "ALBUM" },
+  { id: "join", label: "加入", subLabel: "JOIN" },
+];
+
+const heroTags = ["Minecraft", "技术交流", "生电工程", "自主开发"];
+
+const serverFeatures = [
+  {
+    icon: Cpu,
+    title: "高性能硬件",
+    description:
+      "依托物理机与稳定网络运行，为大型工程、长期测试和日常游玩留出余量。",
+  },
+  {
+    icon: HardDrive,
+    title: "存储与备份",
+    description: "重视数据安全和存档延续，尽量让每一次创造都有安心落点。",
+  },
+  {
+    icon: MessageSquareText,
+    title: "技术交流",
+    description: "成员围绕生电、建筑、运维和开发分享经验，也一起复盘工程问题。",
+  },
+  {
+    icon: ShieldCheck,
+    title: "规则共识",
+    description:
+      "通过清晰规则保护成员作品，也让公共设施和服务器秩序能够长期维护。",
+  },
+];
+
+const principles = [
+  {
+    title: "学生主导",
+    copy: "以学生成员为核心，鼓励技术探索、长期协作和稳定产出。",
+  },
+  {
+    title: "生电友好",
+    copy: "为大型机器、长期工程和高频测试预留性能与规则空间。",
+  },
+  {
+    title: "透明维护",
+    copy: "服务器事务尽可能归档、可查、可交接，降低维护成本。",
+  },
+];
+
+const works = [
+  {
+    title: "珍珠炮工程",
+    meta: "红石 / 远程投送",
+    body: "面向高精度测试的工程记录，从设计假设到实装反馈都能被后来者接上。",
+  },
+  {
+    title: "主城基础设施",
+    meta: "建筑 / 交通 / 仓储",
+    body: "将公共设施作为长期项目维护，兼顾美观、效率和服务器负载。",
+  },
+  {
+    title: "数据与备份",
+    meta: "运维 / 存档 / 恢复",
+    body: "围绕物理机、存储和备份建立稳定流程，让创造可以安心延续。",
+  },
+];
+
+const serverStats = [
+  { value: "LAS", label: "Lazy Alien Server" },
+  { value: "MC", label: "Minecraft Java" },
+  { value: "DEV", label: "自研插件与模组" },
+];
 
 const App = () => {
   const [activeSection, setActiveSection] = useState("home");
 
-  // Scroll to section function
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-      setActiveSection(sectionId);
-    }
+    if (!element) return;
+
+    element.scrollIntoView({ behavior: "smooth", block: "start" });
+    setActiveSection(sectionId);
   };
 
-  // Handle scroll to update active section
   useEffect(() => {
-    const handleScroll = () => {
-      const sections = ["home", "about", "dream"];
-      let currentSection = "home";
+    const controller = new AbortController();
 
-      for (let i = 0; i < sections.length; i++) {
-        const section = document.getElementById(sections[i]);
-        if (section) {
-          const rect = section.getBoundingClientRect();
-          if (rect.top <= 100 && rect.bottom >= 100) {
-            currentSection = sections[i];
-            break;
-          }
+    const handleScroll = () => {
+      const offset = window.innerHeight * 0.35;
+      let current = "home";
+
+      for (const item of navItems) {
+        const section = document.getElementById(item.id);
+        if (section && section.getBoundingClientRect().top <= offset) {
+          current = item.id;
         }
       }
-      setActiveSection(currentSection);
+
+      setActiveSection(current);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+      signal: controller.signal,
+    });
+
+    return () => controller.abort();
   }, []);
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-x-hidden">
-      {/* Navigation */}
-      <Navbar activeSection={activeSection} scrollToSection={scrollToSection} />
+    <div className="site-shell">
+      <Navbar
+        activeSection={activeSection}
+        items={navItems}
+        scrollToSection={scrollToSection}
+      />
 
-      {/* Home Section */}
-      <section
-        id="home"
-        className="h-screen w-screen relative overflow-hidden p-12"
-      >
-        {/* Background */}
-        <div className="absolute inset-0 ">
-          {/* Image */}
-          <img
-            src="/cathedral-bg.png"
-            alt="Cathedral Background"
-            className="w-full h-full object-cover"
-          />
-          {/* Darken Overlay */}
-          <div className="absolute inset-0 bg-black/50"></div>
-          {/* Pixel Effects */}
-          <div className="absolute inset-0 ">
-            <PixelBlast
-              variant="square"
-              pixelSize={4}
-              pixelSizeJitter={1.5}
-              color="#6096E6"
-              patternScale={5}
-              patternDensity={0.75}
-              enableRipples
-              rippleSpeed={0.33}
-              rippleThickness={0.06}
-              rippleIntensityScale={0.6}
-              speed={1}
-              edgeFade={0.1}
-              transparent
-            />
+      <main>
+        <section id="home" className="hero-section section-frame">
+          <div className="hero-media" aria-hidden="true">
+            <img src="/cathedral-bg.png" alt="" className="hero-image" />
+            <div className="hero-shade" />
+            <div className="hero-pixels">
+              <PixelBlast
+                variant="diamond"
+                pixelSize={5}
+                pixelSizeJitter={1.4}
+                color="#0d6bff"
+                patternScale={4.6}
+                patternDensity={0.72}
+                enableRipples
+                rippleSpeed={0.3}
+                rippleThickness={0.055}
+                rippleIntensityScale={0.65}
+                speed={0.72}
+                edgeFade={0.12}
+                transparent
+              />
+            </div>
           </div>
-        </div>
 
-        {/* Space */}
-        <div className="h-1/5"></div>
+          <div className="hero-grid">
+            <div className="hero-copy">
+              <p className="eyebrow">
+                Lazy Alien Server
+                <span>Minecraft 技术交流服务器</span>
+              </p>
+              <h1>
+                LAZY ALIEN
+                <span>SERVER</span>
+              </h1>
+              <div className="hero-tags" aria-label="服务器特色">
+                {heroTags.map((tag) => (
+                  <span key={tag}>{tag}</span>
+                ))}
+              </div>
+              <p className="hero-lede">
+                与 LAS
+                的成员们携手并进：建造、开发、研究生电工程，也把服务器里的创造、规则和回忆认真留下来。
+              </p>
+              <div className="hero-actions">
+                <button
+                  type="button"
+                  className="primary-action"
+                  onClick={() => scrollToSection("server")}
+                >
+                  了解 LAS
+                  <ChevronRight size={18} aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  className="ghost-action"
+                  onClick={() => scrollToSection("join")}
+                >
+                  加入我们
+                </button>
+              </div>
+            </div>
 
-        {/* Hero */}
-        <div className="relative text-[192px] font-bold leading-33.75 tracking-[-0.12em] left-1/12 select-none pointer-events-none">
-          LAZY
-          <br />
-          <span className="text-blue-400">ALI</span>EN
-          <br />
-          <span className="text-blue-400">SERVER</span>
-        </div>
+            <div className="hero-orbit" aria-label="Lazy Alien Server 视觉标识">
+              <div className="orbit-card">
+                <div className="orbit-topline">
+                  <span>LAS NODE</span>
+                  <span>ONLINE</span>
+                </div>
+                <img src="/logo.svg" alt="LAS" />
+                <div className="orbit-preview">
+                  <img src="/cathedral-bg-small.png" alt="" />
+                </div>
+                <div className="orbit-readout">
+                  <span>Minecraft</span>
+                  <span>Community server</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
-        {/* Slogan */}
-        <div className="relative mt-12 left-1/12">
-          <p className="text-xl">
-            与LAS的成员们，携手并进
-            <br />
-            <span className="text-sm opacity-70 italic">
-              by CatCoinZHSM & tanh_Heng
-            </span>
-          </p>
-        </div>
+          <button
+            type="button"
+            aria-label="滚动到服务器介绍"
+            className="scroll-cue"
+            onClick={() => scrollToSection("server")}
+          >
+            <ArrowDown size={22} aria-hidden="true" />
+          </button>
+        </section>
 
-        {/* Scroll Down Indicator */}
-        <button
-          type="button"
-          aria-label="Scroll to about section"
-          className="transparent-button absolute bottom-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center cursor-pointer"
-          onClick={() => scrollToSection("about")}
-        >
-          <ArrowDown
-            className="animate-bounce text-white opacity-70"
-            size={32}
-          />
-        </button>
-      </section>
+        <section id="server" className="platform-section section-frame">
+          <div className="section-heading">
+            <p className="eyebrow">SERVER</p>
+            <h2>面向创造、协作与技术探索的 Minecraft 服务器</h2>
+            <p>
+              从设计稿延展出的官网版本保留黑白蓝主视觉，将服务器的硬件、规则、成员协作和作品沉淀放在更清楚的位置。
+            </p>
+          </div>
 
-      {/* About Us Section */}
-      <section id="about" className="py-20 bg-blue-600">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col lg:flex-row items-center gap-12">
-            <div className="lg:w-1/2">
-              <div className="mb-8 mt-8">
+          <div className="platform-layout">
+            <div className="dashboard-mockup">
+              <div className="mockup-header">
                 <div>
-                  <p className="text-gray-300 font-semibold">
-                    Lazy Alien Server 简称LAS~
-                  </p>
+                  <span className="mockup-kicker">Server Brief</span>
+                  <strong>Lazy Alien Server</strong>
                 </div>
-                <p className="text-gray-300 leading-relaxed">
-                  是以学生群体为主的技术交流向Minecraft服务器我们充分鼓励技术探索与交流，并欢迎有能力的玩家加入。我们为成员提供强大的硬件支持，依托于高性能物理机和完善的存储与备份方案，我们能够提供充足的性能并保障数据安全。除此之外，我们还设有开发团队，并有多个自主开发的模组和插件。
-                </p>
+                <div className="window-dots" aria-hidden="true">
+                  <span />
+                  <span />
+                  <span />
+                </div>
+              </div>
+              <div className="mockup-body">
+                <div className="brief-image">
+                  <img
+                    src="/cathedral-bg-small.png"
+                    alt="Lazy Alien Server 场景"
+                  />
+                </div>
+                <div className="status-panel">
+                  <MapPinned size={28} aria-hidden="true" />
+                  <div>
+                    <span>服务器据点</span>
+                    <strong>在同一张地图里持续创造</strong>
+                  </div>
+                </div>
+                <div className="stat-grid">
+                  {serverStats.map((stat) => (
+                    <div key={stat.label}>
+                      <strong>{stat.value}</strong>
+                      <span>{stat.label}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="activity-list">
+                  <div>
+                    <BookOpenText size={18} aria-hidden="true" />
+                    <span>规章制度与公共设施持续维护</span>
+                  </div>
+                  <div>
+                    <Image size={18} aria-hidden="true" />
+                    <span>图册记录建筑、生电与服务器瞬间</span>
+                  </div>
+                  <div>
+                    <MapPinned size={18} aria-hidden="true" />
+                    <span>地图与工程点位帮助成员快速接入</span>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Right Side - Title */}
-            <div className="lg:w-1/2">
-              <div className="relative">
-                <div className="bg-gray-900 p-8 rounded-lg">
-                  <div className="flex items-center mb-4">
-                    <h2 className="text-4xl md:text-5xl font-bold">关于我们</h2>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="text-xl opacity-70">ABOUT US</span>
-                  </div>
-                </div>
-              </div>
+            <div className="module-grid">
+              {serverFeatures.map((module) => {
+                const Icon = module.icon;
+
+                return (
+                  <article key={module.title} className="module-card">
+                    <Icon size={24} aria-hidden="true" />
+                    <h3>{module.title}</h3>
+                    <p>{module.description}</p>
+                  </article>
+                );
+              })}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Dream Section */}
-      <section id="dream" className="py-20 bg-black">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col lg:flex-row items-center gap-12">
-            {/* Left Side - Text */}
-            <div className="lg:w-1/2">
-              <div className="relative">
-                <div className="bg-gray-900 p-8 rounded-lg">
-                  <div className="mb-6">
-                    <div className="text-6xl font-bold mb-4">DREAM</div>
-                    <div className="flex items-center mb-4">
-                      <div className="text-sm opacity-70">图册 / 珍珠炮</div>
-                    </div>
-                  </div>
+        <section id="about" className="about-section section-frame">
+          <div className="about-copy">
+            <p className="eyebrow">ABOUT US</p>
+            <h2>一群认真把 Minecraft 玩成长期项目的人</h2>
+            <p>
+              LAS 是以学生群体为主的技术交流向 Minecraft
+              服务器。我们鼓励技术探索、工程协作和审美表达，也欢迎有能力的玩家加入开发、建筑、生电与维护。
+            </p>
+            <p>
+              服务器依托高性能物理机、完善存储与备份方案运行，同时保留自研模组和插件的开发空间。我们希望每一次创造都能被记录、被复盘、被下一位成员继续推进。
+            </p>
+          </div>
 
-                  <div className="mb-6">
-                    <h2 className="text-4xl md:text-5xl font-bold mb-4">
-                      做一场
-                      <br />
-                      现实的梦
-                    </h2>
-                    <div className="flex items-center mb-4">
-                      <span className="text-xl opacity-70">
-                        HAVE A REALISTIC DREAM.
-                      </span>
-                    </div>
-                  </div>
+          <div className="principle-stack">
+            {principles.map((principle, index) => (
+              <article key={principle.title} className="principle-card">
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <h3>{principle.title}</h3>
+                <p>{principle.copy}</p>
+              </article>
+            ))}
+          </div>
+        </section>
 
-                  <div className="mb-6">
-                    <div className="text-2xl font-bold mb-2">
-                      {/* TODO: Dynamic Timer */}
-                      1012天21小时31分15秒
-                    </div>
-                    <div className="text-sm opacity-70">LAZY ALIEN SERVER</div>
-                  </div>
+        <section id="dream" className="works-section section-frame">
+          <div className="section-heading compact">
+            <p className="eyebrow">ALBUM</p>
+            <h2>让作品不只停留在截图里</h2>
+          </div>
 
-                  <div className="flex space-x-2">
-                    {[...Array(4)].map((_, i) => (
-                      <div
-                        key={i}
-                        className={`w-8 h-1 rounded-full ${i === 0 ? "bg-blue-400" : "bg-gray-600"}`}
-                      ></div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Side - Image */}
-            <div className="lg:w-1/2">
-              <div className="relative">
-                <img
-                  src="https://placehold.co/600x400/1a1a2e/ffffff?text=Dream+Structure"
-                  alt="Dream Structure"
-                  className="w-full h-auto rounded-lg shadow-2xl"
-                />
-                <div className="absolute top-0 left-0 w-full h-full bg-linear-to-br from-transparent to-black/50 rounded-lg"></div>
-              </div>
+          <div className="works-showcase">
+            <figure className="feature-image-card">
+              <img src="/cathedral-bg.png" alt="Lazy Alien Server 建筑场景" />
+            </figure>
+            <div className="works-layout">
+              {works.map((work) => (
+                <article key={work.title} className="work-card">
+                  <span>{work.meta}</span>
+                  <h3>{work.title}</h3>
+                  <p>{work.body}</p>
+                </article>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Footer */}
-      <footer className="py-8 bg-gray-900 border-t border-gray-800">
-        <div className="container mx-auto px-6 text-center">
-          <p className="text-gray-400">{/* TODO: Footer text */}</p>
-        </div>
+        <section id="join" className="join-section section-frame">
+          <div className="join-panel">
+            <div>
+              <p className="eyebrow">JOIN LAS</p>
+              <h2>如果你想把想法做成可运行的东西，来聊聊。</h2>
+              <p>
+                我们欢迎愿意共同维护规则、记录过程、尊重他人作品的成员。无论你偏向生电、建筑、插件开发还是服务器运维，都可以在
+                LAS 找到能一起推进的人。
+              </p>
+            </div>
+            <div className="join-actions">
+              <button type="button" className="primary-action">
+                <UsersRound size={18} aria-hidden="true" />
+                提交申请
+              </button>
+              <button type="button" className="ghost-action">
+                <Sparkles size={18} aria-hidden="true" />
+                查看规章
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="site-footer">
+        <img src="/logo-simplified.svg" alt="LAS" />
+        <span>Copyright © 2026 Lazy Alien Server</span>
+        <span>CatCoinZHSM & tanh_Heng</span>
       </footer>
     </div>
   );

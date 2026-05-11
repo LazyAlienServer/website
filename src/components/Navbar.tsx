@@ -2,21 +2,20 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
+export type NavItem = {
+  id: string;
+  label: string;
+  subLabel: string;
+};
+
 type Props = {
   activeSection: string;
+  items: NavItem[];
   scrollToSection: (sectionId: string) => void;
 };
 
-const Navbar: React.FC<Props> = ({ activeSection, scrollToSection }) => {
+const Navbar: React.FC<Props> = ({ activeSection, items, scrollToSection }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const navItems = [
-    { id: "home", label: "首页", subLabel: "HOME" },
-    { id: "join", label: "加入我们", subLabel: "JOIN US" },
-    { id: "album", label: "画廊", subLabel: "ALBUM" },
-    { id: "map", label: "地图", subLabel: "MAP" },
-    { id: "rules", label: "规章制度", subLabel: "RULES" },
-  ];
 
   const handleClick = (id: string) => {
     scrollToSection(id);
@@ -24,79 +23,69 @@ const Navbar: React.FC<Props> = ({ activeSection, scrollToSection }) => {
   };
 
   return (
-    <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-black/20 backdrop-blur-md border border-blue-600/33 rounded-full shadow-lg w-11/12 max-w-5xl">
-      <div className="px-12 py-3 w-full">
-        <div className="flex justify-between items-center">
-          {/* Logo */}
-          <img src="/logo-simplified.svg" alt="LAS Logo" className="h-10" />
+    <nav className="site-nav" aria-label="主导航">
+      <button
+        type="button"
+        className="brand-lockup"
+        onClick={() => handleClick("home")}
+        aria-label="回到首页"
+      >
+        <img src="/logo-simplified.svg" alt="" aria-hidden="true" />
+        <span>
+          <strong>LAS</strong>
+          <small>SERVER</small>
+        </span>
+      </button>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-6">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                className={`relative group transparent-button transition-colors duration-300 ${
-                  activeSection === item.id
-                    ? "text-blue-400"
-                    : "text-white hover:text-blue-300"
-                }`}
-                onClick={() => handleClick(item.id)}
-              >
-                <span className="block text-xs text-left leading-none">
-                  {item.label}
-                  <br />
-                  <span className="opacity-66 text-[smaller]">
-                    {item.subLabel}
-                  </span>
-                </span>
-                {activeSection === item.id && (
-                  <motion.div
-                    layoutId="underline"
-                    className="absolute -bottom-2 left-0 w-full h-0.5 bg-blue-400"
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  />
-                )}
-              </button>
-            ))}
-          </div>
-
-          {/* Mobile Menu Button */}
-          {/* TODO: Various visual fixes are required when desktop ver. completed */}
+      <div className="nav-links" aria-label="页面章节">
+        {items.map((item) => (
           <button
-            className="md:hidden text-white"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            key={item.id}
+            type="button"
+            className={activeSection === item.id ? "is-active" : ""}
+            onClick={() => handleClick(item.id)}
           >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            <span>{item.label}</span>
+            <small>{item.subLabel}</small>
+            {activeSection === item.id && (
+              <motion.span
+                layoutId="nav-pill"
+                className="nav-indicator"
+                transition={{ type: "spring", stiffness: 360, damping: 32 }}
+              />
+            )}
           </button>
-        </div>
+        ))}
       </div>
 
-      {/* Mobile Menu */}
+      <button
+        type="button"
+        className="mobile-menu-button"
+        onClick={() => setIsMenuOpen((value) => !value)}
+        aria-label={isMenuOpen ? "关闭导航" : "打开导航"}
+        aria-expanded={isMenuOpen}
+      >
+        {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
+      </button>
+
       {isMenuOpen && (
         <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          className="md:hidden bg-black/95 border-t border-gray-800 rounded-b-xl overflow-hidden"
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          className="mobile-menu"
         >
-          <div className="w-full px-6 py-4 flex flex-col space-y-4">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => handleClick(item.id)}
-                className={`py-2 text-left transition-colors duration-300 ${
-                  activeSection === item.id ? "text-blue-400" : "text-white"
-                }`}
-              >
-                <span className="block">{item.label}</span>
-                <span className="block text-xs opacity-70">
-                  {item.subLabel}
-                </span>
-              </button>
-            ))}
-          </div>
+          {items.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              className={activeSection === item.id ? "is-active" : ""}
+              onClick={() => handleClick(item.id)}
+            >
+              <span>{item.label}</span>
+              <small>{item.subLabel}</small>
+            </button>
+          ))}
         </motion.div>
       )}
     </nav>
