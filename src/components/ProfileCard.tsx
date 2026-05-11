@@ -66,9 +66,7 @@ const ProfileCard = ({
     if (!enableTilt) return;
 
     const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const mobileQuery = window.matchMedia(
-      "(hover: none) and (pointer: coarse) and (max-width: 768px)",
-    );
+    const mobileQuery = window.matchMedia("(hover: none), (pointer: coarse)");
     if (reduceMotionQuery.matches || !mobileQuery.matches) return;
 
     const handleOrientation = (event: DeviceOrientationEvent) => {
@@ -117,16 +115,27 @@ const ProfileCard = ({
         });
     };
 
-    requestOrientationPermission();
-    window.addEventListener("pointerdown", requestOrientationPermission, {
-      once: true,
-      passive: true,
-    });
+    const orientationEvent = window.DeviceOrientationEvent as
+      | DeviceOrientationPermissionEvent
+      | undefined;
+    if (!orientationEvent?.requestPermission) {
+      startOrientation();
+    } else {
+      window.addEventListener("touchend", requestOrientationPermission, {
+        once: true,
+        passive: true,
+      });
+      window.addEventListener("click", requestOrientationPermission, {
+        once: true,
+        passive: true,
+      });
+    }
 
     return () => {
       orientationEnabledRef.current = false;
       window.removeEventListener("deviceorientation", handleOrientation, true);
-      window.removeEventListener("pointerdown", requestOrientationPermission);
+      window.removeEventListener("touchend", requestOrientationPermission);
+      window.removeEventListener("click", requestOrientationPermission);
 
       const node = ref.current;
       if (node) resetTilt(node);
@@ -136,6 +145,7 @@ const ProfileCard = ({
   const setPointer = useCallback(
     (event: PointerEvent<HTMLDivElement>) => {
       if (!enableTilt) return;
+      if (orientationEnabledRef.current) return;
 
       const node = ref.current;
       if (!node) return;
@@ -156,6 +166,8 @@ const ProfileCard = ({
   );
 
   const resetPointer = useCallback(() => {
+    if (orientationEnabledRef.current) return;
+
     const node = ref.current;
     if (!node) return;
 
