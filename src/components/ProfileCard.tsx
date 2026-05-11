@@ -32,8 +32,24 @@ type DeviceOrientationPermissionEvent = DeviceOrientationEventConstructor & {
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
 
-const applyDeadZone = (value: number, threshold: number) =>
-  Math.abs(value) < threshold ? 0 : value;
+const applySoftDeadZone = (value: number, threshold: number) => {
+  const magnitude = Math.abs(value);
+  if (magnitude <= threshold) return 0;
+
+  return Math.sign(value) * (magnitude - threshold);
+};
+
+const curveTilt = (value: number) =>
+  Math.sign(value) * Math.pow(Math.abs(value), 0.85);
+
+const getScreenOrientationAngle = () => {
+  const orientation = window.screen.orientation?.type;
+  if (orientation === "landscape-primary") return 90;
+  if (orientation === "landscape-secondary") return -90;
+  if (orientation === "portrait-secondary") return 180;
+
+  return 0;
+};
 
 const resetTilt = (node: HTMLElement) => {
   node.style.setProperty("--profile-x", "50%");
@@ -79,6 +95,18 @@ const ProfileCard = ({
     let targetGamma = 0;
     let smoothBeta = 0;
     let smoothGamma = 0;
+    let calibrationSamples = 0;
+    let calibrationBeta = 0;
+    let calibrationGamma = 0;
+
+    const projectToScreenAxes = (beta: number, gamma: number) => {
+      const angle = getScreenOrientationAngle();
+      if (angle === 90) return { beta: -gamma, gamma: beta };
+      if (angle === -90) return { beta: gamma, gamma: -beta };
+      if (angle === 180) return { beta: -beta, gamma: -gamma };
+
+      return { beta, gamma };
+    };
 
     const writeOrientationTilt = () => {
       frame = 0;
@@ -86,23 +114,26 @@ const ProfileCard = ({
       const node = ref.current;
       if (!node) return;
 
-      smoothBeta += (targetBeta - smoothBeta) * 0.22;
-      smoothGamma += (targetGamma - smoothGamma) * 0.22;
+      smoothBeta += (targetBeta - smoothBeta) * 0.34;
+      smoothGamma += (targetGamma - smoothGamma) * 0.34;
 
-      const beta = applyDeadZone(smoothBeta, 1.25);
-      const gamma = applyDeadZone(smoothGamma, 1.25);
-      const normalizedBeta = clamp(beta / 18, -1, 1);
-      const normalizedGamma = clamp(gamma / 14, -1, 1);
-      const rotateX = normalizedBeta * -5.5;
-      const rotateY = normalizedGamma * 5.5;
-      const percentX = clamp(50 + normalizedGamma * 28, 22, 78);
-      const percentY = clamp(50 + normalizedBeta * 24, 24, 76);
+      const beta = applySoftDeadZone(smoothBeta, 0.7);
+      const gamma = applySoftDeadZone(smoothGamma, 0.7);
+      const normalizedBeta = clamp(beta / 16, -1, 1);
+      const normalizedGamma = clamp(gamma / 16, -1, 1);
+      const curvedBeta = curveTilt(normalizedBeta);
+      const curvedGamma = curveTilt(normalizedGamma);
+      const rotateX = curvedBeta * -4.5;
+      const rotateY = curvedGamma * 4.5;
+      const percentX = clamp(50 + curvedGamma * 24, 26, 74);
+      const percentY = clamp(50 + curvedBeta * 22, 28, 72);
+      const glowOpacity = clamp(Math.hypot(normalizedBeta, normalizedGamma), 0, 1) * 0.85;
 
       node.style.setProperty("--profile-x", `${percentX}%`);
       node.style.setProperty("--profile-y", `${percentY}%`);
       node.style.setProperty("--profile-rotate-x", `${rotateX}deg`);
       node.style.setProperty("--profile-rotate-y", `${rotateY}deg`);
-      node.style.setProperty("--profile-glow-opacity", beta === 0 && gamma === 0 ? "0" : "1");
+      node.style.setProperty("--profile-glow-opacity", `${glowOpacity}`);
 
       if (Math.abs(targetBeta - smoothBeta) > 0.1 || Math.abs(targetGamma - smoothGamma) > 0.1) {
         frame = window.requestAnimationFrame(writeOrientationTilt);
@@ -113,15 +144,30 @@ const ProfileCard = ({
       if (event.beta === null || event.gamma === null) return;
 
       if (baselineBeta === null || baselineGamma === null) {
-        baselineBeta = event.beta;
-        baselineGamma = event.gamma;
+        calibrationSamples += 1;
+        calibrationBeta += event.beta;
+        calibrationGamma += event.gamma;
+
+        if (calibrationSamples < 10) return;
+
+        baselineBeta = calibrationBeta / calibrationSamples;
+        baselineGamma = calibrationGamma / calibrationSamples;
         targetBeta = 0;
         targetGamma = 0;
         smoothBeta = 0;
         smoothGamma = 0;
       } else {
-        targetBeta = clamp(event.beta - baselineBeta, -24, 24);
-        targetGamma = clamp(event.gamma - baselineGamma, -18, 18);
+        const rawBeta = event.beta - baselineBeta;
+        const rawGamma = event.gamma - baselineGamma;
+
+        if (Math.abs(rawBeta) < 2 && Math.abs(rawGamma) < 2) {
+          baselineBeta += rawBeta * 0.02;
+          baselineGamma += rawGamma * 0.02;
+        }
+
+        const projected = projectToScreenAxes(rawBeta, rawGamma);
+        targetBeta = clamp(projected.beta, -20, 20);
+        targetGamma = clamp(projected.gamma, -20, 20);
       }
 
       if (!frame) frame = window.requestAnimationFrame(writeOrientationTilt);
