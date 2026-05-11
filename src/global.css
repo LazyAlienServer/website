@@ -306,6 +306,12 @@ a:focus-visible {
   grid-template-columns: minmax(0, 1fr) minmax(340px, 0.76fr);
   align-items: center;
   gap: 70px;
+  pointer-events: none;
+}
+
+.hero-grid button,
+.hero-grid a {
+  pointer-events: auto;
 }
 
 .eyebrow {
