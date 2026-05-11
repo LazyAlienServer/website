@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
+    "build:pages": "BASE_PATH=/website/ vite build",
     "lint": "oxlint --fix .",
     "format": "prettier --write ."
   },
