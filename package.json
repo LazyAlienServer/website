@@ -1,7 +1,7 @@
 {
   "name": "lasweb-v2",
-  "private": true,
   "version": "2.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,16 +9,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.5.13",
-    "vue-router": "^4.5.0"
+    "vue": "^3.5.40",
+    "vue-router": "^4.6.4"
   },
   "devDependencies": {
     "@types/node": "^26.1.2",
-    "@vitejs/plugin-vue": "^6.0.0",
-    "sass": "^1.83.0",
-    "typescript": "~5.7.2",
-    "vite": "^7.0.0",
-    "vue-tsc": "^3.0.0"
+    "@vitejs/plugin-vue": "^6.0.8",
+    "sass": "^1.102.0",
+    "typescript": "~6.0.3",
+    "vite": "^7.3.6",
+    "vue-tsc": "^3.3.9"
   },
   "packageManager": "pnpm@11.19.0+sha512.7881f3ed590d472c4a955e2b88b2121791116066dcc88cbca3849ec9b60f1bbaa6d2ccb221fa91da4e1c65bef2bcbe379365aea7ac539c7bf86dedc3a1b22dce"
 }
