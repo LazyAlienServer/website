@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "dev": "vp dev",
+    "build": "vue-tsc && vp build",
+    "preview": "vp preview",
+    "prepare": "vp config"
   },
   "dependencies": {
     "vue": "^3.5.40",
@@ -17,7 +18,7 @@
     "@vitejs/plugin-vue": "^6.0.8",
     "sass": "^1.102.0",
     "typescript": "~6.0.3",
-    "vite": "^7.3.6",
+    "vite-plus": "catalog:",
     "vue-tsc": "^3.3.9"
   },
   "packageManager": "pnpm@11.19.0+sha512.7881f3ed590d472c4a955e2b88b2121791116066dcc88cbca3849ec9b60f1bbaa6d2ccb221fa91da4e1c65bef2bcbe379365aea7ac539c7bf86dedc3a1b22dce"
