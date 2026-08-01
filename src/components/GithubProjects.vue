@@ -69,6 +69,32 @@ interface Repo {
   language: string | null;
 }
 
+interface RepoCache {
+  at: number;
+  repos: Repo[];
+}
+
+const isRepo = (value: unknown): value is Repo => {
+  if (typeof value !== "object" || value === null) return false;
+  const repo = value as Record<string, unknown>;
+  return (
+    typeof repo.name === "string" &&
+    (repo.description === null || typeof repo.description === "string") &&
+    typeof repo.html_url === "string" &&
+    typeof repo.stargazers_count === "number" &&
+    (repo.language === null || typeof repo.language === "string")
+  );
+};
+
+const isRepoArray = (value: unknown): value is Repo[] =>
+  Array.isArray(value) && value.every(isRepo);
+
+const isRepoCache = (value: unknown): value is RepoCache => {
+  if (typeof value !== "object" || value === null) return false;
+  const cache = value as Record<string, unknown>;
+  return typeof cache.at === "number" && isRepoArray(cache.repos);
+};
+
 const repos = ref<Repo[]>([]);
 const loading = ref(true);
 const error = ref<string | null>(null);
@@ -83,7 +109,8 @@ const loadRepos = async () => {
   try {
     const response = await fetch("https://api.github.com/orgs/LazyAlienServer/repos?per_page=100");
     if (!response.ok) throw new Error("Failed to fetch repos");
-    const data: Repo[] = await response.json();
+    const data: unknown = await response.json();
+    if (!isRepoArray(data)) throw new Error("Invalid repository response");
     // list API can't sort by stars — sort client-side, take top 6
     repos.value = data.sort((a, b) => b.stargazers_count - a.stargazers_count).slice(0, 6);
     localStorage.setItem(CACHE_KEY, JSON.stringify({ at: Date.now(), repos: repos.value }));
@@ -97,11 +124,15 @@ const loadRepos = async () => {
 onMounted(() => {
   // Warm cache first — instant paint, no rate-limit burn
   try {
-    const cached = localStorage.getItem(CACHE_KEY);
-    if (cached) {
-      const { at, repos: cachedRepos } = JSON.parse(cached);
-      if (Date.now() - at < CACHE_TTL && Array.isArray(cachedRepos) && cachedRepos.length) {
-        repos.value = cachedRepos;
+    const cachedValue = localStorage.getItem(CACHE_KEY);
+    if (cachedValue) {
+      const cachedData: unknown = JSON.parse(cachedValue);
+      if (
+        isRepoCache(cachedData) &&
+        Date.now() - cachedData.at < CACHE_TTL &&
+        cachedData.repos.length
+      ) {
+        repos.value = cachedData.repos;
         loading.value = false;
         return;
       }
@@ -109,7 +140,7 @@ onMounted(() => {
   } catch {
     // corrupt cache — fall through to network
   }
-  loadRepos();
+  void loadRepos();
 });
 </script>
 
