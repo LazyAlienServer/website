@@ -27,7 +27,14 @@
           </span>
           <span class="admin-link">
             BILIBILI
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              width="14"
+              height="14"
+            >
               <path d="M7 17L17 7M9 7h8v8" />
             </svg>
           </span>
@@ -39,23 +46,23 @@
 
 <script setup lang="ts">
 interface Admin {
-  name: string
-  title: string
-  bilibiliUrl: string
+  name: string;
+  title: string;
+  bilibiliUrl: string;
 }
 
 const admins: Admin[] = [
   {
-    name: 'CatCoinZHSM',
-    title: '服主',
-    bilibiliUrl: 'https://space.bilibili.com/401914568'
+    name: "CatCoinZHSM",
+    title: "服主",
+    bilibiliUrl: "https://space.bilibili.com/401914568",
   },
   {
-    name: 'tanh_Heng',
-    title: '物理服主',
-    bilibiliUrl: 'https://space.bilibili.com/454721668'
-  }
-]
+    name: "tanh_Heng",
+    title: "物理服主",
+    bilibiliUrl: "https://space.bilibili.com/454721668",
+  },
+];
 </script>
 
 <style scoped lang="scss">

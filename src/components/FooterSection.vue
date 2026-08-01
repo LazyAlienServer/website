@@ -24,9 +24,9 @@
 </template>
 
 <script setup lang="ts">
-import logoUrl from '@/assets/logo.svg'
+import logoUrl from "@/assets/logo.svg";
 
-const year = new Date().getFullYear()
+const year = new Date().getFullYear();
 </script>
 
 <style scoped lang="scss">
@@ -37,7 +37,7 @@ const year = new Date().getFullYear()
 
   // blue top accent
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: -1px;
     left: 0;

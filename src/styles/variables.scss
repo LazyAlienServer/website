@@ -3,19 +3,24 @@
 // ============================================================
 
 // Colors
-$color-primary-blue: #0066CC;
-$color-blue-bright: #1E90FF;
+$color-primary-blue: #0066cc;
+$color-blue-bright: #1e90ff;
 $color-blue-dim: rgba(30, 144, 255, 0.45);
-$color-primary-black: #0A0A0A;
+$color-primary-black: #0a0a0a;
 $color-black-soft: #111114;
-$color-white: #FFFFFF;
-$color-gray-dark: #2A2A2A;
+$color-white: #ffffff;
+$color-gray-dark: #2a2a2a;
 $color-gray-mid: #666666;
-$color-gray-light: #CCCCCC;
+$color-gray-light: #cccccc;
 
 // Typography
-$font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-$font-display: 'Roboto Condensed', 'Inter', sans-serif;
+$font-primary:
+  "Inter",
+  -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  sans-serif;
+$font-display: "Roboto Condensed", "Inter", sans-serif;
 
 $font-size-h1: 64px;
 $font-size-h2: 48px;

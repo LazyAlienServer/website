@@ -15,9 +15,7 @@
             <div class="title-rule"></div>
           </div>
           <div class="intro-text">
-            <p>
-              Lazy Alien Server简称LAS~是以学生群体为主的技术交流向Minecraft服务器。
-            </p>
+            <p>Lazy Alien Server简称LAS~是以学生群体为主的技术交流向Minecraft服务器。</p>
             <p>我们充分鼓励技术探索与交流，并欢迎有能力的玩家加入。</p>
             <p>
               我们为成员提供强大的硬件支持，依托于高性能物理机和完善的存储与备份方案，我们能够提供充足的性能并保障数据安全。
@@ -31,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import logoUrl from '@/assets/logo.svg'
+import logoUrl from "@/assets/logo.svg";
 </script>
 
 <style scoped lang="scss">

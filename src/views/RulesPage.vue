@@ -2,7 +2,14 @@
   <div class="rules-page">
     <nav class="rules-nav">
       <router-link to="/" class="back-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          width="16"
+          height="16"
+        >
           <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
         返回首页
@@ -14,7 +21,7 @@
     <article class="rules-content">
       <section v-for="(chapter, ci) in chapters" :key="chapter.id" class="chapter" v-reveal>
         <div class="chapter-header">
-          <span class="chapter-index">{{ String(ci + 1).padStart(2, '0') }}</span>
+          <span class="chapter-index">{{ String(ci + 1).padStart(2, "0") }}</span>
           <h2>{{ chapter.title }}</h2>
         </div>
         <div v-for="article in chapter.articles" :key="article.id" class="article">
@@ -25,9 +32,13 @@
 
       <footer class="rules-signoff">
         <p>
-          <a href="https://space.bilibili.com/454721668" target="_blank" rel="noopener noreferrer">tanh丶桁</a>
+          <a href="https://space.bilibili.com/454721668" target="_blank" rel="noopener noreferrer"
+            >tanh丶桁</a
+          >
           &amp;
-          <a href="https://space.bilibili.com/" target="_blank" rel="noopener noreferrer">LazyAlienServer</a>
+          <a href="https://space.bilibili.com/" target="_blank" rel="noopener noreferrer"
+            >LazyAlienServer</a
+          >
         </p>
         <p class="signoff-date">2023.08.15</p>
       </footer>
@@ -36,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { chapters } from '@/data/rules'
+import { chapters } from "@/data/rules";
 </script>
 
 <style scoped lang="scss">

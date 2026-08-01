@@ -42,26 +42,26 @@ const icons = {
     <path d="M32 16L14 34l8 8 18-18" />
     <path d="M14 34l-6 16 16-6" />
     <path d="M46 30l4 4" />
-  </svg>`
-}
+  </svg>`,
+};
 
 const hardware = [
   {
-    title: 'CPU — i9-13900K',
-    description: '强大性能！主频可达5.8-6.0GHz，为服务器提供充沛算力。',
-    icon: icons.cpu
+    title: "CPU — i9-13900K",
+    description: "强大性能！主频可达5.8-6.0GHz，为服务器提供充沛算力。",
+    icon: icons.cpu,
   },
   {
-    title: 'RAM — DDR5 内存',
-    description: '48Gx2 幻锋戟 DDR5-6200MHz，高频大容量保障流畅运行。',
-    icon: icons.ram
+    title: "RAM — DDR5 内存",
+    description: "48Gx2 幻锋戟 DDR5-6200MHz，高频大容量保障流畅运行。",
+    icon: icons.ram,
   },
   {
-    title: 'Plugin — LAS特色插件',
-    description: '配合插件及其强大拓展性实现多种功能，自主开发持续迭代。',
-    icon: icons.plugin
-  }
-]
+    title: "Plugin — LAS特色插件",
+    description: "配合插件及其强大拓展性实现多种功能，自主开发持续迭代。",
+    icon: icons.plugin,
+  },
+];
 </script>
 
 <style scoped lang="scss">
@@ -86,7 +86,7 @@ const hardware = [
 
   // blue border sliding in from left on hover
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
     top: 0;

@@ -35,36 +35,36 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from "vue";
 
-const establishedDate = new Date('2022-08-29T00:00:00+08:00')
+const establishedDate = new Date("2022-08-29T00:00:00+08:00");
 
-const days = ref(0)
-const hours = ref(0)
-const minutes = ref(0)
-const seconds = ref(0)
+const days = ref(0);
+const hours = ref(0);
+const minutes = ref(0);
+const seconds = ref(0);
 
-let intervalId: number
+let intervalId: number;
 
 const updateTimer = () => {
-  const diff = Date.now() - establishedDate.getTime()
+  const diff = Date.now() - establishedDate.getTime();
 
-  days.value = Math.floor(diff / (1000 * 60 * 60 * 24))
-  hours.value = Math.floor((diff / (1000 * 60 * 60)) % 24)
-  minutes.value = Math.floor((diff / (1000 * 60)) % 60)
-  seconds.value = Math.floor((diff / 1000) % 60)
-}
+  days.value = Math.floor(diff / (1000 * 60 * 60 * 24));
+  hours.value = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  minutes.value = Math.floor((diff / (1000 * 60)) % 60);
+  seconds.value = Math.floor((diff / 1000) % 60);
+};
 
-const pad = (n: number) => String(n).padStart(2, '0')
+const pad = (n: number) => String(n).padStart(2, "0");
 
 onMounted(() => {
-  updateTimer()
-  intervalId = window.setInterval(updateTimer, 1000)
-})
+  updateTimer();
+  intervalId = window.setInterval(updateTimer, 1000);
+});
 
 onUnmounted(() => {
-  clearInterval(intervalId)
-})
+  clearInterval(intervalId);
+});
 </script>
 
 <style scoped lang="scss">
@@ -80,7 +80,7 @@ onUnmounted(() => {
 
   // blueprint grid decoration
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     background-image:
@@ -92,7 +92,7 @@ onUnmounted(() => {
 
   // blue top accent bar
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;

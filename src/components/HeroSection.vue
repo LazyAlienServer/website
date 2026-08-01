@@ -54,25 +54,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import logoUrl from '@/assets/logo.svg'
+import { ref, onMounted, onUnmounted } from "vue";
+import logoUrl from "@/assets/logo.svg";
 
-const heroImage = ref<HTMLImageElement | null>(null)
+const heroImage = ref<HTMLImageElement | null>(null);
 
 // Subtle parallax — image drifts at 0.5x scroll speed
 const onScroll = () => {
   if (heroImage.value) {
-    heroImage.value.style.transform = `translateY(${window.scrollY * 0.5}px)`
+    heroImage.value.style.transform = `translateY(${window.scrollY * 0.5}px)`;
   }
-}
+};
 
 onMounted(() => {
-  window.addEventListener('scroll', onScroll, { passive: true })
-})
+  window.addEventListener("scroll", onScroll, { passive: true });
+});
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', onScroll)
-})
+  window.removeEventListener("scroll", onScroll);
+});
 </script>
 
 <style scoped lang="scss">
@@ -307,7 +307,7 @@ h1 {
 }
 
 .hero-visual::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background:

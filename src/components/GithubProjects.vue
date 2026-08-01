@@ -38,7 +38,7 @@
           v-reveal
         >
           <h3 class="repo-name">{{ repo.name }}</h3>
-          <p class="repo-desc">{{ repo.description || 'No description provided.' }}</p>
+          <p class="repo-desc">{{ repo.description || "No description provided." }}</p>
           <div class="repo-meta">
             <span class="repo-stars">
               <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
@@ -59,63 +59,58 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from "vue";
 
 interface Repo {
-  name: string
-  description: string | null
-  html_url: string
-  stargazers_count: number
-  language: string | null
+  name: string;
+  description: string | null;
+  html_url: string;
+  stargazers_count: number;
+  language: string | null;
 }
 
-const repos = ref<Repo[]>([])
-const loading = ref(true)
-const error = ref<string | null>(null)
+const repos = ref<Repo[]>([]);
+const loading = ref(true);
+const error = ref<string | null>(null);
 
-const CACHE_KEY = 'las-github-repos'
-const CACHE_TTL = 10 * 60 * 1000 // 10 minutes — mitigates GitHub API rate limits
+const CACHE_KEY = "las-github-repos";
+const CACHE_TTL = 10 * 60 * 1000; // 10 minutes — mitigates GitHub API rate limits
 
 const loadRepos = async () => {
-  loading.value = true
-  error.value = null
+  loading.value = true;
+  error.value = null;
 
   try {
-    const response = await fetch(
-      'https://api.github.com/orgs/LazyAlienServer/repos?per_page=100'
-    )
-    if (!response.ok) throw new Error('Failed to fetch repos')
-    const data: Repo[] = await response.json()
+    const response = await fetch("https://api.github.com/orgs/LazyAlienServer/repos?per_page=100");
+    if (!response.ok) throw new Error("Failed to fetch repos");
+    const data: Repo[] = await response.json();
     // list API can't sort by stars — sort client-side, take top 6
-    repos.value = data.sort((a, b) => b.stargazers_count - a.stargazers_count).slice(0, 6)
-    localStorage.setItem(
-      CACHE_KEY,
-      JSON.stringify({ at: Date.now(), repos: repos.value })
-    )
+    repos.value = data.sort((a, b) => b.stargazers_count - a.stargazers_count).slice(0, 6);
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ at: Date.now(), repos: repos.value }));
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Unknown error'
+    error.value = e instanceof Error ? e.message : "Unknown error";
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 onMounted(() => {
   // Warm cache first — instant paint, no rate-limit burn
   try {
-    const cached = localStorage.getItem(CACHE_KEY)
+    const cached = localStorage.getItem(CACHE_KEY);
     if (cached) {
-      const { at, repos: cachedRepos } = JSON.parse(cached)
+      const { at, repos: cachedRepos } = JSON.parse(cached);
       if (Date.now() - at < CACHE_TTL && Array.isArray(cachedRepos) && cachedRepos.length) {
-        repos.value = cachedRepos
-        loading.value = false
-        return
+        repos.value = cachedRepos;
+        loading.value = false;
+        return;
       }
     }
   } catch {
     // corrupt cache — fall through to network
   }
-  loadRepos()
-})
+  loadRepos();
+});
 </script>
 
 <style scoped lang="scss">
@@ -142,7 +137,7 @@ onMounted(() => {
 
   // blue accent bar on top
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -232,8 +227,13 @@ onMounted(() => {
 }
 
 @keyframes sk-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
 
 // Error state
