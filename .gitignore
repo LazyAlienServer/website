@@ -7,10 +7,12 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies
 node_modules
+
+# Build output
 dist
 dist-ssr
-.cloudflare
 *.local
 
 # Editor directories and files
@@ -24,12 +26,8 @@ dist-ssr
 *.sln
 *.sw?
 
-img
+# OS
+Thumbs.db
 
-# agents
-.agents
-.opencode
-.sisyphus
-.claude
-.codex
-.playwright-mcp
+.design/
+design-concepts/

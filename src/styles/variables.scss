@@ -1,0 +1,65 @@
+// ============================================================
+// LAS Design Tokens — blue/black primary, white decoration
+// ============================================================
+
+// Colors
+$color-primary-blue: #0066CC;
+$color-blue-bright: #1E90FF;
+$color-blue-dim: rgba(30, 144, 255, 0.45);
+$color-primary-black: #0A0A0A;
+$color-black-soft: #111114;
+$color-white: #FFFFFF;
+$color-gray-dark: #2A2A2A;
+$color-gray-mid: #666666;
+$color-gray-light: #CCCCCC;
+
+// Typography
+$font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+$font-display: 'Roboto Condensed', 'Inter', sans-serif;
+
+$font-size-h1: 64px;
+$font-size-h2: 48px;
+$font-size-h3: 36px;
+$font-size-h4: 24px;
+$font-size-body: 16px;
+$font-size-body-lg: 18px;
+
+// Spacing scale
+$spacing-unit: 8px;
+$spacing-xs: $spacing-unit;
+$spacing-sm: $spacing-unit * 2;
+$spacing-md: $spacing-unit * 3;
+$spacing-lg: $spacing-unit * 6;
+$spacing-xl: $spacing-unit * 12;
+
+// Breakpoints
+$breakpoint-mobile: 640px;
+$breakpoint-tablet: 1024px;
+$breakpoint-desktop: 1280px;
+
+// Layout
+$content-max-width: 1200px;
+$section-padding-y: 120px;
+
+// Transitions
+$transition-fast: 0.2s ease;
+$transition-med: 0.3s ease-out;
+
+// Mixins
+@mixin tablet {
+  @media (max-width: $breakpoint-tablet) {
+    @content;
+  }
+}
+
+@mixin mobile {
+  @media (max-width: $breakpoint-mobile) {
+    @content;
+  }
+}
+
+// Industrial clipped-corner panel
+@mixin clipped-panel($bg: $color-primary-black, $border: $color-gray-dark) {
+  background: $bg;
+  border: 1px solid $border;
+}
