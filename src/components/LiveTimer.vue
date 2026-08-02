@@ -48,23 +48,41 @@
           <p class="section-subtitle">SINCE 2022.08.29</p>
         </div>
 
-        <div class="timer-grid">
-          <div class="timer-cell">
-            <span class="timer-value">{{ days }}</span>
-            <span class="timer-label">天</span>
+        <div class="timer-row">
+          <svg
+            class="timer-bracket timer-bracket-left"
+            viewBox="0 0 24 96"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path d="M18 2H6V94H18" />
+          </svg>
+          <div class="timer-grid">
+            <div class="timer-cell">
+              <span class="timer-value">{{ days }}</span>
+              <span class="timer-label">天</span>
+            </div>
+            <div class="timer-cell">
+              <span class="timer-value">{{ pad(hours) }}</span>
+              <span class="timer-label">小时</span>
+            </div>
+            <div class="timer-cell">
+              <span class="timer-value">{{ pad(minutes) }}</span>
+              <span class="timer-label">分钟</span>
+            </div>
+            <div class="timer-cell">
+              <span class="timer-value">{{ pad(seconds) }}</span>
+              <span class="timer-label">秒</span>
+            </div>
           </div>
-          <div class="timer-cell">
-            <span class="timer-value">{{ pad(hours) }}</span>
-            <span class="timer-label">小时</span>
-          </div>
-          <div class="timer-cell">
-            <span class="timer-value">{{ pad(minutes) }}</span>
-            <span class="timer-label">分钟</span>
-          </div>
-          <div class="timer-cell">
-            <span class="timer-value">{{ pad(seconds) }}</span>
-            <span class="timer-label">秒</span>
-          </div>
+          <svg
+            class="timer-bracket timer-bracket-right"
+            viewBox="0 0 24 96"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path d="M6 2H18V94H6" />
+          </svg>
         </div>
 
         <div class="signal-row">
@@ -349,8 +367,7 @@ onUnmounted(() => {
 // ---------- Timer panel (frame only — no black card) ----------
 .timer-panel {
   position: relative;
-  padding: $spacing-lg;
-  @include corner-brackets(18px, 2px, $color-blue-bright, 10px);
+  padding: $spacing-lg 0;
 
   // hatch strip along the bottom edge
   &::after {
@@ -371,12 +388,38 @@ onUnmounted(() => {
   }
 }
 
+// SVG brackets flank the timer row
+.timer-row {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  position: relative;
+  z-index: 1;
+}
+
+.timer-bracket {
+  width: 12px;
+  height: clamp(84px, 12vw, 144px);
+  flex: 0 0 auto;
+  color: $color-gray-light;
+  opacity: 0.65;
+  overflow: visible;
+  user-select: none;
+
+  path {
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 3px;
+  }
+}
+
 .timer-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: $spacing-md;
-  position: relative;
-  z-index: 1;
+  flex: 1;
 }
 
 .timer-cell {
@@ -549,7 +592,7 @@ onUnmounted(() => {
   }
 
   .timer-panel {
-    padding: $spacing-md $spacing-lg;
+    padding: $spacing-md 0;
   }
 }
 
@@ -580,7 +623,11 @@ onUnmounted(() => {
   }
 
   .timer-panel {
-    padding: $spacing-md;
+    padding: $spacing-md 0;
+  }
+
+  .timer-bracket {
+    display: none;
   }
 
   .timer-grid {

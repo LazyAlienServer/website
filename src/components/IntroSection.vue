@@ -3,7 +3,36 @@
     <div class="section-shell">
       <div class="intro-grid" v-reveal>
         <div class="intro-icon">
-          <img :src="logoUrl" alt="LAS emblem" />
+          <svg
+            class="intro-logo"
+            viewBox="0 0 97 73"
+            role="img"
+            aria-label="LAS emblem"
+            focusable="false"
+          >
+            <defs>
+              <filter
+                id="intro-logo-thin"
+                x="0"
+                y="0"
+                width="97"
+                height="73"
+                filterUnits="userSpaceOnUse"
+                primitiveUnits="userSpaceOnUse"
+                color-interpolation-filters="sRGB"
+              >
+                <feMorphology in="SourceGraphic" operator="erode" radius="0.8" />
+              </filter>
+            </defs>
+            <image
+              :href="logoUrl"
+              x="0"
+              y="0"
+              width="97"
+              height="73"
+              filter="url(#intro-logo-thin)"
+            />
+          </svg>
         </div>
         <div class="intro-content">
           <div class="section-header">
@@ -50,18 +79,16 @@ import logoUrl from "@/assets/logo.svg";
 
 .intro-grid {
   display: grid;
-  grid-template-columns: 240px 1fr;
+  grid-template-columns: 360px 1fr;
   gap: $spacing-lg * 1.2;
-  align-items: start;
-  border-left: 4px solid $color-primary-blue;
-  padding-left: $spacing-lg;
+  align-items: center;
 }
 
-.intro-icon {
-  img {
-    width: 100%;
-    opacity: 0.9;
-  }
+.intro-logo {
+  display: block;
+  width: 100%;
+  height: auto;
+  opacity: 0.9;
 }
 
 .intro-text {
@@ -138,17 +165,16 @@ import logoUrl from "@/assets/logo.svg";
 @include tablet {
   .intro-grid {
     grid-template-columns: 1fr;
-    padding-left: $spacing-md;
   }
 
   .intro-icon {
-    max-width: 160px;
+    max-width: 240px;
   }
 }
 
 @include mobile {
-  .intro-grid {
-    padding-left: $spacing-sm;
+  .intro-icon {
+    display: none;
   }
 
   .intro-text p {
