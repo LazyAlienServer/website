@@ -1,7 +1,7 @@
 <template>
-  <section class="timer-section">
+  <section class="timer-section" ref="sectionEl">
     <!-- Changeable background slides -->
-    <div class="bg-slides" aria-hidden="true">
+    <div class="bg-slides" ref="slidesEl" aria-hidden="true">
       <div
         v-for="(slide, i) in slides"
         :key="slide.src"
@@ -23,7 +23,7 @@
             <span class="index-num">03</span>
             <span class="index-label">// UPTIME</span>
           </div>
-          <h2 class="section-title">已稳定运行</h2>
+          <h2 class="section-title">做一场现实的梦</h2>
           <p class="section-subtitle">SINCE 2022.08.29</p>
         </div>
 
@@ -52,55 +52,58 @@
         </div>
       </div>
 
-      <!-- Carousel controls: switch buttons + index indicator -->
+      <!-- Carousel control strip: indicator left, caption center, buttons right -->
       <div class="carousel-controls" v-reveal>
-        <button class="ctrl-btn" type="button" aria-label="上一张背景" @click="prev">
-          <svg
-            viewBox="0 0 24 24"
-            width="18"
-            height="18"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-          >
-            <path d="M15 5l-7 7 7 7" />
-          </svg>
-        </button>
-
-        <div class="index-indicator">
-          <span class="idx-num">
-            <span class="idx-current">{{ pad(current + 1) }}</span>
-            <span class="idx-sep">/</span>
-            <span class="idx-total">{{ pad(slides.length) }}</span>
-          </span>
-          <div class="idx-bars">
-            <button
-              v-for="(slide, i) in slides"
-              :key="slide.src"
-              class="idx-bar"
-              :class="{ active: i === current }"
-              type="button"
-              :aria-label="`切换到背景 ${i + 1}`"
-              @click="go(i)"
-            ></button>
+        <div class="zone-left">
+          <div class="index-indicator">
+            <span class="idx-num">
+              <span class="idx-current">{{ pad(current + 1) }}</span>
+              <span class="idx-sep">/</span>
+              <span class="idx-total">{{ pad(slides.length) }}</span>
+            </span>
+            <div class="idx-bars">
+              <button
+                v-for="(slide, i) in slides"
+                :key="slide.src"
+                class="idx-bar"
+                :class="{ active: i === current }"
+                type="button"
+                :aria-label="`切换到背景 ${i + 1}`"
+                @click="go(i)"
+              ></button>
+            </div>
           </div>
         </div>
 
-        <button class="ctrl-btn" type="button" aria-label="下一张背景" @click="next">
-          <svg
-            viewBox="0 0 24 24"
-            width="18"
-            height="18"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-          >
-            <path d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
+        <p class="slide-caption">{{ slides[current].name }}</p>
 
-      <p class="slide-caption">{{ slides[current].name }}</p>
+        <div class="zone-right">
+          <button class="ctrl-btn" type="button" aria-label="上一张背景" @click="prev">
+            <svg
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+            >
+              <path d="M15 5l-7 7 7 7" />
+            </svg>
+          </button>
+          <button class="ctrl-btn" type="button" aria-label="下一张背景" @click="next">
+            <svg
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+            >
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
   </section>
 </template>
@@ -144,13 +147,34 @@ const go = (i: number) => {
 const next = () => go(current.value + 1);
 const prev = () => go(current.value - 1);
 
+// ---------- Scroll parallax (same lag effect as the hero image) ----------
+const sectionEl = ref<HTMLElement | null>(null);
+const slidesEl = ref<HTMLElement | null>(null);
+let rafId = 0;
+
+const updateParallax = () => {
+  if (!sectionEl.value || !slidesEl.value) return;
+  // translate proportional to the section's distance from the viewport top
+  const y = sectionEl.value.getBoundingClientRect().top * 0.2;
+  slidesEl.value.style.transform = `translateY(${y.toFixed(1)}px)`;
+};
+
+const onScroll = () => {
+  cancelAnimationFrame(rafId);
+  rafId = requestAnimationFrame(updateParallax);
+};
+
 onMounted(() => {
   updateTimer();
   intervalId = window.setInterval(updateTimer, 1000);
+  updateParallax();
+  window.addEventListener("scroll", onScroll, { passive: true });
 });
 
 onUnmounted(() => {
   clearInterval(intervalId);
+  cancelAnimationFrame(rafId);
+  window.removeEventListener("scroll", onScroll);
 });
 </script>
 
@@ -162,9 +186,11 @@ onUnmounted(() => {
 }
 
 // ---------- Background carousel ----------
+// Oversized vertically (140%) so the parallax translation never exposes edges
 .bg-slides {
   position: absolute;
-  inset: 0;
+  inset: -20% 0;
+  will-change: transform;
 }
 
 .bg-slide {
@@ -190,9 +216,9 @@ onUnmounted(() => {
   background:
     linear-gradient(
       180deg,
-      rgba(10, 10, 10, 0.84) 0%,
-      rgba(10, 10, 10, 0.74) 50%,
-      rgba(10, 10, 10, 0.92) 100%
+      rgba(10, 10, 10, 0.78) 0%,
+      rgba(10, 10, 10, 0.62) 50%,
+      rgba(10, 10, 10, 0.85) 100%
     ),
     linear-gradient(90deg, rgba(0, 102, 204, 0.16) 0%, rgba(0, 102, 204, 0) 60%);
 }
@@ -244,14 +270,10 @@ onUnmounted(() => {
   z-index: 2;
 }
 
-// ---------- Timer panel (glass control panel) ----------
+// ---------- Timer panel (frame only — no black card) ----------
 .timer-panel {
   position: relative;
   padding: $spacing-lg;
-  background: rgba(10, 10, 10, 0.62);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
   @include corner-brackets(18px, 2px, $color-blue-bright, 10px);
 
   // hatch strip along the bottom edge
@@ -262,9 +284,14 @@ onUnmounted(() => {
     right: 40px;
     bottom: 12px;
     height: 6px;
-    @include hatch-strip;
+    @include hatch-strip(rgba(255, 255, 255, 0.25));
     opacity: 0.6;
     pointer-events: none;
+  }
+
+  // labels sit directly on the image now — brighten them
+  .index-label {
+    color: $color-gray-light;
   }
 }
 
@@ -282,7 +309,7 @@ onUnmounted(() => {
   align-items: center;
   gap: $spacing-xs;
   padding: $spacing-md 0;
-  border-left: 1px solid $color-gray-dark;
+  border-left: 1px solid rgba(255, 255, 255, 0.18);
 
   &:first-child {
     border-left: none;
@@ -301,7 +328,7 @@ onUnmounted(() => {
 
 .timer-label {
   font-size: $font-size-body;
-  color: $color-gray-mid;
+  color: $color-gray-light;
   letter-spacing: 4px;
 }
 
@@ -316,16 +343,26 @@ onUnmounted(() => {
 .signal-text {
   font-size: 11px;
   letter-spacing: 3px;
-  color: $color-gray-mid;
+  color: $color-gray-light;
 }
 
-// ---------- Carousel controls ----------
+// ---------- Carousel control strip ----------
+// 3-zone grid: indicator flush left, caption dead-center, buttons flush right
 .carousel-controls {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: center;
-  gap: $spacing-md;
   margin-top: $spacing-md;
+}
+
+.zone-left {
+  justify-self: start;
+}
+
+.zone-right {
+  justify-self: end;
+  display: flex;
+  gap: $spacing-sm;
 }
 
 .ctrl-btn {
@@ -357,7 +394,7 @@ onUnmounted(() => {
 .index-indicator {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
 }
 
@@ -377,12 +414,12 @@ onUnmounted(() => {
 }
 
 .idx-sep {
-  color: $color-gray-mid;
+  color: $color-gray-light;
 }
 
 .idx-total {
   font-size: 14px;
-  color: $color-gray-mid;
+  color: $color-gray-light;
 }
 
 .idx-bars {
@@ -411,15 +448,57 @@ onUnmounted(() => {
 }
 
 .slide-caption {
-  margin-top: $spacing-sm;
+  justify-self: center;
   text-align: center;
   font-size: 12px;
   letter-spacing: 3px;
-  color: $color-gray-mid;
+  color: $color-gray-light;
   text-transform: uppercase;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+}
+
+// Cinematic 21:9 band on wide screens; content stays vertically centered
+@media (min-width: 1280px) {
+  .timer-section {
+    aspect-ratio: 21 / 9;
+  }
+
+  .section-shell {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: $spacing-lg;
+    padding-bottom: $spacing-lg;
+  }
+
+  .timer-panel {
+    padding: $spacing-md $spacing-lg;
+  }
 }
 
 @include mobile {
+  // split row preserved; caption wraps to its own centered line
+  .carousel-controls {
+    grid-template-columns: 1fr 1fr;
+    row-gap: $spacing-sm;
+  }
+
+  .zone-left {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .zone-right {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .slide-caption {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
   .dial-ring {
     display: none;
   }
@@ -439,7 +518,7 @@ onUnmounted(() => {
 
   .timer-cell:nth-child(1),
   .timer-cell:nth-child(2) {
-    border-bottom: 1px solid $color-gray-dark;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
     padding-bottom: $spacing-md;
   }
 }
