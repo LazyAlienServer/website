@@ -13,8 +13,29 @@
     </div>
     <div class="bg-overlay" aria-hidden="true"></div>
 
-    <!-- Rotating survey dial decoration -->
-    <div class="dial-ring" aria-hidden="true"></div>
+    <!-- Real-time UTC+8 clock (analog instrument) -->
+    <div class="clock-face" aria-hidden="true">
+      <span
+        v-for="i in 60"
+        :key="i"
+        class="tick"
+        :class="{ hour: i % 5 === 1 }"
+        :style="{ transform: `translateX(-50%) rotate(${(i - 1) * 6}deg)` }"
+      ></span>
+      <div
+        class="hand hand-hour"
+        :style="{ transform: `translateX(-50%) rotate(${hourAngle}deg)` }"
+      ></div>
+      <div
+        class="hand hand-minute"
+        :style="{ transform: `translateX(-50%) rotate(${minuteAngle}deg)` }"
+      ></div>
+      <div
+        class="hand hand-second"
+        :style="{ transform: `translateX(-50%) rotate(${secondAngle}deg)` }"
+      ></div>
+      <div class="clock-hub"></div>
+    </div>
 
     <div class="section-shell">
       <div class="timer-panel" v-reveal>
@@ -128,6 +149,8 @@ const updateTimer = () => {
   hours.value = Math.floor((diff / (1000 * 60 * 60)) % 24);
   minutes.value = Math.floor((diff / (1000 * 60)) % 60);
   seconds.value = Math.floor((diff / 1000) % 60);
+
+  updateClock();
 };
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -146,6 +169,24 @@ const go = (i: number) => {
 };
 const next = () => go(current.value + 1);
 const prev = () => go(current.value - 1);
+
+// ---------- UTC+8 analog clock ----------
+const hourAngle = ref(0);
+const minuteAngle = ref(0);
+const secondAngle = ref(0);
+
+const updateClock = () => {
+  // shift to UTC+8 regardless of the viewer's timezone
+  const now = new Date();
+  const utc8 = new Date(now.getTime() + (now.getTimezoneOffset() + 480) * 60_000);
+  const h = utc8.getHours() % 12;
+  const m = utc8.getMinutes();
+  const s = utc8.getSeconds();
+
+  secondAngle.value = s * 6;
+  minuteAngle.value = m * 6 + s * 0.1;
+  hourAngle.value = h * 30 + m * 0.5;
+};
 
 // ---------- Scroll parallax (same lag effect as the hero image) ----------
 const sectionEl = ref<HTMLElement | null>(null);
@@ -223,17 +264,18 @@ onUnmounted(() => {
     linear-gradient(90deg, rgba(0, 102, 204, 0.16) 0%, rgba(0, 102, 204, 0) 60%);
 }
 
-// ---------- Survey dial decoration ----------
-.dial-ring {
+// ---------- UTC+8 clock ----------
+// Static face; hands rotate. Hidden on mobile.
+.clock-face {
   position: absolute;
   z-index: 1;
   right: -160px;
   top: 50%;
   width: 560px;
   height: 560px;
-  border: 1px dashed rgba(255, 255, 255, 0.14);
+  border: 1px dashed rgba(255, 255, 255, 0.18);
   border-radius: 50%;
-  animation: dial-spin 90s linear infinite;
+  transform: translateY(-50%);
 
   &::before {
     content: "";
@@ -242,27 +284,61 @@ onUnmounted(() => {
     border: 1px solid rgba(30, 144, 255, 0.16);
     border-radius: 50%;
   }
+}
 
-  // bearing tick at 12 o'clock
-  &::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: -6px;
+.tick {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  transform-origin: 50% 280px; // ring radius
+
+  &.hour {
     width: 2px;
-    height: 14px;
-    margin-left: -1px;
-    background: $color-blue-bright;
+    height: 18px;
+    background: rgba(30, 144, 255, 0.55);
   }
 }
 
-@keyframes dial-spin {
-  from {
-    transform: translateY(-50%) rotate(0deg);
-  }
-  to {
-    transform: translateY(-50%) rotate(360deg);
-  }
+.hand {
+  position: absolute;
+  left: 50%;
+  bottom: 50%;
+  transform-origin: 50% 100%;
+  filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.8));
+}
+
+.hand-hour {
+  width: 6px;
+  height: 140px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.hand-minute {
+  width: 4px;
+  height: 205px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.hand-second {
+  width: 2px;
+  height: 248px;
+  background: $color-blue-bright;
+  box-shadow: 0 0 12px rgba(30, 144, 255, 0.6);
+}
+
+.clock-hub {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: $color-blue-bright;
+  box-shadow: 0 0 12px rgba(30, 144, 255, 0.8);
 }
 
 .section-shell {
@@ -499,7 +575,7 @@ onUnmounted(() => {
     grid-row: 2;
   }
 
-  .dial-ring {
+  .clock-face {
     display: none;
   }
 
@@ -524,10 +600,6 @@ onUnmounted(() => {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dial-ring {
-    animation: none;
-  }
-
   .bg-slide {
     transition: none;
   }
