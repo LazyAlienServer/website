@@ -24,6 +24,16 @@
           </div>
         </div>
       </div>
+
+      <!-- Vertical tech rail decoration (wide screens only) -->
+      <div class="intro-deco" aria-hidden="true">
+        <span class="plus-marker deco-plus-top">+</span>
+        <span class="deco-rail"></span>
+        <span class="deco-text">SYS.STATUS // ONLINE</span>
+        <span class="deco-text">MODE // SURVIVAL</span>
+        <div class="deco-hatch"></div>
+        <span class="plus-marker deco-plus-bottom">+</span>
+      </div>
     </div>
   </section>
 </template>
@@ -64,6 +74,64 @@ import logoUrl from "@/assets/logo.svg";
     &:last-child {
       margin-bottom: 0;
     }
+  }
+}
+
+// ---------- Side tech rail decoration ----------
+.intro-deco {
+  display: none;
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100px;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-md;
+
+  .deco-rail {
+    width: 1px;
+    height: 120px;
+    background: linear-gradient(
+      180deg,
+      rgba(42, 42, 42, 0) 0%,
+      $color-gray-dark 30%,
+      $color-gray-dark 70%,
+      rgba(42, 42, 42, 0) 100%
+    );
+  }
+
+  .deco-text {
+    writing-mode: vertical-rl;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: $color-gray-mid;
+    text-transform: uppercase;
+  }
+
+  .deco-hatch {
+    width: 64px;
+    height: 64px;
+    @include hatch-strip;
+    opacity: 0.7;
+  }
+
+  .deco-plus-top {
+    top: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .deco-plus-bottom {
+    bottom: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+@media (min-width: 1400px) {
+  .intro-deco {
+    display: flex;
   }
 }
 

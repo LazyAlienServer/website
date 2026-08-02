@@ -147,6 +147,15 @@ button {
     align-items: center;
     gap: $spacing-sm;
     margin-bottom: $spacing-sm;
+
+    // fading hairline filling the row — control-panel framing
+    &::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      margin-left: $spacing-sm;
+      background: linear-gradient(90deg, $color-gray-dark 0%, rgba(42, 42, 42, 0) 100%);
+    }
   }
 
   .index-num {
@@ -184,6 +193,17 @@ button {
     background: $color-white;
     margin-top: $spacing-md;
   }
+}
+
+// Crosshair plus marker — place absolutely inside positioned parents
+.plus-marker {
+  position: absolute;
+  color: $color-gray-mid;
+  font-family: $font-display;
+  font-size: 18px;
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
 }
 
 // Scroll reveal (applied via v-reveal directive)

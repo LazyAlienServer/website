@@ -23,3 +23,36 @@ import AdminTeam from "@/components/AdminTeam.vue";
 import JoinSection from "@/components/JoinSection.vue";
 import FooterSection from "@/components/FooterSection.vue";
 </script>
+
+<style scoped lang="scss">
+// Fixed side rails — control-panel frame on wide screens
+.home-page {
+  &::before,
+  &::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.06);
+    z-index: 1;
+    pointer-events: none;
+    display: none;
+  }
+
+  &::before {
+    left: 20px;
+  }
+
+  &::after {
+    right: 20px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .home-page::before,
+  .home-page::after {
+    display: block;
+  }
+}
+</style>

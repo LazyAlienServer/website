@@ -79,6 +79,7 @@ const admins: Admin[] = [
 
 .admin-card {
   @include clipped-panel;
+  @include corner-brackets;
   display: flex;
   align-items: center;
   gap: $spacing-md;

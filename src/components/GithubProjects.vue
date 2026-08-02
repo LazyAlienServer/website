@@ -157,6 +157,7 @@ onMounted(() => {
 
 .repo-card {
   @include clipped-panel($color-white, $color-white);
+  @include corner-brackets(12px, 2px, $color-primary-blue, 14px);
   position: relative;
   display: flex;
   flex-direction: column;

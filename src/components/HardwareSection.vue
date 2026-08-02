@@ -77,6 +77,7 @@ const hardware = [
 
 .hw-card {
   @include clipped-panel;
+  @include corner-brackets;
   position: relative;
   padding: $spacing-lg $spacing-md;
   overflow: hidden;

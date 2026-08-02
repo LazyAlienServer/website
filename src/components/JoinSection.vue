@@ -48,8 +48,9 @@
   margin: 0 auto;
   text-align: center;
   border-left: 4px solid $color-primary-blue;
-  padding-left: $spacing-lg;
+  padding: $spacing-md $spacing-lg;
   text-align: left;
+  @include corner-brackets(14px, 2px, $color-primary-blue, 8px);
 }
 
 .paths-grid {
@@ -61,6 +62,7 @@
 
 .path-card {
   @include clipped-panel;
+  @include corner-brackets;
   padding: $spacing-md;
   transition:
     transform $transition-med,
@@ -121,7 +123,6 @@
   display: block;
   width: fit-content;
   margin: 0 auto $spacing-lg;
-  transform: translateX(calc(#{$spacing-lg} / -2));
 }
 
 .contact {
@@ -129,21 +130,15 @@
   color: $color-gray-mid;
   letter-spacing: 1px;
   text-align: center;
-  transform: translateX(calc(#{$spacing-lg} / -2));
 }
 
 @include mobile {
   .join-panel {
-    padding-left: $spacing-sm;
+    padding: $spacing-md $spacing-sm;
   }
 
   .paths-grid {
     grid-template-columns: 1fr;
-  }
-
-  .join-cta,
-  .contact {
-    transform: none;
   }
 }
 </style>

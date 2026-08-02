@@ -68,3 +68,43 @@ $transition-med: 0.3s ease-out;
   background: $bg;
   border: 1px solid $border;
 }
+
+// Four corner brackets — layered background gradients, no extra markup.
+// Apply AFTER clipped-panel/background shorthand so layers aren't reset.
+@mixin corner-brackets($len: 12px, $thickness: 2px, $color: $color-primary-blue, $offset: 6px) {
+  background-image:
+    linear-gradient($color, $color), linear-gradient($color, $color),
+    linear-gradient($color, $color), linear-gradient($color, $color),
+    linear-gradient($color, $color), linear-gradient($color, $color),
+    linear-gradient($color, $color), linear-gradient($color, $color);
+  background-repeat: no-repeat;
+  background-size:
+    $len $thickness,
+    $thickness $len,
+    $len $thickness,
+    $thickness $len,
+    $len $thickness,
+    $thickness $len,
+    $len $thickness,
+    $thickness $len;
+  background-position:
+    $offset $offset,
+    $offset $offset,
+    calc(100% - #{$offset}) $offset,
+    calc(100% - #{$offset}) $offset,
+    $offset calc(100% - #{$offset}),
+    $offset calc(100% - #{$offset}),
+    calc(100% - #{$offset}) calc(100% - #{$offset}),
+    calc(100% - #{$offset}) calc(100% - #{$offset});
+}
+
+// Diagonal hatch strip — industrial tape/texture
+@mixin hatch-strip($color: $color-gray-dark, $angle: 45deg, $line: 2px, $gap: 8px) {
+  background-image: repeating-linear-gradient(
+    $angle,
+    $color 0,
+    $color $line,
+    transparent $line,
+    transparent $gap
+  );
+}
