@@ -79,12 +79,26 @@ const admins: Admin[] = [
 
 .admin-card {
   @include clipped-panel;
-  @include corner-brackets;
+  position: relative;
   display: flex;
   align-items: center;
   gap: $spacing-md;
   padding: $spacing-md $spacing-lg;
   color: $color-white;
+
+  // short status rail replaces the repeated four-corner frame
+  &::before {
+    content: "";
+    position: absolute;
+    left: -1px;
+    top: $spacing-sm;
+    bottom: $spacing-sm;
+    width: 2px;
+    background: $color-primary-blue;
+    opacity: 0.85;
+    pointer-events: none;
+  }
+
   transition:
     transform $transition-med,
     box-shadow $transition-med,
