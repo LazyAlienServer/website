@@ -390,6 +390,7 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 @include mobile {
   .join-layout {
     flex-direction: column;
+    margin-bottom: -24px;
   }
 
   .enlist-side {
@@ -398,19 +399,21 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
   }
 
   .zone-divider {
-    flex: none;
-    width: 100%;
-    height: 32px;
-    margin: $spacing-md 0;
-    transform: none;
-    clip-path: polygon(2% 0, 100% 0, 98% 100%, 0 100%);
+    display: none;
   }
 
   .group-zone {
     flex: none;
     margin: 0 calc(-1 * $spacing-sm) 0 0;
+    // let the blue layer's bottom stretch past the zone box
+    overflow: visible;
 
     &::before {
+      // background-only extension: top stays anchored to the zone, bottom
+      // runs through the shell's bottom padding to the section's edge —
+      // no layout margin involved
+      top: 0;
+      bottom: calc(-1 * $spacing-lg * 1.5);
       transform: none;
     }
   }
