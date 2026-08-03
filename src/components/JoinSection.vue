@@ -42,20 +42,74 @@
           </div>
           <p class="group-number">835047145</p>
           <p class="group-caption">服外交流群 // QQ GROUP</p>
-          <a
-            class="btn btn-primary join-btn"
-            href="https://qm.qq.com/cgi-bin/qm/qr?k=835047145"
-            target="_blank"
-            rel="noopener"
-            >加入 QQ 群</a
-          >
+          <div class="group-actions">
+            <a
+              class="btn btn-primary join-btn"
+              href="https://qm.qq.com/cgi-bin/qm/qr?k=835047145"
+              target="_blank"
+              rel="noopener"
+              >加入 QQ 群</a
+            >
+            <button
+              class="btn copy-btn"
+              :class="{ 'is-copied': copied }"
+              type="button"
+              :aria-label="copied ? '已复制群号' : '复制群号'"
+              :title="copied ? '已复制群号' : '复制群号'"
+              @click="copyGroupNumber"
+            >
+              <svg
+                class="copy-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="square"
+                stroke-linejoin="miter"
+                aria-hidden="true"
+              >
+                <path v-if="!copied" d="M9 9h10v10H9z" />
+                <path v-if="!copied" d="M5 15H4V5h10v1" />
+                <path v-else d="m5 12 4 4L19 6" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </section>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { onBeforeUnmount, shallowRef } from "vue";
+
+const GROUP_NUMBER = "835047145";
+const copied = shallowRef(false);
+let resetCopiedTimer: ReturnType<typeof setTimeout> | undefined;
+
+async function copyGroupNumber() {
+  try {
+    await navigator.clipboard.writeText(GROUP_NUMBER);
+  } catch {
+    const input = document.createElement("textarea");
+    input.value = GROUP_NUMBER;
+    input.style.position = "fixed";
+    input.style.opacity = "0";
+    document.body.append(input);
+    input.select();
+    document.execCommand("copy");
+    input.remove();
+  }
+
+  copied.value = true;
+  clearTimeout(resetCopiedTimer);
+  resetCopiedTimer = setTimeout(() => {
+    copied.value = false;
+  }, 2000);
+}
+
+onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
+</script>
 
 <style scoped lang="scss">
 // ---------- Section-wide blueprint grid ----------
@@ -74,11 +128,13 @@
 }
 
 // ---------- Enlist side (left) ----------
-// fixed width leaves room for the centered divider: 50% − half the band's
-// mid-height offset (2.4vw) − half the visible band (17px incl. skew shift)
+// flexes to fill everything the auto-sized group zone and the 48px band
+// leave behind
 .enlist-side {
-  flex: 0 0 calc(50% - 2.4vw - 17px);
+  flex: 1 1 0;
   min-width: 0;
+  // breathing room before the hatched divider
+  padding-right: 12px;
 }
 
 // blue JOIN US index label — keeps the control-panel row language
@@ -143,17 +199,14 @@
   font-size: 16px;
   font-weight: 600;
   letter-spacing: 2px;
-  transition:
-    transform $transition-fast,
-    filter $transition-fast;
+  transition: filter $transition-fast;
 
   &:hover {
-    transform: scale(1.05);
-    filter: brightness(1.2);
+    filter: brightness(1.08);
   }
 
   &:active {
-    transform: scale(0.98);
+    filter: brightness(1.04);
   }
 }
 
@@ -164,14 +217,12 @@
 
 // ---------- Full-height hatched divider at the hero seam's slant ----------
 .zone-divider {
-  // absolute, out of flow: spans the full section (top/bottom 0 against the
-  // shell's padding box); skewed so the band's sides sit at exactly the hero
-  // seam's angle (4.8vw over 100vh) for any section height
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: calc(50% - 2.4vw - 17px);
-  width: 48px;
+  // Flow item: enlist fills the space before it; the auto-sized group zone
+  // starts immediately after it. Negative block margins extend it through
+  // the shell padding to the section's top and bottom edges.
+  flex: 0 0 48px;
+  margin-top: calc(-1 * $section-padding-y);
+  margin-bottom: calc(-1 * $section-padding-y);
   transform-origin: 0 100%;
   transform: skewX(-4deg);
   @include hatch-strip(rgba(30, 144, 255, 0.55), 45deg, 2px, 8px);
@@ -187,25 +238,24 @@
 // ---------- Group zone (right) ----------
 .group-zone {
   position: relative;
-  flex: 1 1 0;
+  // Content determines the group width; enlist consumes the remainder.
+  flex: 0 0 auto;
   display: flex;
   overflow: hidden;
-  // 48px right of the divider box: the skewed blue layer's left edge then
-  // coincides with the divider's right edge
+  // The divider now occupies its own 48px flow slot, so the blue cut starts
+  // directly at the divider's right edge.
   margin-top: calc(-1 * $section-padding-y);
   margin-bottom: calc(-1 * $section-padding-y);
-  margin-left: $spacing-lg;
+  margin-left: 0;
   // negative right margin spans the shell's horizontal padding plus the
   // centered-shell margin, so the blue reaches the section's right edge
   margin-right: calc(-1 * ((100vw - min(1200px, 100vw)) / 2 + $spacing-md));
-
-  // blue layer, skewed at the hero seam's angle — its left edge is the cut;
-  // horizontal gradient keeps the right side (section edge) clearly blue
+  // uniform tint — gradient removed per request
   &::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, rgba(0, 102, 204, 0.05) 0%, rgba(0, 102, 204, 0.16) 100%);
+    background: rgba(0, 102, 204, 0.1);
     transform-origin: 0 100%;
     transform: skewX(-4deg);
 
@@ -220,14 +270,15 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   gap: $spacing-md;
-  text-align: center;
+  text-align: right;
   padding: $spacing-lg;
-  // the zone's negative right margin widens it past the shell — offset that
-  // extension here so the content stays where it was before it
-  margin-right: calc((100vw - min(1200px, 100vw)) / 2 + $spacing-md);
+  padding-left: $spacing-lg * 1.3;
+  // offset the zone extension and the inner right padding so content ends
+  // exactly at the shell's content edge
+  margin-right: calc((100vw - min(1200px, 100vw)) / 2 + $spacing-md - $spacing-lg);
 }
 
 .group-status {
@@ -245,7 +296,7 @@
 
 .group-number {
   font-family: $font-display;
-  font-size: clamp(36px, 4.5vw, 56px);
+  font-size: clamp(38px, 4.5vw, 56px);
   font-weight: 700;
   letter-spacing: 5px;
   color: $color-blue-bright;
@@ -259,59 +310,80 @@
   color: $color-gray-mid;
 }
 
-// ---------- Scan effect: glowing arc flowing around the join button, hover only ----------
+.group-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: $spacing-xs;
+}
+
+// Subtle join button hover: no scaling or rotating scan effect.
 .join-btn {
-  position: relative;
-  isolation: isolate;
+  transition: filter $transition-fast;
+}
+
+// Square copy control beside the join action.
+.copy-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  padding: 0;
+  border: 1px solid $color-blue-bright;
+  background: rgba(0, 102, 204, 0.12);
+  color: $color-blue-bright;
+  line-height: 1;
   overflow: hidden;
 
-  // rotating conic arc — the moving light
-  &::before {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 300%;
-    aspect-ratio: 1;
-    z-index: -2;
-    background: conic-gradient(
-      transparent 0deg 260deg,
-      $color-blue-bright 310deg,
-      $color-white 330deg,
-      transparent 360deg
-    );
-    transform: translate(-50%, -50%) rotate(0deg);
-    opacity: 0;
-    transition: opacity $transition-fast;
-    pointer-events: none;
-  }
+  &:hover {
+    transform: none;
+    filter: brightness(1.25);
 
-  // inner fill carves the ring down to a border
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 2px;
-    z-index: -1;
-    background: $color-primary-blue;
-    pointer-events: none;
-  }
-
-  &:hover::before {
-    opacity: 1;
-    animation: scan-rotate 1.2s linear infinite;
+    .copy-icon {
+      transform: translateX(3px);
+    }
   }
 }
 
-@keyframes scan-rotate {
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
+.copy-icon {
+  width: 22px;
+  height: 22px;
+  transition: transform $transition-fast;
 }
 
 // ---------- Responsive ----------
 @include tablet {
+  .zone-divider {
+    // Tablet shells use 72px vertical padding, not the desktop 120px.
+    margin-block: calc(-1 * $spacing-lg * 1.5);
+  }
+
   .group-zone {
     margin-block: calc(-1 * $spacing-lg * 1.5);
+  }
+
+  .group-inner {
+    // tablet: base left padding minus 12px
+    padding-left: calc($spacing-lg - 12px);
+  }
+
+  .group-status-text {
+    letter-spacing: clamp(1px, 0.2vw, 3px);
+  }
+
+  .group-actions {
+    gap: clamp(6px, 1vw, 8px);
+  }
+
+  .group-actions .join-btn {
+    padding: clamp(12px, calc(12px + (100vw - 640px) * 0.0104167), 16px)
+      clamp(28px, calc(28px + (100vw - 640px) * 0.0416667), 44px);
+    font-size: clamp(14px, calc(14px + (100vw - 640px) * 0.0052083), 16px);
+  }
+
+  .group-actions .copy-btn {
+    width: clamp(50px, calc(50px + (100vw - 640px) * 0.0208333), 58px);
+    height: clamp(50px, calc(50px + (100vw - 640px) * 0.0208333), 58px);
   }
 }
 
@@ -326,10 +398,7 @@
   }
 
   .zone-divider {
-    position: relative;
-    top: auto;
-    bottom: auto;
-    left: auto;
+    flex: none;
     width: 100%;
     height: 32px;
     margin: $spacing-md 0;
@@ -348,13 +417,33 @@
 
   .group-inner {
     padding: $spacing-lg $spacing-sm;
-    margin-right: $spacing-sm;
+    // mobile: base left padding minus 12px
+    padding-left: calc($spacing-sm - 12px);
+    margin-right: 0;
+  }
+
+  .group-status-text {
+    letter-spacing: 3px;
+  }
+
+  .group-actions .join-btn {
+    padding: 16px 44px;
+    font-size: 16px;
+  }
+
+  .group-actions .copy-btn {
+    width: 58px;
+    height: 58px;
+  }
+
+  .group-actions .copy-btn {
+    order: -1;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .join-btn:hover::before {
-    animation: none;
+  .copy-btn:hover .copy-icon {
+    transform: none;
   }
 }
 </style>
