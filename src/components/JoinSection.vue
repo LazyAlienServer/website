@@ -27,7 +27,7 @@
             :to="{ path: '/rules', query: { path: '02' }, hash: '#06' }"
           >
             <div class="path-head">
-              <h3 class="path-title">邀请担保制</h3>
+              <h3 class="path-title">邀请制</h3>
               <span class="path-index">PATH 02</span>
             </div>
             <p class="path-desc">
@@ -352,7 +352,7 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 
 .group-number {
   font-family: $font-display;
-  font-size: clamp(38px, 4.5vw, 56px);
+  font-size: clamp(38px, 6vw, 56px);
   font-weight: 700;
   letter-spacing: 5px;
   color: $color-blue-bright;
