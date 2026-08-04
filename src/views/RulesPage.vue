@@ -19,12 +19,17 @@
     </nav>
 
     <article class="rules-content">
-      <section v-for="(chapter, ci) in chapters" :key="chapter.id" class="chapter" v-reveal>
+      <section v-for="(chapter, ci) in chapters" :key="chapter.id" class="chapter">
         <div class="chapter-header">
           <span class="chapter-index">{{ String(ci + 1).padStart(2, "0") }}</span>
-          <h2>{{ chapter.title }}</h2>
+          <h2 :id="String(ci + 1).padStart(2, '0')">{{ chapter.title }}</h2>
         </div>
-        <div v-for="article in chapter.articles" :key="article.id" class="article">
+        <div
+          v-for="article in chapter.articles"
+          :key="article.id"
+          class="article"
+          :class="{ 'article--flash': activeFlashArticleIds.includes(article.id) }"
+        >
           <h3>{{ article.title }}</h3>
           <div class="article-body" v-html="article.content"></div>
         </div>
@@ -47,7 +52,29 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 import { chapters } from "@/data/rules";
+
+const route = useRoute();
+
+const flashArticleIdsByPath: Record<string, readonly string[]> = {
+  "01": [
+    "article-37",
+    "article-38",
+    "article-39",
+    "article-40",
+    "article-41",
+    "article-42",
+    "article-43",
+  ],
+  "02": ["article-44", "article-45", "article-46", "article-47"],
+};
+
+const activeFlashArticleIds = computed(() => {
+  const path = route.query.path;
+  return flashArticleIdsByPath[typeof path === "string" ? path : ""] ?? [];
+});
 </script>
 
 <style scoped lang="scss">
@@ -145,6 +172,39 @@ import { chapters } from "@/data/rules";
     font-size: $font-size-body-lg;
     color: $color-white;
     margin-bottom: $spacing-xs;
+  }
+}
+
+.article--flash {
+  animation: rules-article-flash 1.6s ease-out;
+}
+
+@keyframes rules-article-flash {
+  0%,
+  100% {
+    background-color: transparent;
+    box-shadow: none;
+  }
+
+  10%,
+  35% {
+    background-color: rgba(0, 102, 204, 0.32);
+    box-shadow:
+      0 0 0 1px rgba(30, 144, 255, 0.8),
+      0 0 22px rgba(30, 144, 255, 0.28);
+  }
+
+  55% {
+    background-color: rgba(0, 102, 204, 0.1);
+    box-shadow: 0 0 0 1px rgba(30, 144, 255, 0.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .article--flash {
+    animation: none;
+    background-color: rgba(0, 102, 204, 0.18);
+    box-shadow: 0 0 0 1px rgba(30, 144, 255, 0.45);
   }
 }
 

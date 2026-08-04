@@ -10,7 +10,10 @@
         </div>
 
         <div class="paths-grid">
-          <div class="path-card">
+          <router-link
+            class="path-card"
+            :to="{ path: '/rules', query: { path: '01' }, hash: '#06' }"
+          >
             <div class="path-head">
               <h3 class="path-title">审核制</h3>
               <span class="path-index">PATH 01</span>
@@ -18,8 +21,11 @@
             <p class="path-desc">
               通过素养审核（一审）与技术审核（二审），考察综合素质与红石、后勤或建筑能力。
             </p>
-          </div>
-          <div class="path-card">
+          </router-link>
+          <router-link
+            class="path-card"
+            :to="{ path: '/rules', query: { path: '02' }, hash: '#06' }"
+          >
             <div class="path-head">
               <h3 class="path-title">邀请担保制</h3>
               <span class="path-index">PATH 02</span>
@@ -27,7 +33,7 @@
             <p class="path-desc">
               由成员担保邀请，通过面试及技术审核；被邀请人违规时邀请人承担连带责任。
             </p>
-          </div>
+          </router-link>
         </div>
       </div>
 
@@ -157,6 +163,11 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 
 .path-card {
   position: relative;
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+
   // PATH hover uses directional index and underline motion, not card lift
   &::after {
     content: "";
@@ -174,6 +185,11 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 
   &:hover::after {
     transform: scaleX(1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-blue-bright;
+    outline-offset: 6px;
   }
 }
 
