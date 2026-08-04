@@ -114,7 +114,8 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 <style scoped lang="scss">
 // ---------- Section-wide blueprint grid ----------
 .join-section {
-  background-color: $color-primary-black;
+  // subtle cold blue-black separation from the rest of the site
+  background-color: #0c0f14;
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
@@ -156,11 +157,23 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 
 .path-card {
   position: relative;
-  // no panel box — bare text starting flush with the section title
-  transition: transform $transition-med;
+  // PATH hover uses directional index and underline motion, not card lift
+  &::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: -12px;
+    left: 0;
+    height: 3px;
+    background: $color-blue-bright;
+    transform: scaleX(0);
+    transform-origin: left center;
+    // quick launch with a long deceleration at the finish
+    transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  }
 
-  &:hover {
-    transform: translateY(-4px);
+  &:hover::after {
+    transform: scaleX(1);
   }
 }
 
@@ -174,12 +187,39 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 }
 
 .path-index {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
   font-family: $font-display;
   font-size: $font-size-h4;
   font-weight: 400;
   letter-spacing: 3px;
   color: $color-blue-bright;
   text-transform: uppercase;
+  white-space: nowrap;
+}
+
+// The arrow expands from the right edge toward the index text, shifting the
+// PATH label left as it appears.
+.path-index::after {
+  content: "→";
+  display: inline-block;
+  width: 0;
+  margin-left: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    width 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    margin-left 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.path-card:hover .path-index::after {
+  width: 1.1em;
+  margin-left: $spacing-xs;
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .path-title {
@@ -404,7 +444,11 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 
   .group-zone {
     flex: none;
-    margin: 0 calc(-1 * $spacing-sm) 0 0;
+    // extend the background across both shell side paddings on mobile
+    margin-top: 0;
+    margin-right: calc(-1 * $spacing-sm);
+    margin-bottom: 0;
+    margin-left: calc(-1 * $spacing-sm);
     // let the blue layer's bottom stretch past the zone box
     overflow: visible;
 
