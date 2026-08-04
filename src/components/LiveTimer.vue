@@ -108,7 +108,7 @@
                 :class="{ active: i === current }"
                 type="button"
                 :aria-label="`切换到背景 ${i + 1}`"
-                @click="go(i)"
+                @click="go(i, true)"
               ></button>
             </div>
           </div>
@@ -117,7 +117,7 @@
         <p class="slide-caption">{{ slides[current].name }}</p>
 
         <div class="zone-right">
-          <button class="ctrl-btn" type="button" aria-label="上一张背景" @click="prev">
+          <button class="ctrl-btn" type="button" aria-label="上一张背景" @click="prev(true)">
             <svg
               viewBox="0 0 24 24"
               width="18"
@@ -129,7 +129,7 @@
               <path d="M15 5l-7 7 7 7" />
             </svg>
           </button>
-          <button class="ctrl-btn" type="button" aria-label="下一张背景" @click="next">
+          <button class="ctrl-btn" type="button" aria-label="下一张背景" @click="next(true)">
             <svg
               viewBox="0 0 24 24"
               width="18"
@@ -159,14 +159,26 @@ const minutes = ref(0);
 const seconds = ref(0);
 
 let intervalId: number;
+const AUTO_SWITCH_COOLDOWN_MS = 5_000;
+let autoSwitchCooldownUntil = 0;
 
 const updateTimer = () => {
-  const diff = Date.now() - establishedDate.getTime();
+  const now = Date.now();
+  const diff = now - establishedDate.getTime();
 
   days.value = Math.floor(diff / (1000 * 60 * 60 * 24));
   hours.value = Math.floor((diff / (1000 * 60 * 60)) % 24);
   minutes.value = Math.floor((diff / (1000 * 60)) % 60);
   seconds.value = Math.floor((diff / 1000) % 60);
+
+  if (
+    seconds.value % 5 === 0 &&
+    seconds.value !== lastAutoRotationSecond &&
+    now >= autoSwitchCooldownUntil
+  ) {
+    lastAutoRotationSecond = seconds.value;
+    next();
+  }
 
   updateClock();
 };
@@ -181,12 +193,17 @@ const slides = [
 ];
 
 const current = ref(0);
+let lastAutoRotationSecond = -1;
 
-const go = (i: number) => {
+const go = (i: number, userInitiated = false) => {
+  if (userInitiated) {
+    autoSwitchCooldownUntil = Date.now() + AUTO_SWITCH_COOLDOWN_MS;
+  }
+
   current.value = (i + slides.length) % slides.length;
 };
-const next = () => go(current.value + 1);
-const prev = () => go(current.value - 1);
+const next = (userInitiated = false) => go(current.value + 1, userInitiated);
+const prev = (userInitiated = false) => go(current.value - 1, userInitiated);
 
 // ---------- UTC+8 analog clock ----------
 const hourAngle = ref(0);

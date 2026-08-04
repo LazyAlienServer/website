@@ -1,18 +1,17 @@
 <template>
-  <section class="hero">
-    <!-- LEFT: carbon black content panel -->
-    <div class="hero-panel">
-      <nav class="nav">
-        <router-link to="/" class="nav-logo">
-          <img :src="logoUrl" alt="LAS logo" />
-          <span>LAZY ALIEN SERVER</span>
-        </router-link>
-        <div class="nav-links">
-          <router-link to="/" class="active">首页</router-link>
-          <router-link to="/rules">规章</router-link>
-        </div>
-      </nav>
+  <nav class="nav" :class="{ 'nav--expanded': isNavExpanded }">
+    <router-link to="/" class="nav-logo">
+      <img :src="logoUrl" alt="LAS logo" />
+      <span>LAZY ALIEN SERVER</span>
+    </router-link>
+    <div class="nav-links">
+      <router-link to="/" class="active">首页</router-link>
+      <router-link to="/rules">规章</router-link>
+    </div>
+  </nav>
 
+  <section class="hero">
+    <div class="hero-panel">
       <div class="panel-body">
         <div class="index-row">
           <span class="index-num">01</span>
@@ -36,7 +35,6 @@
       </div>
     </div>
 
-    <!-- RIGHT: hero image with diagonal clip -->
     <div class="hero-visual">
       <img
         ref="heroImage"
@@ -44,7 +42,6 @@
         src="/hero.webp"
         alt="LAS survival build — gothic hall"
       />
-      <!-- blue seam tracing the image edge -->
       <div class="seam-glow"></div>
       <div class="seam"></div>
       <div class="meta-tag">MINECRAFT TECH SERVER<br />EST. 2022.08.29</div>
@@ -54,23 +51,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import logoUrl from "@/assets/logo.svg";
 
 const heroImage = ref<HTMLImageElement | null>(null);
+const isNavExpanded = ref(false);
+let scrollFrameId = 0;
 
-// Subtle parallax — image drifts at 0.5x scroll speed
-const onScroll = () => {
+const updateScrollEffects = () => {
   if (heroImage.value) {
     heroImage.value.style.transform = `translateY(${window.scrollY * 0.5}px)`;
   }
+
+  isNavExpanded.value = window.scrollY > 48;
+};
+
+const onScroll = () => {
+  cancelAnimationFrame(scrollFrameId);
+  scrollFrameId = requestAnimationFrame(updateScrollEffects);
 };
 
 onMounted(() => {
+  updateScrollEffects();
   window.addEventListener("scroll", onScroll, { passive: true });
 });
 
 onUnmounted(() => {
+  cancelAnimationFrame(scrollFrameId);
   window.removeEventListener("scroll", onScroll);
 });
 </script>
@@ -95,15 +102,63 @@ onUnmounted(() => {
   padding: 0 $spacing-lg * 1.2 $spacing-lg $spacing-lg;
   position: relative;
   z-index: 6;
+  flex: none;
 }
 
 .nav {
+  --nav-inline: #{$spacing-lg};
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: $spacing-md;
-  padding: $spacing-md 0;
-  border-bottom: 1px solid $color-gray-dark;
+  width: 40%;
+  padding: $spacing-md var(--nav-inline);
+  background: $color-primary-black;
+  transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+
+  // Gray underline follows the content insets: logo left to links right.
+  &::before {
+    content: "";
+    position: absolute;
+    right: var(--nav-inline);
+    bottom: 0;
+    left: var(--nav-inline);
+    height: 1px;
+    background: $color-gray-dark;
+    pointer-events: none;
+  }
+
+  // Moving hero seam. One compound layer fills the 4.8vw gap in black and
+  // reserves its final 6px for the blue edge.
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: -2px;
+    left: calc(100% - 2px);
+    width: calc(4.8vw + 7px);
+    background: linear-gradient(
+      90deg,
+      $color-primary-black 0 calc(100% - 6px),
+      $color-blue-bright calc(100% - 6px)
+    );
+    pointer-events: none;
+    transform-origin: 0 0;
+    transform: skewX(-4deg);
+
+    @supports (transform: skewX(atan2(1vw, 1vh))) {
+      transform: skewX(atan2(-4.8vw, 100vh));
+    }
+  }
+
+  &.nav--expanded {
+    width: 100vw;
+  }
 }
 
 .nav-logo {
@@ -112,7 +167,7 @@ onUnmounted(() => {
   gap: 14px;
 
   img {
-    height: 44px;
+    height: 35.2px;
     width: auto;
   }
 
@@ -351,16 +406,30 @@ h1 {
 // ---------- RESPONSIVE ----------
 @include tablet {
   .hero {
-    flex-direction: column-reverse;
-    height: auto;
-    min-height: 100vh;
+    display: contents;
   }
 
   .hero-panel {
+    order: -1;
     width: 100%;
+    height: auto;
+    min-height: calc(100vh - 46vh);
     padding: 0 $spacing-md $spacing-lg;
   }
 
+  .nav,
+  .nav.nav--expanded {
+    --nav-inline: #{$spacing-md};
+
+    position: sticky;
+    order: -2;
+    width: 100%;
+    transition: none;
+
+    &::after {
+      display: none;
+    }
+  }
   .panel-body {
     padding: $spacing-lg 0;
   }
@@ -371,11 +440,11 @@ h1 {
   }
 
   .hero-visual {
+    order: -3;
     width: 100%;
     height: 46vh;
     clip-path: none;
   }
-
   .watermark {
     font-size: 96px;
   }
@@ -389,6 +458,11 @@ h1 {
 @include mobile {
   .nav-logo span {
     display: none;
+  }
+
+  .nav,
+  .nav.nav--expanded {
+    --nav-inline: #{$spacing-sm};
   }
 
   .sub-cn {

@@ -27,6 +27,11 @@ import FooterSection from "@/components/FooterSection.vue";
 <style scoped lang="scss">
 // Fixed side rails — control-panel frame on wide screens
 .home-page {
+  @include tablet {
+    display: flex;
+    flex-direction: column;
+  }
+
   &::before,
   &::after {
     content: "";
