@@ -193,6 +193,7 @@ onUnmounted(() => {
 
 .hw-intro {
   flex: 0 0 clamp(200px, 25vw, 280px);
+  margin-top: 24px;
 
   .section-header {
     margin-bottom: 0;
@@ -205,7 +206,7 @@ onUnmounted(() => {
   min-width: 0;
   display: flex;
   // slant matches the hero exactly: horizontal offset = height × (4.8vw / 100vh)
-  --accordion-h: clamp(460px, 55vw, 540px);
+  --accordion-h: clamp(440px, 55vw, 580px);
   --slant-angle: 4deg; // fallback matching the hero's skewX(-4deg) magnitude
   --slant-tan: 0.07; // ≈ tan(4°) fallback
   --slant: calc(var(--slant-tan) * var(--accordion-h));
@@ -463,20 +464,25 @@ onUnmounted(() => {
     width: 100%;
     margin-left: 0;
     display: grid;
-    grid-template-rows: 64px 0fr;
-    transition: grid-template-rows 0.45s ease;
-
-    &::before {
-      // straight divider under each strip — no slant on mobile
-      clip-path: none;
+    grid-template-rows: 48px 0fr;
+    transition: grid-template-rows 0.6s ease;
+    transition-delay: 0s;
+    &.active {
+      grid-template-rows: 48px 1fr;
     }
 
-    &.active {
-      grid-template-rows: 64px 1fr;
+    &::before {
+      // straight frame on mobile — no slant on the stacked layout
+      clip-path: none;
     }
   }
 
+  .hw-panel + .hw-panel {
+    margin-left: 0;
+  }
+
   .hw-skin {
+    overflow: hidden;
     clip-path: inset(1px);
   }
 
@@ -512,14 +518,21 @@ onUnmounted(() => {
 
   .hw-detail {
     position: static;
-    min-height: 0;
     overflow: hidden;
-    padding: 0 24px 24px;
+    opacity: 0;
+    transition-delay: 0s;
+    padding: 0 24px;
     transform: none;
+    padding-bottom: 0;
+    justify-content: flex-start;
+    transition: opacity 2s ease;
 
     .hw-panel.active & {
-      transition-delay: 0.15s;
+      opacity: 1;
     }
+  }
+  .hw-specs {
+    padding-bottom: 24px;
   }
 }
 

@@ -63,7 +63,7 @@ const capabilities: Capability[] = [
   grid-template-columns: repeat(2, minmax(0, 1fr) 1px) minmax(0, 1fr);
   align-items: stretch;
   gap: clamp(16px, 2.5vw, 32px);
-  margin-top: 96px;
+  margin-top: clamp(48px, 8vw, 72px);
 }
 
 .infra-divider {
@@ -140,13 +140,13 @@ const capabilities: Capability[] = [
   .infra-features {
     display: flex;
     flex-direction: column;
-    gap: 0;
-    margin-top: 24px;
+    gap: 24px;
+    margin-top: 48px;
   }
 
-  .infra-feature {
-    min-height: 92px;
-  }
+  // .infra-feature {
+  //   min-height: 92px;
+  // }
 
   .infra-divider {
     width: 100%;
