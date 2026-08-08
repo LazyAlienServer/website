@@ -6,11 +6,22 @@
           <div class="section-header" v-reveal>
             <div class="index-row">
               <span class="index-num">04</span>
-              <span class="index-label">// HARDWARE</span>
+              <span class="index-label">// TECH SUPPORT</span>
             </div>
-            <h2 class="section-title">硬件支持</h2>
+            <h2 class="section-title">技术支持</h2>
             <p class="section-subtitle">强劲的服务与支持为服务器保驾护航</p>
             <div class="title-rule"></div>
+          </div>
+          <div class="hardware-tags" role="list" aria-label="Hardware status">
+            <span
+              v-for="(tag, index) in hardwareTags"
+              :key="tag"
+              class="hardware-tag"
+              :class="{ active: index === activeTagIndex }"
+              role="listitem"
+            >
+              {{ tag }}
+            </span>
           </div>
         </div>
 
@@ -46,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, shallowRef, onMounted, onUnmounted } from "vue";
 import InfrastructureFeatures from "./InfrastructureFeatures.vue";
 
 const icons = {
@@ -102,6 +113,10 @@ const hardware: HardwareSpec[] = [
   },
 ];
 
+const hardwareTags = ["99% UPTIME", "13900K", "96GB DDR5", "4TB RAID 10", "BGP & CN2", "DEV TEAM"];
+const TAG_INTERVAL = 3000;
+const activeTagIndex = shallowRef(0);
+
 // ── auto-rotation state machine ─────────────────────────────
 // default: first panel expanded; rotate every 5s;
 // click selects a panel and starts a 10s cooldown; hover pauses only.
@@ -112,6 +127,22 @@ const activeIndex = ref(0);
 const hovering = ref(false);
 const cooling = ref(false);
 const motionSafe = ref(true);
+
+let tagTimer: ReturnType<typeof setInterval> | undefined;
+
+const startTagRotation = (): void => {
+  if (!motionSafe.value || tagTimer !== undefined) return;
+  tagTimer = setInterval(() => {
+    activeTagIndex.value = (activeTagIndex.value + 1) % hardwareTags.length;
+  }, TAG_INTERVAL);
+};
+
+const stopTagRotation = (): void => {
+  if (tagTimer !== undefined) {
+    clearInterval(tagTimer);
+    tagTimer = undefined;
+  }
+};
 
 let autoTimer: ReturnType<typeof setInterval> | undefined;
 let cooldownTimer: ReturnType<typeof setTimeout> | undefined;
@@ -158,10 +189,12 @@ const select = (index: number): void => {
 onMounted(() => {
   motionSafe.value = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   startAuto();
+  startTagRotation();
 });
 
 onUnmounted(() => {
   stopAuto();
+  stopTagRotation();
   if (cooldownTimer !== undefined) clearTimeout(cooldownTimer);
 });
 </script>
@@ -197,6 +230,43 @@ onUnmounted(() => {
 
   .section-header {
     margin-bottom: 0;
+  }
+}
+
+.hardware-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 32px;
+}
+
+.hardware-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 7px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: $color-black-soft;
+  color: $color-gray-light;
+  font-family: $font-display;
+  font-size: clamp(10px, 0.9vw, 12px);
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  line-height: 1;
+  opacity: 0.72;
+  white-space: nowrap;
+  transition:
+    background-color 0.35s ease,
+    border-color 0.35s ease,
+    color 0.35s ease,
+    opacity 0.35s ease;
+
+  &.active {
+    border-color: $color-white;
+    background: $color-white;
+    color: $color-primary-black;
+    opacity: 1;
   }
 }
 
@@ -340,7 +410,7 @@ onUnmounted(() => {
   white-space: nowrap;
   font-family: $font-display;
   font-weight: 500;
-  font-size: clamp(24px, 3vw, 42px);
+  font-size: clamp(28px, 3vw, 42px);
   letter-spacing: 12px;
   color: $color-white;
   transition:
@@ -352,7 +422,7 @@ onUnmounted(() => {
   // left-center so the skew keeps the column parallel with a constant gap,
   // independent of letter count
   .hw-panel.active & {
-    left: calc(var(--slant) / 2 + 15px);
+    left: calc(var(--slant) / 2);
     transform: translateY(-50%) skewX(calc(-1 * var(--slant-angle)));
     transform-origin: 0 50%;
   }
@@ -367,7 +437,7 @@ onUnmounted(() => {
   flex-direction: column;
   justify-content: center;
   gap: 14px;
-  padding: 24px clamp(24px, 4vw, 48px) 24px clamp(84px, 9vw, 100px);
+  padding: 24px clamp(24px, 4vw, 48px) 24px clamp(54px, 8vw, 90px);
   color: $color-white;
   opacity: 0;
   transform: translateY(8px);
@@ -420,11 +490,11 @@ onUnmounted(() => {
 
 // rows keep stepping along the slant inside the spec list
 .hw-spec:nth-child(1) {
-  margin-left: calc(var(--slant) * 0.3);
+  margin-left: calc(var(--slant) * 0.1);
 }
 
 .hw-spec:nth-child(2) {
-  margin-left: calc(var(--slant) * 0.15);
+  margin-left: calc(var(--slant) * 0.05);
 }
 
 .hw-spec {
@@ -441,6 +511,11 @@ onUnmounted(() => {
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .hardware-tag {
+    transition: none;
+  }
+}
 // ── mobile: vertical accordion ──────────────────────────────
 @include mobile {
   .hw-main {
