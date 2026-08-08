@@ -51,7 +51,7 @@
           <div class="group-actions">
             <a
               class="btn btn-primary join-btn"
-              href="https://qm.qq.com/cgi-bin/qm/qr?k=835047145"
+              href="https://qm.qq.com/q/DFdl0HQecg"
               target="_blank"
               rel="noopener"
               >加入 QQ 群</a
