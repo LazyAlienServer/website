@@ -250,6 +250,7 @@ onMounted(() => {
   color: $color-gray-light;
   line-height: 1.6;
   display: -webkit-box;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
