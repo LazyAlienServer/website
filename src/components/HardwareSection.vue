@@ -1,28 +1,54 @@
 <template>
   <section class="hardware-section">
-    <div class="section-shell">
-      <div class="section-header" v-reveal>
-        <div class="index-row">
-          <span class="index-num">04</span>
-          <span class="index-label">// HARDWARE</span>
+    <div class="section-shell hw-shell">
+      <div class="hw-main">
+        <div class="hw-intro">
+          <div class="section-header" v-reveal>
+            <div class="index-row">
+              <span class="index-num">04</span>
+              <span class="index-label">// HARDWARE</span>
+            </div>
+            <h2 class="section-title">硬件支持</h2>
+            <p class="section-subtitle">强劲的服务与支持为服务器保驾护航</p>
+            <div class="title-rule"></div>
+          </div>
         </div>
-        <h2 class="section-title">硬件支持</h2>
-        <p class="section-subtitle">强劲的服务与支持为服务器保驾护航</p>
-        <div class="title-rule"></div>
-      </div>
 
-      <div class="hardware-grid">
-        <div v-for="item in hardware" :key="item.title" class="hw-card" v-reveal>
-          <div class="hw-icon" v-html="item.icon"></div>
-          <h3 class="hw-title">{{ item.title }}</h3>
-          <p class="hw-desc">{{ item.description }}</p>
+        <div class="hw-accordion" v-reveal @mouseenter="onHoverStart" @mouseleave="onHoverEnd">
+          <button
+            v-for="(item, i) in hardware"
+            :key="item.title"
+            type="button"
+            class="hw-panel"
+            :class="{ active: i === activeIndex }"
+            :aria-expanded="i === activeIndex"
+            @click="select(i)"
+          >
+            <span class="hw-skin" aria-hidden="true">
+              <span class="hw-watermark" aria-hidden="true" v-html="item.icon"></span>
+            </span>
+            <span class="hw-vlabel" aria-hidden="true">{{ item.short }}</span>
+            <span class="hw-detail">
+              <span class="hw-icon" aria-hidden="true" v-html="item.icon"></span>
+              <span class="hw-name">{{ item.title }}</span>
+              <span class="hw-desc">{{ item.description }}</span>
+              <span class="hw-specs">
+                <span v-for="spec in item.specs" :key="spec" class="hw-spec">{{ spec }}</span>
+              </span>
+            </span>
+            <span class="sr-only">{{ item.title }}</span>
+          </button>
         </div>
       </div>
+      <InfrastructureFeatures />
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted } from "vue";
+import InfrastructureFeatures from "./InfrastructureFeatures.vue";
+
 const icons = {
   cpu: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2">
     <rect x="14" y="14" width="36" height="36" />
@@ -37,85 +63,329 @@ const icons = {
     <rect x="42" y="24" width="6" height="10" />
     <path d="M10 40v8h6v-4h4v4h6v-4h4v4h6v-4h4v4h6v-4h4v4h6v-8" />
   </svg>`,
-  plugin: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2">
-    <path d="M40 8l16 16-8 8-16-16z" />
-    <path d="M32 16L14 34l8 8 18-18" />
-    <path d="M14 34l-6 16 16-6" />
-    <path d="M46 30l4 4" />
+  storage: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M32 8 56 20 32 32 8 20z" />
+    <path d="m8 32 24 12 24-12M8 44l24 12 24-12" />
   </svg>`,
 };
 
-const hardware = [
+interface HardwareSpec {
+  short: string;
+  title: string;
+  description: string;
+  icon: string;
+  specs: string[];
+}
+
+const hardware: HardwareSpec[] = [
   {
+    short: "CPU",
     title: "CPU — i9-13900K",
     description: "强大性能！主频可达5.8-6.0GHz，为服务器提供充沛算力。",
     icon: icons.cpu,
+    specs: ["24C / 32T — 8P + 16E CORES", "MAX TURBO 5.8 GHZ", "36MB SMART CACHE"],
   },
   {
-    title: "RAM — DDR5 内存",
-    description: "48Gx2 幻锋戟 DDR5-6200MHz，高频大容量保障流畅运行。",
+    short: "RAM",
+    title: "RAM — DDR5 5600MHz 内存",
+    description: "48G x 2 幻锋戟 DDR5-5600MHz，高频大容量保障流畅运行。",
     icon: icons.ram,
+    specs: ["48GB × 2 — 96GB TOTAL", "DDR5-6200MHZ CL32", "DUAL CHANNEL KIT"],
   },
   {
-    title: "Plugin — LAS特色插件",
-    description: "配合插件及其强大拓展性实现多种功能，自主开发持续迭代。",
-    icon: icons.plugin,
+    short: "RAID",
+    title: "Storage — 2TB × 4 RAID 10",
+    description:
+      "4 块 2TB M.2 SSD 组成 RAID 10 存储阵列，在提升并发读写的同时保留镜像冗余，兼顾速度、容量与数据安全。",
+    icon: icons.storage,
+    specs: ["2TB × 4 M.2 NVME SSD", "RAID 10 — 4TB USABLE", "STRIPED SPEED + MIRROR REDUNDANCY"],
   },
 ];
+
+// ── auto-rotation state machine ─────────────────────────────
+// default: first panel expanded; rotate every 5s;
+// click selects a panel and starts a 10s cooldown; hover pauses only.
+const AUTO_INTERVAL = 5000;
+const COOLDOWN = 10000;
+
+const activeIndex = ref(0);
+const hovering = ref(false);
+const cooling = ref(false);
+const motionSafe = ref(true);
+
+let autoTimer: ReturnType<typeof setInterval> | undefined;
+let cooldownTimer: ReturnType<typeof setTimeout> | undefined;
+
+const stopAuto = (): void => {
+  if (autoTimer !== undefined) {
+    clearInterval(autoTimer);
+    autoTimer = undefined;
+  }
+};
+
+const startAuto = (): void => {
+  if (!motionSafe.value || autoTimer !== undefined) return;
+  autoTimer = setInterval(() => {
+    activeIndex.value = (activeIndex.value + 1) % hardware.length;
+  }, AUTO_INTERVAL);
+};
+
+const resumeIfIdle = (): void => {
+  if (!hovering.value && !cooling.value) startAuto();
+};
+
+const onHoverStart = (): void => {
+  hovering.value = true;
+  stopAuto();
+};
+
+const onHoverEnd = (): void => {
+  hovering.value = false;
+  resumeIfIdle();
+};
+
+const select = (index: number): void => {
+  activeIndex.value = index;
+  cooling.value = true;
+  stopAuto();
+  if (cooldownTimer !== undefined) clearTimeout(cooldownTimer);
+  cooldownTimer = setTimeout(() => {
+    cooling.value = false;
+    resumeIfIdle();
+  }, COOLDOWN);
+};
+
+onMounted(() => {
+  motionSafe.value = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  startAuto();
+});
+
+onUnmounted(() => {
+  stopAuto();
+  if (cooldownTimer !== undefined) clearTimeout(cooldownTimer);
+});
 </script>
 
 <style scoped lang="scss">
 .hardware-section {
-  background: $color-primary-black;
+  background-color: $color-primary-black;
 }
 
-.hardware-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: $spacing-md;
-}
-
-.hw-card {
-  @include clipped-panel;
-  position: relative;
-  padding: $spacing-lg $spacing-md;
+// screen-reader-only text (full title inside the button)
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
   overflow: hidden;
-  transition:
-    transform $transition-med,
-    box-shadow $transition-med;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
 
-  // blue border sliding in from left on hover
+.hw-shell {
+  display: block;
+}
+
+.hw-main {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(20px, 3.5vw, 48px);
+}
+
+.hw-intro {
+  flex: 0 0 clamp(200px, 25vw, 280px);
+
+  .section-header {
+    margin-bottom: 0;
+  }
+}
+
+// ── slanted accordion ───────────────────────────────────────
+.hw-accordion {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  // slant matches the hero exactly: horizontal offset = height × (4.8vw / 100vh)
+  --accordion-h: clamp(460px, 55vw, 540px);
+  --slant-angle: 4deg; // fallback matching the hero's skewX(-4deg) magnitude
+  --slant-tan: 0.07; // ≈ tan(4°) fallback
+  --slant: calc(var(--slant-tan) * var(--accordion-h));
+  height: var(--accordion-h);
+}
+
+@supports (transform: skewX(atan2(1vw, 1vh))) {
+  .hw-accordion {
+    --slant-angle: atan2(4.8vw, 100vh);
+    --slant-tan: tan(atan2(4.8vw, 100vh));
+  }
+}
+
+.hw-panel {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+  transition: flex-grow 0.5s ease;
+
+  // faint full-perimeter frame — skin insets 1px on all sides to reveal it
   &::before {
     content: "";
     position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 0;
-    background: $color-primary-blue;
-    transition: width $transition-med;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.25);
+    clip-path: polygon(var(--slant) 0, 100% 0, calc(100% - var(--slant)) 100%, 0 100%);
   }
 
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  &.active {
+    flex-grow: 4;
+  }
+}
 
-    &::before {
-      width: 6px;
-    }
+// overlap each panel by one skew minus an 8px channel, so adjacent slanted
+// edges run parallel with a narrow black gap between them
+.hw-panel + .hw-panel {
+  margin-left: calc(8px - var(--slant));
+}
 
-    .hw-icon {
-      color: $color-blue-bright;
-    }
+.hw-skin {
+  position: absolute;
+  inset: 0;
+  background-color: $color-primary-black;
+  // white diagonal stripes on collapsed panels too
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.1) 0,
+    rgba(255, 255, 255, 0.1) 2px,
+    transparent 2px,
+    transparent 10px
+  );
+  clip-path: polygon(
+    calc(var(--slant) + 1px) 1px,
+    calc(100% - 1px) 1px,
+    calc(100% - var(--slant) - 1px) calc(100% - 1px),
+    1px calc(100% - 1px)
+  );
+  transition: background-color $transition-med;
+
+  .hw-panel.active & {
+    background-color: $color-primary-blue;
+    // faded diagonal hatch — industrial texture on the expanded panel
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.08) 0,
+      rgba(255, 255, 255, 0.08) 2px,
+      transparent 2px,
+      transparent 10px
+    );
+  }
+
+  .hw-panel:not(.active):hover &,
+  .hw-panel:not(.active):focus-visible & {
+    background-color: #17171c;
+  }
+
+  .hw-panel.active:focus-visible & {
+    background-color: $color-blue-bright;
+  }
+}
+
+// oversized icon watermark bleeding off both sides — collapsed panel texture
+.hw-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 260px;
+  height: 260px;
+  transform: translate(-50%, -50%);
+  color: $color-white;
+  opacity: 0.07;
+  pointer-events: none;
+  transition:
+    opacity 0.4s ease,
+    color 0.3s ease;
+
+  :deep(svg) {
+    width: 100%;
+    height: 100%;
+  }
+
+  .hw-panel.active & {
+    opacity: 0;
+  }
+
+  .hw-panel:not(.active):hover & {
+    color: $color-blue-bright;
+    opacity: 0.3;
+  }
+}
+
+// vertical stacked label — visible in both states
+// upright stacked label, sheared parallel to the panel slant via skew
+.hw-vlabel {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) skewX(calc(-1 * var(--slant-angle)));
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  white-space: nowrap;
+  font-family: $font-display;
+  font-weight: 500;
+  font-size: clamp(24px, 3vw, 42px);
+  letter-spacing: 12px;
+  color: $color-white;
+  transition:
+    left 0.5s ease,
+    transform 0.5s ease,
+    font-size 0.3s ease;
+
+  // expanded: big label hugs the slanted left edge — origin pinned to the
+  // left-center so the skew keeps the column parallel with a constant gap,
+  // independent of letter count
+  .hw-panel.active & {
+    left: calc(var(--slant) / 2 + 15px);
+    transform: translateY(-50%) skewX(calc(-1 * var(--slant-angle)));
+    transform-origin: 0 50%;
+  }
+}
+
+// expanded content
+.hw-detail {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px clamp(24px, 4vw, 48px) 24px clamp(84px, 9vw, 100px);
+  color: $color-white;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+
+  .hw-panel.active & {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.2s;
   }
 }
 
 .hw-icon {
-  width: 56px;
-  height: 56px;
+  margin-left: calc(var(--slant) * 0.6);
+  width: clamp(56px, 7vw, 72px);
+  height: clamp(56px, 7vw, 72px);
   color: $color-white;
-  margin-bottom: $spacing-md;
-  transition: color $transition-med;
 
   :deep(svg) {
     width: 100%;
@@ -123,24 +393,142 @@ const hardware = [
   }
 }
 
-.hw-title {
-  font-size: $font-size-h4;
-  color: $color-white;
-  margin-bottom: $spacing-sm;
+.hw-name {
+  margin-left: calc(var(--slant) * 0.4);
+  font-family: $font-display;
+  font-size: clamp(16px, 1.8vw, 24px);
+  font-weight: 700;
   letter-spacing: 1px;
+  text-transform: uppercase;
+  overflow-wrap: break-word;
 }
 
 .hw-desc {
-  font-size: $font-size-body;
-  color: $color-gray-light;
-  line-height: 1.7;
+  margin-left: calc(var(--slant) * 0.2);
+  font-size: clamp(13px, 1.1vw, 15px);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+  overflow-wrap: break-word;
 }
 
-@include tablet {
-  .hardware-grid {
-    grid-template-columns: 1fr;
-    max-width: 560px;
-    margin: 0 auto;
+.hw-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+// rows keep stepping along the slant inside the spec list
+.hw-spec:nth-child(1) {
+  margin-left: calc(var(--slant) * 0.3);
+}
+
+.hw-spec:nth-child(2) {
+  margin-left: calc(var(--slant) * 0.15);
+}
+
+.hw-spec {
+  font-family: $font-display;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.9);
+  overflow-wrap: break-word;
+
+  &::before {
+    content: "»";
+    margin-right: 6px;
+    color: rgba(255, 255, 255, 0.7);
+  }
+}
+
+// ── mobile: vertical accordion ──────────────────────────────
+@include mobile {
+  .hw-main {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $spacing-lg;
+  }
+
+  .hw-intro {
+    flex: none;
+  }
+
+  .hw-accordion {
+    flex-direction: column;
+    height: auto;
+    gap: 8px;
+  }
+
+  .hw-panel {
+    flex: none;
+    width: 100%;
+    margin-left: 0;
+    display: grid;
+    grid-template-rows: 64px 0fr;
+    transition: grid-template-rows 0.45s ease;
+
+    &::before {
+      // straight divider under each strip — no slant on mobile
+      clip-path: none;
+    }
+
+    &.active {
+      grid-template-rows: 64px 1fr;
+    }
+  }
+
+  .hw-skin {
+    clip-path: inset(1px);
+  }
+
+  .hw-watermark {
+    width: 120px;
+    height: 120px;
+  }
+
+  // no slant effects on mobile: label fills the collapsed row
+  .hw-vlabel {
+    position: static;
+    transform: none;
+    writing-mode: horizontal-tb;
+    align-self: center;
+    justify-self: stretch;
+    text-align: center;
+    letter-spacing: 8px;
+    font-size: clamp(18px, 6vw, 26px);
+
+    .hw-panel.active & {
+      transform: none;
+      font-size: clamp(18px, 6vw, 26px);
+    }
+  }
+
+  .hw-icon,
+  .hw-name,
+  .hw-desc,
+  .hw-specs,
+  .hw-spec {
+    margin-left: 0;
+  }
+
+  .hw-detail {
+    position: static;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0 24px 24px;
+    transform: none;
+
+    .hw-panel.active & {
+      transition-delay: 0.15s;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hw-panel,
+  .hw-skin,
+  .hw-vlabel,
+  .hw-detail {
+    transition: none;
   }
 }
 </style>
