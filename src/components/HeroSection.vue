@@ -1,5 +1,6 @@
 <template>
-  <nav class="nav" :class="{ 'nav--expanded': isNavExpanded }">
+  <nav ref="navbar" class="nav" :class="{ 'nav--expanded': isNavExpanded }">
+    <span class="nav-surface" aria-hidden="true"></span>
     <router-link to="/" class="nav-logo">
       <img :src="logoUrl" alt="LAS logo" />
       <span>LAZY ALIEN SERVER</span>
@@ -35,7 +36,7 @@
       </div>
     </div>
 
-    <div class="hero-visual">
+    <div ref="heroVisual" class="hero-visual">
       <img
         ref="heroImage"
         class="hero-img"
@@ -55,6 +56,8 @@ import { onMounted, onUnmounted, ref } from "vue";
 import logoUrl from "@/assets/logo.svg";
 
 const heroImage = ref<HTMLImageElement | null>(null);
+const heroVisual = ref<HTMLElement | null>(null);
+const navbar = ref<HTMLElement | null>(null);
 const isNavExpanded = ref(false);
 let scrollFrameId = 0;
 
@@ -63,22 +66,38 @@ const updateScrollEffects = () => {
     heroImage.value.style.transform = `translateY(${window.scrollY * 0.5}px)`;
   }
 
+  if (navbar.value && heroVisual.value) {
+    const visualRect = heroVisual.value.getBoundingClientRect();
+    const navbarRect = navbar.value.getBoundingClientRect();
+    const localY = Math.min(Math.max(-visualRect.top, 0), visualRect.height);
+    const isDesktop = window.innerWidth > 1024;
+    const seamSlope = visualRect.height > 0 ? (visualRect.width * 0.08) / visualRect.height : 0;
+    const seamShift = isDesktop ? localY * seamSlope : 0;
+    const edgeInset = isDesktop ? navbarRect.height * seamSlope : 0;
+
+    navbar.value.style.setProperty("--navbar-seam-scroll-shift", `${seamShift}px`);
+    navbar.value.style.setProperty("--navbar-edge-height", `${navbarRect.height}px`);
+    navbar.value.style.setProperty("--navbar-edge-inset", `${edgeInset}px`);
+  }
+
   isNavExpanded.value = window.scrollY > 48;
 };
 
-const onScroll = () => {
+const scheduleScrollEffects = () => {
   cancelAnimationFrame(scrollFrameId);
   scrollFrameId = requestAnimationFrame(updateScrollEffects);
 };
 
 onMounted(() => {
   updateScrollEffects();
-  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("scroll", scheduleScrollEffects, { passive: true });
+  window.addEventListener("resize", scheduleScrollEffects);
 });
 
 onUnmounted(() => {
   cancelAnimationFrame(scrollFrameId);
-  window.removeEventListener("scroll", onScroll);
+  window.removeEventListener("scroll", scheduleScrollEffects);
+  window.removeEventListener("resize", scheduleScrollEffects);
 });
 </script>
 
@@ -107,6 +126,9 @@ onUnmounted(() => {
 
 .nav {
   --nav-inline: #{$spacing-lg};
+  --navbar-seam-scroll-shift: 0px;
+  --navbar-edge-height: 83px;
+  --navbar-edge-inset: 6px;
 
   position: fixed;
   top: 0;
@@ -158,6 +180,122 @@ onUnmounted(() => {
 
   &.nav--expanded {
     width: 100vw;
+  }
+}
+
+.nav-surface {
+  display: none;
+}
+
+// Two-stage desktop navbar transition.
+// Expand: blue parallelogram -> black nav/content.
+// Retract: black nav/content -> blue parallelogram.
+@media (min-width: 1025px) {
+  .nav {
+    --navbar-body-duration: 420ms;
+    --navbar-blue-expand-duration: 240ms;
+    --navbar-blue-retract-duration: 270ms;
+    --navbar-body-expand-delay: 240ms;
+    --navbar-blue-retract-delay: 330ms;
+
+    isolation: isolate;
+    background: transparent;
+    transition-duration: var(--navbar-body-duration);
+    transition-delay: 0ms;
+    will-change: width;
+
+    &::after {
+      z-index: 1;
+      left: calc(100% + 4.8vw - 1px);
+      width: 6px;
+      background: $color-blue-bright;
+      translate: calc(0px - var(--navbar-seam-scroll-shift)) 0;
+
+      @supports (transform: skewX(atan2(1vw, 1vh))) {
+        transform: skewX(atan2(calc(0px - var(--navbar-edge-inset)), var(--navbar-edge-height)));
+      }
+    }
+
+    // Anchored to the resting blue seam so it expands and retracts from the
+    // exact same slanted position.
+    &::before {
+      z-index: 1;
+      top: 0;
+      right: auto;
+      bottom: -2px;
+      left: calc(100% + 4.8vw - 1px);
+      width: max(
+        0px,
+        calc(
+          100vw - 100% - 4.8vw + 8px + var(--navbar-seam-scroll-shift) + var(--navbar-edge-inset)
+        )
+      );
+      height: auto;
+      background: $color-blue-bright;
+      translate: calc(0px - var(--navbar-seam-scroll-shift)) 0;
+      transform: skewX(-4deg) scaleX(0);
+      transform-origin: 0 0;
+      transition: transform var(--navbar-blue-retract-duration) cubic-bezier(0.16, 1, 0.3, 1)
+        var(--navbar-blue-retract-delay);
+      will-change: transform;
+
+      @supports (transform: skewX(atan2(1vw, 1vh))) {
+        transform: skewX(atan2(calc(0px - var(--navbar-edge-inset)), var(--navbar-edge-height)))
+          scaleX(0);
+      }
+    }
+
+    &.nav--expanded {
+      transition-delay: var(--navbar-body-expand-delay);
+
+      &::before {
+        transform: skewX(-4deg) scaleX(1);
+        transition-duration: var(--navbar-blue-expand-duration);
+        transition-delay: 0ms;
+
+        @supports (transform: skewX(atan2(1vw, 1vh))) {
+          transform: skewX(atan2(calc(0px - var(--navbar-edge-inset)), var(--navbar-edge-height)))
+            scaleX(1);
+        }
+      }
+    }
+  }
+
+  .nav-surface {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 0;
+    display: block;
+    width: calc(100% + 4.8vw + 5px);
+    background-color: $color-primary-black;
+    background-image: linear-gradient($color-gray-dark, $color-gray-dark);
+    background-position: var(--nav-inline) bottom;
+    background-repeat: no-repeat;
+    background-size: calc(100% - 4.8vw - 5px - var(--nav-inline) - var(--nav-inline)) 1px;
+    clip-path: polygon(0 0, 100% 0, calc(100% - var(--navbar-edge-inset)) 100%, 0 100%);
+    pointer-events: none;
+    translate: calc(0px - var(--navbar-seam-scroll-shift)) 0;
+    will-change: width, translate;
+  }
+
+  .nav-logo,
+  .nav-links {
+    position: relative;
+    z-index: 2;
+  }
+}
+
+@media (min-width: 1025px) and (prefers-reduced-motion: reduce) {
+  .nav,
+  .nav.nav--expanded {
+    transition: none;
+
+    &::before {
+      display: none;
+      transition: none;
+    }
   }
 }
 
