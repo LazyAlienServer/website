@@ -11,6 +11,8 @@ LASweb-v2 is the official website for Lazy Alien Server (LAS), a Chinese Minecra
 - `src/data/rules.ts` is the source of truth for the rules page; `src/styles/` contains shared design tokens and global industrial UI styles.
 - `src/router/index.ts` defines the `/` home route and `/rules` rules route. The `@` alias resolves to `src/`.
 
+Detailed runtime boundaries, state ownership, data flows, and modification entry points are documented in [architecture.md](architecture.md).
+
 ## Product and Design Context
 
 The visual language is neo-industrial and technological: blue and black are primary colors, white is used for contrast, and interfaces use panels, grid lines, status indicators, clipped corners, and restrained motion. Preserve the existing Chinese-language content and responsive behavior when changing UI. Respect `prefers-reduced-motion` and keep interactive controls keyboard-accessible.
