@@ -63,6 +63,12 @@ $transition-med: 0.3s ease-out;
   }
 }
 
+@mixin desktop {
+  @media (min-width: ($breakpoint-mobile + 1px)) {
+    @content;
+  }
+}
+
 // Industrial clipped-corner panel
 @mixin clipped-panel($bg: $color-primary-black, $border: $color-gray-dark) {
   background: $bg;
