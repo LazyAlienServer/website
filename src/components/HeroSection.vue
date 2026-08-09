@@ -1,6 +1,7 @@
 <template>
   <nav ref="navbar" class="nav" :class="{ 'nav--expanded': isNavExpanded }">
     <span class="nav-surface" aria-hidden="true"></span>
+    <span class="nav-underline" aria-hidden="true"></span>
     <router-link to="/" class="nav-logo">
       <img :src="logoUrl" alt="LAS logo" />
       <span>LAZY ALIEN SERVER</span>
@@ -270,14 +271,21 @@ onUnmounted(() => {
     display: block;
     width: calc(100% + 4.8vw + 5px);
     background-color: $color-primary-black;
-    background-image: linear-gradient($color-gray-dark, $color-gray-dark);
-    background-position: var(--nav-inline) bottom;
-    background-repeat: no-repeat;
-    background-size: calc(100% - 4.8vw - 5px - var(--nav-inline) - var(--nav-inline)) 1px;
     clip-path: polygon(0 0, 100% 0, calc(100% - var(--navbar-edge-inset)) 100%, 0 100%);
     pointer-events: none;
     translate: calc(0px - var(--navbar-seam-scroll-shift)) 0;
     will-change: width, translate;
+  }
+
+  .nav-underline {
+    position: absolute;
+    right: var(--nav-inline);
+    bottom: 0;
+    left: var(--nav-inline);
+    z-index: 1;
+    height: 1px;
+    background: $color-gray-dark;
+    pointer-events: none;
   }
 
   .nav-logo,
