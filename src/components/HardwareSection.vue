@@ -350,8 +350,8 @@ onUnmounted(() => {
     // faded diagonal hatch — industrial texture on the expanded panel
     background-image: repeating-linear-gradient(
       45deg,
-      rgba(255, 255, 255, 0.08) 0,
-      rgba(255, 255, 255, 0.08) 2px,
+      rgba(255, 255, 255, 0.05) 0,
+      rgba(255, 255, 255, 0.05) 2px,
       transparent 2px,
       transparent 10px
     );
