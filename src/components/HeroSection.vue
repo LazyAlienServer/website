@@ -188,6 +188,10 @@ onUnmounted(() => {
   display: none;
 }
 
+.nav-underline {
+  position: absolute;
+}
+
 // Two-stage desktop navbar transition.
 // Expand: blue parallelogram -> black nav/content.
 // Retract: black nav/content -> blue parallelogram.
@@ -278,7 +282,6 @@ onUnmounted(() => {
   }
 
   .nav-underline {
-    position: absolute;
     right: var(--nav-inline);
     bottom: 0;
     left: var(--nav-inline);
