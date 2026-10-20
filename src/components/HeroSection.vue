@@ -119,7 +119,7 @@ onUnmounted(() => {
   background: $color-primary-black;
   display: flex;
   flex-direction: column;
-  padding: 0 $spacing-lg * 1.2 $spacing-lg $spacing-lg;
+  padding: $spacing-lg $spacing-lg * 1.2 $spacing-lg $spacing-lg;
   position: relative;
   z-index: 6;
   flex: none;
@@ -162,8 +162,8 @@ onUnmounted(() => {
     content: "";
     position: absolute;
     top: 0;
-    bottom: -2px;
-    left: calc(100% - 2px);
+    bottom: 0;
+    left: calc(100%);
     width: calc(4.8vw + 7px);
     background: linear-gradient(
       90deg,
@@ -539,7 +539,7 @@ h1 {
 .meta-tag {
   position: absolute;
   right: $spacing-lg;
-  top: 120px;
+  top: $spacing-lg;
   z-index: 4;
   text-align: right;
   color: $color-white;
