@@ -39,14 +39,21 @@
 
     <div class="section-shell">
       <div class="timer-panel" v-reveal>
-        <div class="section-header">
-          <div class="index-row">
-            <span class="index-num">03</span>
-            <span class="index-label">// UPTIME</span>
+        <header class="timer-header">
+          <p class="timer-kicker">A Realistic Dream.</p>
+          <div class="timer-heading-row">
+            <h2 class="timer-title">做一场现实的梦</h2>
+            <ol class="timer-timeline" aria-label="LAS 运行时间线">
+              <li class="timeline-node is-origin">
+                <time datetime="2022-08-29">2022.08.29</time>
+              </li>
+              <li v-for="year in timelineYears" :key="year" class="timeline-node is-year">
+                <time :datetime="String(year)">{{ year }}</time>
+              </li>
+              <li class="timeline-node is-now">NOW</li>
+            </ol>
           </div>
-          <h2 class="section-title">做一场现实的梦</h2>
-          <p class="section-subtitle">SINCE 2022.08.29</p>
-        </div>
+        </header>
 
         <div class="timer-row">
           <svg
@@ -152,6 +159,11 @@ import { ref, onMounted, onUnmounted } from "vue";
 
 // ---------- Uptime counter ----------
 const establishedDate = new Date("2022-08-29T00:00:00+08:00");
+// whole years elapsed after founding — one timeline tick each
+const timelineYears = Array.from(
+  { length: new Date().getFullYear() - establishedDate.getFullYear() },
+  (_, i) => establishedDate.getFullYear() + 1 + i,
+);
 
 const days = ref(0);
 const hours = ref(0);
@@ -398,10 +410,102 @@ onUnmounted(() => {
     opacity: 0.6;
     pointer-events: none;
   }
+}
 
-  // labels sit directly on the image now — brighten them
-  .index-label {
-    color: $color-gray-light;
+// ---------- Uptime header: kicker + founding timeline ----------
+.timer-header {
+  margin-bottom: $spacing-lg;
+}
+
+.timer-kicker {
+  margin-bottom: $spacing-sm;
+  font-family: $font-display;
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: $color-gray-light;
+}
+
+// title left, timeline fills the remaining width; stacks below at tablet widths
+.timer-heading-row {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+}
+
+.timer-title {
+  flex: none;
+}
+
+// elapsed span: blue line from founding diamond to the NOW arrowhead.
+// Labels hang 28px below the line (12px padding + 16px line-height); the equal
+// top margin makes the row's vertical centering land on the line itself.
+.timer-timeline {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  margin-top: 16px;
+  // kept secondary to the title it sits beside
+  opacity: 0.7;
+  list-style: none;
+}
+
+@include tablet {
+  .timer-heading-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $spacing-md;
+  }
+
+  .timer-timeline {
+    margin-top: 0;
+  }
+}
+
+.timeline-node {
+  position: relative;
+  flex: 1;
+  padding-top: 12px;
+  border-top: 2px solid $color-blue-bright;
+  font-family: $font-display;
+  font-size: 11px;
+  line-height: 16px;
+  letter-spacing: 2px;
+  color: $color-gray-light;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: 0;
+    width: 1px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.6);
+  }
+
+  &.is-origin {
+    color: $color-white;
+
+    &::before {
+      left: -5px;
+      width: 10px;
+      background: $color-blue-bright;
+      transform: rotate(45deg);
+    }
+  }
+
+  &.is-now {
+    flex: none;
+    border-top-color: transparent;
+    color: $color-blue-bright;
+    font-weight: 700;
+
+    &::before {
+      top: -7px;
+      width: 10px;
+      height: 12px;
+      background: $color-blue-bright;
+      clip-path: polygon(0 0, 100% 50%, 0 100%);
+    }
   }
 }
 
@@ -644,6 +748,11 @@ onUnmounted(() => {
   }
 
   .timer-bracket {
+    display: none;
+  }
+
+  // founding date and NOW stay labelled; intermediate years keep only ticks
+  .timeline-node.is-year time {
     display: none;
   }
 

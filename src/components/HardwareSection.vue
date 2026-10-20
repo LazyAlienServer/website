@@ -3,15 +3,14 @@
     <div class="section-shell hw-shell">
       <div class="hw-main">
         <div class="hw-intro">
-          <div class="section-header" v-reveal>
-            <div class="index-row">
-              <span class="index-num">04</span>
-              <span class="index-label">// TECH SUPPORT</span>
-            </div>
-            <h2 class="section-title">技术支持</h2>
-            <p class="section-subtitle">强劲的服务与支持为服务器保驾护航</p>
-            <div class="title-rule"></div>
-          </div>
+          <header v-reveal>
+            <p class="hw-header-kicker">
+              <span class="hw-header-tech">TECH</span>
+              SUPPORT
+            </p>
+            <h2 class="hw-header-title">技术支持</h2>
+            <p class="hw-header-subtitle">强劲的服务与支持为服务器保驾护航</p>
+          </header>
           <div class="hardware-tags" role="list" aria-label="Hardware status">
             <span
               v-for="(tag, index) in hardwareTags"
@@ -227,10 +226,33 @@ onUnmounted(() => {
 .hw-intro {
   flex: 0 0 clamp(200px, 25vw, 280px);
   margin-top: 24px;
+}
 
-  .section-header {
-    margin-bottom: 0;
-  }
+// ---------- Header: TECH (blue) SUPPORT (gray) kicker ----------
+.hw-header-kicker {
+  font-family: $font-display;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 1px;
+  color: $color-gray-mid;
+}
+
+.hw-header-tech {
+  color: $color-blue-bright;
+}
+
+.hw-header-title {
+  margin-top: 8px;
+  font-size: clamp(30px, 3.6vw, 44px);
+  color: $color-white;
+}
+
+.hw-header-subtitle {
+  margin-top: 8px;
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: $color-gray-light;
 }
 
 .hardware-tags {

@@ -1,14 +1,32 @@
 <template>
   <section class="admin-section">
     <div class="section-shell">
-      <div class="section-header" v-reveal>
-        <div class="index-row">
-          <span class="index-num">06</span>
-          <span class="index-label">// OPERATORS</span>
+      <header class="admin-header" v-reveal>
+        <div class="admin-heading">
+          <p class="admin-kicker">CREW MANIFEST // 名册</p>
+          <h2 class="admin-title">管理团队</h2>
         </div>
-        <h2 class="section-title">管理团队</h2>
-        <div class="title-rule"></div>
-      </div>
+        <div class="admin-manifest">
+          <p class="admin-count">
+            <span class="admin-count-num">{{ pad(operators.length) }}</span>
+            <span class="admin-count-label">OPERATORS</span>
+          </p>
+          <ul class="admin-roles">
+            <li
+              v-for="entry in roleSummary"
+              :key="entry.role"
+              class="admin-role"
+              :class="`role-${entry.role}`"
+            >
+              <span class="admin-role-swatch" aria-hidden="true"></span>
+              {{ roleLabel(entry.role) }} {{ pad(entry.count) }}
+            </li>
+          </ul>
+        </div>
+        <ol class="admin-roster" aria-hidden="true">
+          <li v-for="op in operators" :key="op.name" :class="`role-${op.role}`"></li>
+        </ol>
+      </header>
 
       <div class="admin-grid">
         <component
@@ -146,6 +164,12 @@ const roleLabel = (role: OperatorRole): string => roleLabels[role] ?? role.toUpp
 
 const pad = (value: number): string => String(value).padStart(2, "0");
 
+const ROLE_ORDER: OperatorRole[] = ["admin", "tech", "mod"];
+const roleSummary = ROLE_ORDER.map((role) => ({
+  role,
+  count: operators.filter((op) => op.role === role).length,
+}));
+
 // names of operators whose avatar failed to load — initials fallback renders instead
 const failedAvatars = reactive(new Set<string>());
 const onAvatarError = (name: string): void => {
@@ -156,6 +180,113 @@ const onAvatarError = (name: string): void => {
 <style scoped lang="scss">
 .admin-section {
   background-color: $color-primary-black;
+}
+
+// ---------- Manifest header: headcount, role legend, per-operator roster strip ----------
+// role colors are shared by the legend swatches and the roster segments
+.role-admin {
+  --role-color: #{$color-blue-bright};
+}
+
+.role-tech {
+  --role-color: #{$color-primary-blue};
+}
+
+.role-mod {
+  --role-color: rgba(255, 255, 255, 0.55);
+}
+
+.admin-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: $spacing-md $spacing-lg;
+  margin-bottom: $spacing-lg;
+}
+
+.admin-kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: $spacing-sm;
+  font-family: $font-display;
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: $color-gray-mid;
+
+  &::before {
+    content: "";
+    width: 18px;
+    height: 2px;
+    background: $color-blue-bright;
+  }
+}
+
+.admin-manifest {
+  display: flex;
+  align-items: flex-end;
+  gap: $spacing-md;
+}
+
+.admin-count {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.admin-count-num {
+  font-family: $font-display;
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 0.85;
+  font-variant-numeric: tabular-nums;
+  color: $color-white;
+}
+
+.admin-count-label {
+  font-family: $font-display;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: $color-gray-mid;
+}
+
+.admin-roles {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: $spacing-md;
+  border-left: 1px solid $color-gray-dark;
+  list-style: none;
+}
+
+.admin-role {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: $font-display;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: $color-gray-light;
+}
+
+.admin-role-swatch {
+  width: 10px;
+  height: 4px;
+  background: var(--role-color);
+}
+
+// one segment per operator card, in card order
+.admin-roster {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 4px;
+  list-style: none;
+
+  li {
+    flex: 1;
+    height: 4px;
+    background: var(--role-color);
+  }
 }
 
 // 3 / 3 / 2 columns — desktop / tablet / mobile
@@ -305,6 +436,10 @@ const onAvatarError = (name: string): void => {
   .op-avatar-fallback {
     width: clamp(44px, 15vw, 56px);
     height: clamp(44px, 15vw, 56px);
+  }
+
+  .admin-header {
+    grid-template-columns: 1fr;
   }
 
   .op-subtitle {

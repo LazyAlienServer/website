@@ -138,64 +138,6 @@ button {
   }
 }
 
-// Section header pattern: index chip + label + heading
-.section-header {
-  margin-bottom: $spacing-lg;
-
-  .index-row {
-    display: flex;
-    align-items: center;
-    gap: $spacing-sm;
-    margin-bottom: $spacing-sm;
-
-    // fading hairline filling the row — control-panel framing
-    &::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      margin-left: $spacing-sm;
-      background: linear-gradient(90deg, $color-gray-dark 0%, rgba(42, 42, 42, 0) 100%);
-    }
-  }
-
-  .index-num {
-    font-family: $font-display;
-    font-size: 14px;
-    font-weight: 700;
-    color: $color-white;
-    background: $color-primary-blue;
-    padding: 4px 10px;
-    letter-spacing: 1px;
-  }
-
-  .index-label {
-    color: $color-gray-mid;
-    font-size: 12px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    text-wrap: nowrap;
-  }
-
-  .section-title {
-    font-size: $font-size-h2;
-    color: $color-white;
-  }
-
-  .section-subtitle {
-    color: $color-gray-light;
-    font-size: $font-size-body-lg;
-    margin-top: $spacing-xs;
-    letter-spacing: 2px;
-  }
-
-  .title-rule {
-    width: 64px;
-    height: 6px;
-    background: $color-white;
-    margin-top: $spacing-md;
-  }
-}
-
 // Crosshair plus marker — place absolutely inside positioned parents
 .plus-marker {
   position: absolute;

@@ -153,6 +153,32 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
   color: $color-blue-bright;
 }
 
+// original section-header layout, scoped here after the global header styles were retired
+.section-header {
+  margin-bottom: $spacing-lg;
+}
+
+.index-row {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-sm;
+
+  // fading hairline filling the row — control-panel framing
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    margin-left: $spacing-sm;
+    background: linear-gradient(90deg, $color-gray-dark 0%, rgba(42, 42, 42, 0) 100%);
+  }
+}
+
+.section-title {
+  font-size: $font-size-h2;
+  color: $color-white;
+}
+
 // PATH cards stack vertically — one per row
 .paths-grid {
   display: grid;

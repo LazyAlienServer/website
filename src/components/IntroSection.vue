@@ -35,14 +35,27 @@
           </svg>
         </div>
         <div class="intro-content">
-          <div class="section-header">
-            <div class="index-row">
-              <span class="index-num">02</span>
-              <span class="index-label">// ABOUT US</span>
+          <header class="intro-header">
+            <div class="intro-tab">
+              <span class="intro-tab-id">LAS</span>
+              <span class="intro-tab-label">PROFILE // 档案</span>
             </div>
-            <h2 class="section-title">关于我们</h2>
-            <div class="title-rule"></div>
-          </div>
+            <h2 class="intro-title">关于我们</h2>
+            <dl class="intro-record">
+              <div class="intro-field">
+                <dt>NAME</dt>
+                <dd>Lazy Alien Server</dd>
+              </div>
+              <div class="intro-field">
+                <dt>FOCUS</dt>
+                <dd>技术交流</dd>
+              </div>
+              <div class="intro-field">
+                <dt>MEMBERS</dt>
+                <dd>学生群体</dd>
+              </div>
+            </dl>
+          </header>
           <div class="intro-text">
             <p>Lazy Alien Server简称LAS~是以学生群体为主的技术交流向Minecraft服务器。</p>
             <p>我们充分鼓励技术探索与交流，并欢迎有能力的玩家加入。</p>
@@ -101,6 +114,76 @@ import logoUrl from "@/assets/logo.svg";
     &:last-child {
       margin-bottom: 0;
     }
+  }
+}
+
+// ---------- Profile header: folder tab + record fields ----------
+.intro-header {
+  margin-bottom: $spacing-lg;
+}
+
+// tab shares the hairline's color so it reads as one folder edge
+.intro-tab {
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: $spacing-md;
+
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: $color-gray-dark;
+  }
+}
+
+.intro-tab-id,
+.intro-tab-label {
+  font-family: $font-display;
+  font-size: 12px;
+  letter-spacing: 3px;
+  line-height: 1;
+  padding: 8px 12px 7px;
+}
+
+.intro-tab-id {
+  background: $color-primary-blue;
+  color: $color-white;
+  font-weight: 700;
+}
+
+.intro-tab-label {
+  padding-right: 28px;
+  background: $color-gray-dark;
+  color: $color-gray-light;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 100%, 0 100%);
+}
+
+.intro-record {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 12px;
+  margin-top: $spacing-md;
+}
+
+.intro-field {
+  padding: 2px 24px 2px 12px;
+  border-left: 1px solid $color-gray-dark;
+
+  &:first-child {
+    border-left: 3px solid $color-white;
+  }
+
+  dt {
+    font-family: $font-display;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: $color-gray-mid;
+  }
+
+  dd {
+    font-size: 14px;
+    letter-spacing: 1px;
+    color: $color-white;
   }
 }
 
