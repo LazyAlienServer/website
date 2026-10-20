@@ -58,7 +58,7 @@
 
 <script setup lang="ts">
 import logoUrl from "@/assets/logo.svg";
-import logoV1Url from "../../.design/logos/logo.svg";
+import logoV1Url from "@/assets/logo-v1.svg";
 import ParticleLogo from "./ParticleLogo.vue";
 </script>
 
