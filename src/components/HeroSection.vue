@@ -15,10 +15,11 @@
   <section class="hero">
     <div class="hero-panel">
       <div class="panel-body">
-        <div class="index-row">
-          <span class="index-num">01</span>
-          <span class="index-label">// SYSTEM ONLINE</span>
-        </div>
+        <p class="hero-kicker">
+          <span class="kicker-mark" aria-hidden="true"></span>
+          <span class="kicker-lead">STUDENT-LED</span>
+          TECH EXCHANGE
+        </p>
         <h1>LAZY ALIEN<br /><span class="accent">SERVER</span></h1>
         <p class="sub-cn">与 LAS 的成员们，携手并进</p>
         <div class="rule"></div>
@@ -358,28 +359,30 @@ onUnmounted(() => {
   justify-content: center;
 }
 
-.index-row {
+// Identity kicker: slanted blue mark + two-tone mission line (status lives in the footer)
+.hero-kicker {
   display: flex;
   align-items: center;
-  gap: $spacing-sm;
+  gap: 10px;
   margin-bottom: 28px;
-}
-
-.index-num {
   font-family: $font-display;
-  font-size: 14px;
-  color: $color-white;
-  background: $color-primary-blue;
-  padding: 4px 10px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 3px;
+  color: $color-gray-mid;
 }
 
-.index-label {
-  color: $color-gray-mid;
-  font-size: 12px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
+.kicker-mark {
+  flex: none;
+  width: 22px;
+  height: 10px;
+  margin-right: 4px;
+  background: $color-blue-bright;
+  transform: skewX(-20deg);
+}
+
+.kicker-lead {
+  color: $color-white;
 }
 
 h1 {
