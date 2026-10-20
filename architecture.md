@@ -33,7 +33,7 @@ The Vite alias `@` resolves to `src/`. SCSS receives `src/styles/variables.scss`
 `src/views/HomePage.vue` is a composition surface. It owns ordering, not the implementation of each section:
 
 1. `HeroSection.vue` — fixed navigation, hero visual, scroll-driven seam/parallax.
-2. `IntroSection.vue` — static LAS introduction and decorative technology rail.
+2. `IntroSection.vue` — LAS introduction, particle emblem (`ParticleLogo.vue`), and decorative technology rail.
 3. `LiveTimer.vue` — founding-date uptime counter, UTC+8 analog clock, image carousel, and parallax.
 4. `HardwareSection.vue` — hardware accordion; composes `InfrastructureFeatures.vue`.
 5. `GithubProjects.vue` — remote GitHub repository index and carousel.
@@ -106,6 +106,10 @@ This is the most stateful landing section. Keep the following contracts intact:
 - Loading, error, and empty states are part of the observable contract. Preserve the retry path and do not silently swallow a failed repository request.
 
 If changing GitHub fields, update the interface, runtime validator, cache compatibility, display formatting, and both desktop/mobile card templates together.
+
+### `ParticleLogo.vue`
+
+Hand-written canvas particle swarm (no dependency). On mount it decodes `src` and `hoverSrc`, trims each to its drawn bounds and contain-fits it to the frame, samples opaque pixels on a sparse 5px grid into colored targets, and morphs one particle set between them: `src` at rest, `hoverSrc` (`.design/logos/logo.svg`, the v1 logo) while hovered. Each particle has its own soft spring stiffness and brightness, so morphs drift in staggered without overshoot; the pointer gently pushes nearby dots aside and a few free dots drift in the background. The animation frame runs continuously only while the element is in view. `ResizeObserver` resamples on size change; reduced motion snaps particles to targets with static ambient dots and no repulsion; an image decode failure falls back to a static `<img>`. The parent sizes the root (Intro uses a square frame so the landscape v2 and portrait v1 logos fill it about equally).
 
 ### `AdminTeam.vue`
 
