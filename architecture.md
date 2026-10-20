@@ -129,6 +129,8 @@ This component uses template refs and `requestAnimationFrame` to derive viewport
 - Breakpoint mixins: `mobile` (max 640px), `tablet` (max 1024px), and `desktop` (min 641px).
 - Industrial mixins: `clipped-panel`, `corner-brackets`, and `hatch-strip`.
 
+Section headings are intentionally bespoke and owned by each section component (intro profile tab, timer founding timeline, hardware module-count header, GitHub title, admin roster manifest, join index row). There is no shared section-header component or global header class; derive header data from the section's own constants (`hardware`, `operators`, `establishedDate`).
+
 `src/styles/global.scss` owns resets, body defaults, typography scale, utility panels, blueprint grids, signal animation, section shells, reveal transitions, and the global reduced-motion rules. Prefer existing tokens/mixins over local duplicate values.
 
 `src/directives/reveal.ts` owns the `v-reveal` contract. It adds `.reveal`, observes the element once with `IntersectionObserver`, then adds `.revealed`. The global reduced-motion rule makes revealed content immediately visible without transition.
