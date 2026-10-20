@@ -1,8 +1,7 @@
-import { defineConfig, lazyPlugins } from "vite-plus";
 import vue from "@vitejs/plugin-vue";
 import { fileURLToPath, URL } from "node:url";
 
-export default defineConfig({
+export default {
   staged: {
     "*": "vp check --fix",
   },
@@ -43,7 +42,7 @@ export default defineConfig({
     },
     options: { typeAware: true, typeCheck: true },
   },
-  plugins: lazyPlugins(() => [vue()]),
+  plugins: [vue()],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
@@ -62,4 +61,4 @@ export default defineConfig({
     assetsDir: "assets",
     sourcemap: false,
   },
-});
+};
