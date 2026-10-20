@@ -224,21 +224,19 @@ import ParticleLogo from "./ParticleLogo.vue";
   }
 }
 
+// tablet and mobile: single text column without the particle emblem or profile tab
 @include tablet {
   .intro-grid {
     grid-template-columns: 1fr;
   }
 
-  .intro-icon {
-    max-width: 288px;
+  .intro-icon,
+  .intro-tab {
+    display: none;
   }
 }
 
 @include mobile {
-  .intro-icon {
-    display: none;
-  }
-
   .intro-text p {
     font-size: $font-size-body;
   }
