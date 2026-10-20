@@ -3,36 +3,12 @@
     <div class="section-shell">
       <div class="intro-grid" v-reveal>
         <div class="intro-icon">
-          <svg
+          <ParticleLogo
             class="intro-logo"
-            viewBox="0 0 97 73"
-            role="img"
-            aria-label="LAS emblem"
-            focusable="false"
-          >
-            <defs>
-              <filter
-                id="intro-logo-thin"
-                x="0"
-                y="0"
-                width="97"
-                height="73"
-                filterUnits="userSpaceOnUse"
-                primitiveUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
-              >
-                <feMorphology in="SourceGraphic" operator="erode" radius="0.8" />
-              </filter>
-            </defs>
-            <image
-              :href="logoUrl"
-              x="0"
-              y="0"
-              width="97"
-              height="73"
-              filter="url(#intro-logo-thin)"
-            />
-          </svg>
+            :src="logoUrl"
+            :hover-src="logoV1Url"
+            label="LAS emblem"
+          />
         </div>
         <div class="intro-content">
           <header class="intro-header">
@@ -82,6 +58,8 @@
 
 <script setup lang="ts">
 import logoUrl from "@/assets/logo.svg";
+import logoV1Url from "../../.design/logos/logo.svg";
+import ParticleLogo from "./ParticleLogo.vue";
 </script>
 
 <style scoped lang="scss">
@@ -92,16 +70,17 @@ import logoUrl from "@/assets/logo.svg";
 
 .intro-grid {
   display: grid;
-  grid-template-columns: 360px 1fr;
+  grid-template-columns: 432px 1fr;
   gap: $spacing-lg * 1.2;
   align-items: center;
 }
 
+// square frame balances the landscape v2 logo (97 × 73) and the portrait v1
+// logo (881 × 1080): they contain-fit to about 75% and 82% of the frame area
 .intro-logo {
   display: block;
   width: 100%;
-  height: auto;
-  opacity: 0.9;
+  aspect-ratio: 1;
 }
 
 .intro-text {
@@ -251,7 +230,7 @@ import logoUrl from "@/assets/logo.svg";
   }
 
   .intro-icon {
-    max-width: 240px;
+    max-width: 288px;
   }
 }
 
