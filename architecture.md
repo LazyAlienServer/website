@@ -48,7 +48,8 @@ When changing section order or adding a landing section, start in `HomePage.vue`
 `src/views/RulesPage.vue` renders `chapters` from `src/data/rules.ts`. The data model is:
 
 `SiteNav.vue` owns the shared logo, route-aware links, and responsive branding. `SiteNavbar.vue` is mounted once in `App.vue`, remains fixed across route changes, and owns the route/scroll expansion state plus hero seam geometry. It is expanded by default on `/rules`; on `/`, scroll position controls expansion. Keeping the same navbar instance preserves the expansion transition when navigating from a collapsed homepage navbar to RulesPage. RulesPage offsets its content by the observed navbar height and renders the shared `FooterSection.vue` after the rules signoff.
-RulesPage includes an unframed, fixed right-edge chapter index above 1200px viewport width. Links reuse the existing `01`–`08` heading anchors; CSS scroll margins account for the persistent navbar. A coalesced scroll/resize callback selects the last heading above the navbar offset and updates `aria-current`; listeners and pending frames are removed on unmount.
+
+RulesPage lays out a centered 900px document column inside a three-column grid. The chapter index is an unframed list of right-aligned titles, each ending in a dash; it is `position: sticky` in the right column, so it stops at the end of the document instead of overlapping the footer, and it is hidden at 1360px and below. Links reuse the `01`–`09` heading anchors (the route-hash contract used by JoinSection), and CSS scroll margins account for the persistent navbar. A coalesced scroll/resize callback selects the last heading above the navbar offset and sets `aria-current`; the active item turns blue and its dash lengthens. Chapter titles are split into a "第X章" label and a short title at module load; edit titles in `src/data/rules.ts` only.
 
 ```ts
 interface Article {
