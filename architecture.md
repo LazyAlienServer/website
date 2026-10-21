@@ -39,8 +39,7 @@ The Vite alias `@` resolves to `src/`. SCSS receives `src/styles/variables.scss`
 5. `GithubProjects.vue` — remote GitHub repository index and carousel.
 6. `AdminTeam.vue` — operator cards, avatar fallback, and optional Bilibili links.
 7. `JoinSection.vue` — rules entry points, QQ group link, and clipboard action.
-8. `FooterSection.vue` — contact, credits, copyright, and founding metadata.
-9. `UnderFooterSection.vue` — viewport-aware animated closing wordmark.
+8. `FooterSection.vue` — shared contact, credits, copyright, founding metadata, and the blue closing wordmark on both home and rules pages.
 
 When changing section order or adding a landing section, start in `HomePage.vue`. When changing behavior or markup, work in the owning component instead of adding route-level logic.
 
@@ -120,9 +119,9 @@ Operator data is local and typed. Avatar URLs point to the LAS website source di
 
 The two rules buttons route to `/rules` with query values `path=01` or `path=02` and a chapter hash. The QQ group number is `835047145`. Copying uses `navigator.clipboard` first and a temporary textarea fallback second; timer cleanup belongs in `onBeforeUnmount`.
 
-### `UnderFooterSection.vue`
+### `FooterSection.vue`
 
-This component uses template refs and `requestAnimationFrame` to derive viewport clipping, panel position, and responsive wordmark bounds. It also waits for the `Noto Sans SC` font before measuring the SVG title. Keep scroll/resize listener cleanup and frame cancellation together.
+Both routes render the same footer, including the closing blue wordmark. A normal-flow slot reserves the SVG's 10:1 aspect ratio plus padding and uses `clip-path: inset(0)` to reveal its viewport-fixed, bottom-aligned child only within that slot. The SVG uses a fixed viewBox and `textLength`; CSS handles sizing without font measurement, viewport state, scroll/resize listeners, or animation frames.
 
 ## Shared presentation system
 

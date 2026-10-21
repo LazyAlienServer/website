@@ -10,7 +10,6 @@
       <JoinSection />
     </main>
     <FooterSection />
-    <UnderFooterSection />
   </div>
 </template>
 
@@ -23,7 +22,6 @@ import GithubProjects from "@/components/GithubProjects.vue";
 import AdminTeam from "@/components/AdminTeam.vue";
 import JoinSection from "@/components/JoinSection.vue";
 import FooterSection from "@/components/FooterSection.vue";
-import UnderFooterSection from "@/components/UnderFooterSection.vue";
 </script>
 
 <style scoped lang="scss">

@@ -20,6 +20,15 @@
       <span>© {{ year }} LAZY ALIEN SERVER</span>
       <span>EST. 2022.08.29 — V2.0</span>
     </div>
+    <div class="footer-wordmark">
+      <div class="footer-wordmark-panel">
+        <svg viewBox="0 0 1500 150" role="img" aria-label="LAZY ALIEN SERVER">
+          <text x="0" y="125" textLength="1500" lengthAdjust="spacingAndGlyphs">
+            LAZY ALIEN SERVER
+          </text>
+        </svg>
+      </div>
+    </div>
   </footer>
 </template>
 
@@ -106,6 +115,44 @@ const year = new Date().getFullYear();
   letter-spacing: 2px;
   color: $color-gray-mid;
   text-transform: uppercase;
+}
+
+.footer-wordmark {
+  --wordmark-inline: 24px;
+  --wordmark-block: 16px;
+
+  // Reserve the SVG's 10:1 aspect ratio plus padding. The clip reveals only
+  // the portion of the fixed panel intersecting this normal-flow slot.
+  height: calc((100vw - 2 * var(--wordmark-inline)) / 10 + 2 * var(--wordmark-block));
+  clip-path: inset(0);
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    fill: $color-white;
+  }
+
+  text {
+    font-family: "Noto Sans SC", sans-serif;
+    font-size: 150px;
+    font-weight: 900;
+  }
+}
+
+.footer-wordmark-panel {
+  position: fixed;
+  inset: auto 0 0;
+  padding: var(--wordmark-block) var(--wordmark-inline);
+  background: $color-primary-blue;
+  pointer-events: none;
+}
+
+@include mobile {
+  .footer-wordmark {
+    --wordmark-inline: 8px;
+    --wordmark-block: 8px;
+  }
 }
 
 @include tablet {
