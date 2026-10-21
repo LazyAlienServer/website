@@ -6,6 +6,18 @@
       <p class="rules-version">修订日期 <time datetime="2023-08-15">2023.08.15</time></p>
     </header>
 
+    <nav class="rules-toc" aria-label="章节目录">
+      <a
+        v-for="(chapter, ci) in chapters"
+        :key="chapter.id"
+        :href="`#${String(ci + 1).padStart(2, '0')}`"
+        :class="{ 'is-active': activeChapterIndex === ci }"
+        :aria-current="activeChapterIndex === ci ? 'location' : undefined"
+      >
+        <span class="toc-title">{{ chapter.title }}</span>
+        <span class="toc-marker" aria-hidden="true"></span>
+      </a>
+    </nav>
     <article class="rules-content">
       <section v-for="(chapter, ci) in chapters" :key="chapter.id" class="chapter">
         <div class="chapter-header">
@@ -41,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { chapters } from "@/data/rules";
 import FooterSection from "@/components/FooterSection.vue";
@@ -65,6 +77,35 @@ const activeFlashArticleIds = computed(() => {
   const path = route.query.path;
   return flashArticleIdsByPath[typeof path === "string" ? path : ""] ?? [];
 });
+
+const activeChapterIndex = ref(0);
+let frame = 0;
+const updateChapter = () => {
+  frame = 0;
+  const offset =
+    Number.parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue("--site-nav-height"),
+    ) || 84;
+  const headings = document.querySelectorAll<HTMLElement>(".chapter-header h2[id]");
+  let current = 0;
+  headings.forEach((heading, index) => {
+    if (heading.getBoundingClientRect().top <= offset + 32) current = index;
+  });
+  activeChapterIndex.value = current;
+};
+const scheduleChapter = () => {
+  if (!frame) frame = requestAnimationFrame(updateChapter);
+};
+onMounted(() => {
+  updateChapter();
+  window.addEventListener("scroll", scheduleChapter, { passive: true });
+  window.addEventListener("resize", scheduleChapter);
+});
+onUnmounted(() => {
+  cancelAnimationFrame(frame);
+  window.removeEventListener("scroll", scheduleChapter);
+  window.removeEventListener("resize", scheduleChapter);
+});
 </script>
 
 <style scoped lang="scss">
@@ -72,6 +113,65 @@ const activeFlashArticleIds = computed(() => {
   background: $color-primary-black;
   min-height: 100vh;
   padding-top: var(--site-nav-height, 84px);
+}
+
+.rules-toc {
+  position: fixed;
+  top: 50%;
+  right: 24px;
+  z-index: 5;
+  width: min(240px, calc((100vw - 900px) / 2 - 48px));
+  max-height: calc(100dvh - var(--site-nav-height, 84px) * 2);
+  overflow-y: auto;
+  transform: translateY(-50%);
+
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    padding: 8px 0;
+    color: $color-gray-mid;
+    font-size: 13px;
+
+    &:hover,
+    &.is-active {
+      color: $color-blue-bright;
+    }
+    &:focus-visible {
+      outline: 1px solid $color-blue-bright;
+      outline-offset: -1px;
+    }
+  }
+}
+
+.toc-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.toc-marker {
+  flex: none;
+  width: 8px;
+  height: 3px;
+  background: currentColor;
+  opacity: 0.4;
+}
+
+.is-active .toc-marker {
+  width: 16px;
+  opacity: 1;
+}
+
+.chapter-header h2 {
+  scroll-margin-top: calc(var(--site-nav-height, 84px) + 24px);
+}
+
+@media (max-width: 1200px) {
+  .rules-toc {
+    display: none;
+  }
 }
 
 .rules-heading {
