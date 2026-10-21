@@ -48,6 +48,8 @@ When changing section order or adding a landing section, start in `HomePage.vue`
 
 `src/views/RulesPage.vue` renders `chapters` from `src/data/rules.ts`. The data model is:
 
+`SiteNav.vue` owns the shared logo, route-aware links, and responsive branding. `SiteNavbar.vue` is mounted once in `App.vue`, remains fixed across route changes, and owns the route/scroll expansion state plus hero seam geometry. It is expanded by default on `/rules`; on `/`, scroll position controls expansion. Keeping the same navbar instance preserves the expansion transition when navigating from a collapsed homepage navbar to RulesPage. RulesPage offsets its content by the observed navbar height and renders the shared `FooterSection.vue` after the rules signoff.
+
 ```ts
 interface Article {
   id: string;
@@ -66,14 +68,13 @@ The page reads `route.query.path` and maps `01` and `02` to article IDs that rec
 
 ## Stateful components and side effects
 
-### `HeroSection.vue`
+### `SiteNavbar.vue` and `HeroSection.vue`
 
-- State: `isNavExpanded` is derived from `window.scrollY > 48`.
-- Scroll work is coalesced with `requestAnimationFrame`.
-- The hero image receives a `translateY` parallax transform.
-- Desktop nav derives `--seam-top` and `--seam-bottom` from the actual hero visual bounds and its 8%-to-0 clip slope. Both nav surfaces use these same coordinates; registered `--nav-blue-progress` and `--nav-body-progress` animate independently of scroll geometry (blue first on expansion, black first on retraction). Do not reintroduce skew transforms or pixel-offset seam patches.
-- Cleanup must cancel the frame and remove both scroll and resize listeners.
-- The navbar's gray underline is a separate fixed element; do not put it on the scrolling seam surface.
+- `SiteNavbar.vue` derives expansion from route and scroll position: rules is always expanded; home expands after `window.scrollY > 48`.
+- Both components coalesce scroll work with `requestAnimationFrame`; Hero owns only its image parallax.
+- Desktop nav derives `--seam-top` and `--seam-bottom` from the actual hero visual bounds and its 8%-to-0 clip slope. Both nav surfaces use these same coordinates; registered progress properties animate independently of scroll geometry. Do not reintroduce skew transforms or pixel-offset seam patches.
+- Navbar observes its own dimensions and publishes `--site-nav-height` for page offsets. Cleanup cancels frames, disconnects the observer, and removes event listeners.
+- The navbar's gray underline remains separate from its seam surfaces.
 
 ### `LiveTimer.vue`
 

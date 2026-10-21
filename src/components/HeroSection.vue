@@ -1,17 +1,4 @@
 <template>
-  <nav ref="navbar" class="nav" :class="{ 'nav--expanded': isNavExpanded }">
-    <span class="nav-surface" aria-hidden="true"></span>
-    <span class="nav-underline" aria-hidden="true"></span>
-    <router-link to="/" class="nav-logo">
-      <img :src="logoUrl" alt="LAS logo" />
-      <span>LAZY ALIEN SERVER</span>
-    </router-link>
-    <div class="nav-links">
-      <router-link to="/" class="active">首页</router-link>
-      <router-link to="/rules">规章</router-link>
-    </div>
-  </nav>
-
   <section class="hero">
     <div class="hero-panel">
       <div class="panel-body">
@@ -38,7 +25,7 @@
       </div>
     </div>
 
-    <div ref="heroVisual" class="hero-visual">
+    <div class="hero-visual">
       <img
         ref="heroImage"
         class="hero-img"
@@ -55,30 +42,14 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
-import logoUrl from "@/assets/logo.svg";
 
 const heroImage = ref<HTMLImageElement | null>(null);
-const heroVisual = ref<HTMLElement | null>(null);
-const navbar = ref<HTMLElement | null>(null);
-const isNavExpanded = ref(false);
 let scrollFrameId = 0;
 
 const updateScrollEffects = () => {
   if (heroImage.value) {
     heroImage.value.style.transform = `translateY(${window.scrollY * 0.5}px)`;
   }
-
-  if (navbar.value && heroVisual.value && window.innerWidth > 1024) {
-    const visual = heroVisual.value.getBoundingClientRect();
-    const nav = navbar.value.getBoundingClientRect();
-    const slope = visual.height > 0 ? (visual.width * 0.08) / visual.height : 0;
-    // Same line as the Hero's 8%-to-0 clip: x(y) = left + 8% width - y * slope.
-    const top = visual.left + visual.width * 0.08 + visual.top * slope;
-    navbar.value.style.setProperty("--seam-top", `${top}px`);
-    navbar.value.style.setProperty("--seam-bottom", `${top - nav.height * slope}px`);
-  }
-
-  isNavExpanded.value = window.scrollY > 48;
 };
 
 const scheduleScrollEffects = () => {
@@ -100,18 +71,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang="scss">
-@property --nav-blue-progress {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0;
-}
-
-@property --nav-body-progress {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0;
-}
-
 .hero {
   display: flex;
   height: 100vh;
@@ -132,169 +91,6 @@ onUnmounted(() => {
   position: relative;
   z-index: 6;
   flex: none;
-}
-
-.nav {
-  --nav-inline: #{$spacing-lg};
-  --seam-top: 44.8vw;
-  --seam-bottom: 44.8vw;
-
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: $spacing-md;
-  width: 40%;
-  padding: $spacing-md var(--nav-inline);
-  background: $color-primary-black;
-  transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-
-  // Gray underline follows the content insets: logo left to links right.
-  &::before {
-    content: "";
-    position: absolute;
-    right: var(--nav-inline);
-    bottom: 0;
-    left: var(--nav-inline);
-    height: 1px;
-    background: $color-gray-dark;
-    pointer-events: none;
-  }
-
-  &.nav--expanded {
-    width: 100vw;
-  }
-}
-
-.nav-surface {
-  display: none;
-}
-
-.nav-underline {
-  position: absolute;
-}
-
-// Both surfaces use the Hero's exact seam coordinates. Blue expands first;
-// black follows via the nav's width transition. On collapse the order reverses.
-@media (min-width: 1025px) {
-  .nav {
-    isolation: isolate;
-    background: transparent;
-    transition:
-      width 420ms cubic-bezier(0.16, 1, 0.3, 1),
-      --nav-body-progress 420ms cubic-bezier(0.16, 1, 0.3, 1),
-      --nav-blue-progress 270ms cubic-bezier(0.16, 1, 0.3, 1) 420ms;
-
-    &::before {
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: auto;
-      width: 100vw;
-      height: auto;
-      z-index: -2;
-      background: $color-blue-bright;
-      clip-path: polygon(
-        0 0,
-        calc(var(--seam-top) + 6px + (100vw - var(--seam-top) - 6px) * var(--nav-blue-progress)) 0,
-        calc(
-            var(--seam-bottom) + 6px + (100vw - var(--seam-bottom) - 6px) * var(--nav-blue-progress)
-          )
-          100%,
-        0 100%
-      );
-    }
-
-    &.nav--expanded {
-      --nav-blue-progress: 1;
-      --nav-body-progress: 1;
-      transition:
-        width 420ms cubic-bezier(0.16, 1, 0.3, 1) 240ms,
-        --nav-body-progress 420ms cubic-bezier(0.16, 1, 0.3, 1) 240ms,
-        --nav-blue-progress 240ms cubic-bezier(0.16, 1, 0.3, 1);
-    }
-  }
-
-  .nav-surface {
-    position: absolute;
-    inset: 0 auto 0 0;
-    z-index: -1;
-    display: block;
-    width: 100vw;
-    background: $color-primary-black;
-    clip-path: polygon(
-      0 0,
-      calc(var(--seam-top) + (100vw - var(--seam-top)) * var(--nav-body-progress)) 0,
-      calc(var(--seam-bottom) + (100vw - var(--seam-bottom)) * var(--nav-body-progress)) 100%,
-      0 100%
-    );
-    pointer-events: none;
-  }
-
-  .nav-underline {
-    right: var(--nav-inline);
-    bottom: 0;
-    left: var(--nav-inline);
-    height: 1px;
-    background: $color-gray-dark;
-    pointer-events: none;
-  }
-}
-
-@media (min-width: 1025px) and (prefers-reduced-motion: reduce) {
-  .nav,
-  .nav.nav--expanded {
-    transition: none;
-
-    &::before,
-    .nav-surface {
-      transition: none;
-    }
-  }
-}
-
-.nav-logo {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-
-  img {
-    height: 35.2px;
-    width: auto;
-  }
-
-  span {
-    font-family: $font-display;
-    font-weight: 700;
-    font-size: 18px;
-    color: $color-white;
-    letter-spacing: 1px;
-  }
-}
-
-.nav-links {
-  display: flex;
-  gap: 28px;
-
-  a {
-    color: $color-gray-mid;
-    font-size: 14px;
-    letter-spacing: 2px;
-    transition: color $transition-fast;
-
-    &:hover {
-      color: $color-blue-bright;
-    }
-
-    &.active {
-      color: $color-white;
-      border-bottom: 2px solid $color-blue-bright;
-      padding-bottom: 4px;
-    }
-  }
 }
 
 .panel-body {
@@ -514,19 +310,6 @@ h1 {
     padding: 0 $spacing-md $spacing-lg;
   }
 
-  .nav,
-  .nav.nav--expanded {
-    --nav-inline: #{$spacing-md};
-
-    position: sticky;
-    order: -2;
-    width: 100%;
-    transition: none;
-
-    &::after {
-      display: none;
-    }
-  }
   .panel-body {
     padding: $spacing-lg 0;
   }
@@ -553,15 +336,6 @@ h1 {
 }
 
 @include mobile {
-  .nav-logo span {
-    display: none;
-  }
-
-  .nav,
-  .nav.nav--expanded {
-    --nav-inline: #{$spacing-sm};
-  }
-
   .sub-cn {
     font-size: 18px;
     letter-spacing: 3px;

@@ -1,22 +1,10 @@
 <template>
   <div class="rules-page">
-    <nav class="rules-nav">
-      <router-link to="/" class="back-link">
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          width="16"
-          height="16"
-        >
-          <path d="M19 12H5M12 19l-7-7 7-7" />
-        </svg>
-        返回首页
-      </router-link>
-      <h1 class="nav-title">LazyAlienServer规章制度</h1>
-      <span class="nav-version">2023.08.15</span>
-    </nav>
+    <header class="rules-heading">
+      <p class="rules-kicker">LAS // COMMUNITY PROTOCOL</p>
+      <h1>LazyAlienServer规章制度</h1>
+      <p class="rules-version">修订日期 <time datetime="2023-08-15">2023.08.15</time></p>
+    </header>
 
     <article class="rules-content">
       <section v-for="(chapter, ci) in chapters" :key="chapter.id" class="chapter">
@@ -48,6 +36,7 @@
         <p class="signoff-date">2023.08.15</p>
       </footer>
     </article>
+    <FooterSection />
   </div>
 </template>
 
@@ -55,6 +44,7 @@
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { chapters } from "@/data/rules";
+import FooterSection from "@/components/FooterSection.vue";
 
 const route = useRoute();
 
@@ -81,50 +71,35 @@ const activeFlashArticleIds = computed(() => {
 .rules-page {
   background: $color-primary-black;
   min-height: 100vh;
+  padding-top: var(--site-nav-height, 84px);
 }
 
-.rules-nav {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: $spacing-md;
-  background: rgba(10, 10, 10, 0.92);
-  backdrop-filter: blur(10px);
+.rules-heading {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: $spacing-lg * 1.5 $spacing-md $spacing-lg;
   border-bottom: 1px solid $color-gray-dark;
-  border-left: 6px solid $color-primary-blue;
-  padding: 16px $spacing-md;
-}
 
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: $spacing-xs;
-  color: $color-gray-light;
-  font-size: 14px;
-  letter-spacing: 1px;
-  white-space: nowrap;
-  transition: color $transition-fast;
-
-  &:hover {
-    color: $color-blue-bright;
+  h1 {
+    max-width: 20ch;
+    font-size: clamp(28px, 4vw, 48px);
+    overflow-wrap: anywhere;
   }
 }
 
-.nav-title {
-  font-size: 20px;
-  color: $color-white;
-  letter-spacing: 2px;
-  text-align: center;
+.rules-kicker {
+  margin-bottom: $spacing-sm;
+  font-family: $font-display;
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: $color-blue-bright;
 }
 
-.nav-version {
-  font-size: 12px;
+.rules-version {
+  margin-top: $spacing-md;
   color: $color-gray-mid;
+  font-size: 12px;
   letter-spacing: 2px;
-  white-space: nowrap;
 }
 
 .rules-content {
@@ -263,14 +238,6 @@ const activeFlashArticleIds = computed(() => {
 }
 
 @include mobile {
-  .nav-title {
-    font-size: 16px;
-  }
-
-  .nav-version {
-    display: none;
-  }
-
   .chapter-header {
     .chapter-index {
       font-size: 28px;
