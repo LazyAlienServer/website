@@ -132,7 +132,7 @@ onUnmounted(() => {
     gap: 16px;
     padding: 8px 0;
     color: $color-gray-mid;
-    font-size: 13px;
+    transition: color $transition-med;
 
     &:hover,
     &.is-active {
@@ -156,7 +156,9 @@ onUnmounted(() => {
   width: 8px;
   height: 3px;
   background: currentColor;
-  opacity: 0.4;
+  transition:
+    width $transition-med,
+    opacity $transition-med;
 }
 
 .is-active .toc-marker {
