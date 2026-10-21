@@ -71,7 +71,7 @@ The page reads `route.query.path` and maps `01` and `02` to article IDs that rec
 - State: `isNavExpanded` is derived from `window.scrollY > 48`.
 - Scroll work is coalesced with `requestAnimationFrame`.
 - The hero image receives a `translateY` parallax transform.
-- Desktop navbar seam variables are written to the nav element: `--navbar-seam-scroll-shift`, `--navbar-edge-height`, and `--navbar-edge-inset`.
+- Desktop nav derives `--seam-top` and `--seam-bottom` from the actual hero visual bounds and its 8%-to-0 clip slope. Both nav surfaces use these same coordinates; registered `--nav-blue-progress` and `--nav-body-progress` animate independently of scroll geometry (blue first on expansion, black first on retraction). Do not reintroduce skew transforms or pixel-offset seam patches.
 - Cleanup must cancel the frame and remove both scroll and resize listeners.
 - The navbar's gray underline is a separate fixed element; do not put it on the scrolling seam surface.
 

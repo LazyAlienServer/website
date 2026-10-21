@@ -68,18 +68,14 @@ const updateScrollEffects = () => {
     heroImage.value.style.transform = `translateY(${window.scrollY * 0.5}px)`;
   }
 
-  if (navbar.value && heroVisual.value) {
-    const visualRect = heroVisual.value.getBoundingClientRect();
-    const navbarRect = navbar.value.getBoundingClientRect();
-    const localY = Math.min(Math.max(-visualRect.top, 0), visualRect.height);
-    const isDesktop = window.innerWidth > 1024;
-    const seamSlope = visualRect.height > 0 ? (visualRect.width * 0.08) / visualRect.height : 0;
-    const seamShift = isDesktop ? localY * seamSlope : 0;
-    const edgeInset = isDesktop ? navbarRect.height * seamSlope : 0;
-
-    navbar.value.style.setProperty("--navbar-seam-scroll-shift", `${seamShift}px`);
-    navbar.value.style.setProperty("--navbar-edge-height", `${navbarRect.height}px`);
-    navbar.value.style.setProperty("--navbar-edge-inset", `${edgeInset}px`);
+  if (navbar.value && heroVisual.value && window.innerWidth > 1024) {
+    const visual = heroVisual.value.getBoundingClientRect();
+    const nav = navbar.value.getBoundingClientRect();
+    const slope = visual.height > 0 ? (visual.width * 0.08) / visual.height : 0;
+    // Same line as the Hero's 8%-to-0 clip: x(y) = left + 8% width - y * slope.
+    const top = visual.left + visual.width * 0.08 + visual.top * slope;
+    navbar.value.style.setProperty("--seam-top", `${top}px`);
+    navbar.value.style.setProperty("--seam-bottom", `${top - nav.height * slope}px`);
   }
 
   isNavExpanded.value = window.scrollY > 48;
@@ -104,6 +100,18 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang="scss">
+@property --nav-blue-progress {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --nav-body-progress {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
 .hero {
   display: flex;
   height: 100vh;
@@ -128,9 +136,8 @@ onUnmounted(() => {
 
 .nav {
   --nav-inline: #{$spacing-lg};
-  --navbar-seam-scroll-shift: 0px;
-  --navbar-edge-height: 83px;
-  --navbar-edge-inset: 6px;
+  --seam-top: 44.8vw;
+  --seam-bottom: 44.8vw;
 
   position: fixed;
   top: 0;
@@ -157,29 +164,6 @@ onUnmounted(() => {
     pointer-events: none;
   }
 
-  // Moving hero seam. One compound layer fills the 4.8vw gap in black and
-  // reserves its final 6px for the blue edge.
-  &::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: calc(100%);
-    width: calc(4.8vw + 7px);
-    background: linear-gradient(
-      90deg,
-      $color-primary-black 0 calc(100% - 6px),
-      $color-blue-bright calc(100% - 6px)
-    );
-    pointer-events: none;
-    transform-origin: 0 0;
-    transform: skewX(-4deg);
-
-    @supports (transform: skewX(atan2(1vw, 1vh))) {
-      transform: skewX(atan2(-4.8vw, 100vh));
-    }
-  }
-
   &.nav--expanded {
     width: 100vw;
   }
@@ -193,109 +177,70 @@ onUnmounted(() => {
   position: absolute;
 }
 
-// Two-stage desktop navbar transition.
-// Expand: blue parallelogram -> black nav/content.
-// Retract: black nav/content -> blue parallelogram.
+// Both surfaces use the Hero's exact seam coordinates. Blue expands first;
+// black follows via the nav's width transition. On collapse the order reverses.
 @media (min-width: 1025px) {
   .nav {
-    --navbar-body-duration: 420ms;
-    --navbar-blue-expand-duration: 240ms;
-    --navbar-blue-retract-duration: 270ms;
-    --navbar-body-expand-delay: 240ms;
-    --navbar-blue-retract-delay: 330ms;
-
     isolation: isolate;
     background: transparent;
-    transition-duration: var(--navbar-body-duration);
-    transition-delay: 0ms;
-    will-change: width;
+    transition:
+      width 420ms cubic-bezier(0.16, 1, 0.3, 1),
+      --nav-body-progress 420ms cubic-bezier(0.16, 1, 0.3, 1),
+      --nav-blue-progress 270ms cubic-bezier(0.16, 1, 0.3, 1) 420ms;
 
-    &::after {
-      z-index: 1;
-      left: calc(100% + 4.8vw - 1px);
-      width: 6px;
-      background: $color-blue-bright;
-      translate: calc(0px - var(--navbar-seam-scroll-shift)) 0;
-
-      @supports (transform: skewX(atan2(1vw, 1vh))) {
-        transform: skewX(atan2(calc(0px - var(--navbar-edge-inset)), var(--navbar-edge-height)));
-      }
-    }
-
-    // Anchored to the resting blue seam so it expands and retracts from the
-    // exact same slanted position.
     &::before {
-      z-index: 1;
       top: 0;
+      bottom: 0;
+      left: 0;
       right: auto;
-      bottom: -2px;
-      left: calc(100% + 4.8vw - 1px);
-      width: max(
-        0px,
-        calc(
-          100vw - 100% - 4.8vw + 8px + var(--navbar-seam-scroll-shift) + var(--navbar-edge-inset)
-        )
-      );
+      width: 100vw;
       height: auto;
+      z-index: -2;
       background: $color-blue-bright;
-      translate: calc(0px - var(--navbar-seam-scroll-shift)) 0;
-      transform: skewX(-4deg) scaleX(0);
-      transform-origin: 0 0;
-      transition: transform var(--navbar-blue-retract-duration) cubic-bezier(0.16, 1, 0.3, 1)
-        var(--navbar-blue-retract-delay);
-      will-change: transform;
-
-      @supports (transform: skewX(atan2(1vw, 1vh))) {
-        transform: skewX(atan2(calc(0px - var(--navbar-edge-inset)), var(--navbar-edge-height)))
-          scaleX(0);
-      }
+      clip-path: polygon(
+        0 0,
+        calc(var(--seam-top) + 6px + (100vw - var(--seam-top) - 6px) * var(--nav-blue-progress)) 0,
+        calc(
+            var(--seam-bottom) + 6px + (100vw - var(--seam-bottom) - 6px) * var(--nav-blue-progress)
+          )
+          100%,
+        0 100%
+      );
     }
 
     &.nav--expanded {
-      transition-delay: var(--navbar-body-expand-delay);
-
-      &::before {
-        transform: skewX(-4deg) scaleX(1);
-        transition-duration: var(--navbar-blue-expand-duration);
-        transition-delay: 0ms;
-
-        @supports (transform: skewX(atan2(1vw, 1vh))) {
-          transform: skewX(atan2(calc(0px - var(--navbar-edge-inset)), var(--navbar-edge-height)))
-            scaleX(1);
-        }
-      }
+      --nav-blue-progress: 1;
+      --nav-body-progress: 1;
+      transition:
+        width 420ms cubic-bezier(0.16, 1, 0.3, 1) 240ms,
+        --nav-body-progress 420ms cubic-bezier(0.16, 1, 0.3, 1) 240ms,
+        --nav-blue-progress 240ms cubic-bezier(0.16, 1, 0.3, 1);
     }
   }
 
   .nav-surface {
     position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 0;
+    inset: 0 auto 0 0;
+    z-index: -1;
     display: block;
-    width: calc(100% + 4.8vw + 5px);
-    background-color: $color-primary-black;
-    clip-path: polygon(0 0, 100% 0, calc(100% - var(--navbar-edge-inset)) 100%, 0 100%);
+    width: 100vw;
+    background: $color-primary-black;
+    clip-path: polygon(
+      0 0,
+      calc(var(--seam-top) + (100vw - var(--seam-top)) * var(--nav-body-progress)) 0,
+      calc(var(--seam-bottom) + (100vw - var(--seam-bottom)) * var(--nav-body-progress)) 100%,
+      0 100%
+    );
     pointer-events: none;
-    translate: calc(0px - var(--navbar-seam-scroll-shift)) 0;
-    will-change: width, translate;
   }
 
   .nav-underline {
     right: var(--nav-inline);
     bottom: 0;
     left: var(--nav-inline);
-    z-index: 1;
     height: 1px;
     background: $color-gray-dark;
     pointer-events: none;
-  }
-
-  .nav-logo,
-  .nav-links {
-    position: relative;
-    z-index: 2;
   }
 }
 
@@ -304,8 +249,8 @@ onUnmounted(() => {
   .nav.nav--expanded {
     transition: none;
 
-    &::before {
-      display: none;
+    &::before,
+    .nav-surface {
       transition: none;
     }
   }
