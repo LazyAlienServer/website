@@ -92,7 +92,10 @@
             :aria-label="`查看大图：${entry.item.title}`"
             @click="open(index)"
           >
-            <span class="frame-media">
+            <span
+              class="frame-media"
+              @pointermove="trackCursor($event, entry.item.width, entry.item.height)"
+            >
               <img
                 :src="entry.item.src"
                 :alt="entry.item.title"
@@ -101,6 +104,10 @@
                 :loading="index === 0 ? 'eager' : 'lazy'"
                 decoding="async"
               />
+              <span class="frame-cursor" aria-hidden="true">
+                <span class="cursor-reticle"></span>
+                <span class="cursor-coords"> X<b>0000</b>Y<b>0000</b> </span>
+              </span>
               <span class="frame-plate" aria-hidden="true">{{ entry.number }}</span>
               <span class="frame-hud" aria-hidden="true">
                 <span>{{ entry.item.width }} × {{ entry.item.height }} PX</span>
@@ -271,6 +278,28 @@ const visible = computed<Entry[]>(() =>
 // Repeating three-frame rhythm: a full-width plate, then a 7/5 column pair.
 const layouts = ["wide", "major", "minor"] as const;
 const layoutOf = (index: number) => layouts[index % layouts.length];
+
+const pad4 = (value: number): string => String(value).padStart(4, "0");
+
+// Moves the crosshair via `--cx`/`--cy` and writes the pointer position in
+// source-image pixels, undoing the `object-fit: cover` scale and crop.
+// Writes the DOM directly so pointer moves never trigger a Vue render.
+const trackCursor = (event: PointerEvent, width: number, height: number) => {
+  const target = event.currentTarget as HTMLElement;
+  const bounds = target.getBoundingClientRect();
+  const x = event.clientX - bounds.left;
+  const y = event.clientY - bounds.top;
+  target.style.setProperty("--cx", `${x}px`);
+  target.style.setProperty("--cy", `${y}px`);
+
+  const scale = Math.max(bounds.width / width, bounds.height / height);
+  const sourceX = (x - (bounds.width - width * scale) / 2) / scale;
+  const sourceY = (y - (bounds.height - height * scale) / 2) / scale;
+  const [xOut, yOut] = target.querySelectorAll<HTMLElement>(".cursor-coords b");
+  if (!xOut || !yOut) return;
+  xOut.textContent = pad4(Math.min(width - 1, Math.max(0, Math.floor(sourceX))));
+  yOut.textContent = pad4(Math.min(height - 1, Math.max(0, Math.floor(sourceY))));
+};
 
 const previewIndex = ref(0);
 const previewEntry = computed(() => visible.value[previewIndex.value] ?? visible.value[0]);
@@ -606,6 +635,104 @@ onUnmounted(onClose);
     opacity: 0;
     transition: opacity $transition-med;
     pointer-events: none;
+  }
+}
+
+// Pointer crosshair: full-length hairlines plus a split-square reticle. Only
+// for hover-capable fine pointers; the native cursor is hidden there.
+// `trackCursor` writes `--cx`/`--cy` straight to the element (no reactivity).
+.frame-cursor {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity $transition-fast;
+  pointer-events: none;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    background: rgba(255, 255, 255, 0.35);
+  }
+
+  &::before {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    transform: translate3d(0, var(--cy, 50%), 0);
+  }
+
+  &::after {
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    transform: translate3d(var(--cx, 50%), 0, 0);
+  }
+}
+
+.cursor-reticle {
+  --size: 28px;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: var(--size);
+  height: var(--size);
+  margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
+  border: 2px solid $color-blue-bright;
+  background:
+    linear-gradient($color-blue-bright, $color-blue-bright) center / 2px 100% no-repeat,
+    linear-gradient($color-blue-bright, $color-blue-bright) center / 100% 2px no-repeat,
+    rgba(10, 10, 10, 0.35);
+  transform: translate3d(var(--cx, 50%), var(--cy, 50%), 0);
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    margin: -3px 0 0 -3px;
+    background: #6cb8ff;
+  }
+}
+
+.cursor-coords {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  padding: 4px 10px;
+  background: rgba(10, 10, 10, 0.82);
+  border-bottom: 1px solid $color-blue-bright;
+  font-family: $font-display;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: $color-gray-mid;
+
+  b {
+    margin: 0 10px 0 6px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: $color-white;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .frame-trigger .frame-media {
+    cursor: none;
+
+    &:hover .frame-cursor {
+      opacity: 1;
+    }
   }
 }
 
@@ -1038,6 +1165,7 @@ onUnmounted(onClose);
 @media (prefers-reduced-motion: reduce) {
   .frame-media img,
   .frame-media::after,
+  .frame-cursor,
   .frame-hud,
   .frame-caption::before,
   .index-row,
