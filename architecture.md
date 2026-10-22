@@ -90,6 +90,10 @@ Viewer input beyond buttons, arrow keys, and the strip: with a mouse, the outer 
 - Mobile home (≤640px, `nav--home`): the navbar is `position: sticky` in flow with a top margin of `$hero-visual-height-mobile`, so it starts directly under the stacked hero image and sticks to the viewport top once scrolled there. `HeroSection.vue` pulls `.hero-visual` up by that height plus `--site-nav-height` and leaves `--site-nav-height` below it. Change the image height only through the shared token. Other routes and wider viewports keep the fixed bar.
 - Navbar travel in page transitions: the router reads `#site-nav`'s viewport top before and after a route change. If it differs (mobile home with the navbar docked ↔ any fixed-bar page), it sets `--nav-from`, `--nav-to` and `data-nav-move` (`up`/`down`) on `<html>`. `global.scss` then animates the `site-nav` group and a blue `nav-trail` group, captured from the invisible `.nav-trail` span. The blue only fills the gap between the navbar's top edge and the far end of the travel, so it never sits under or below the navbar. Up: the blue grows to the top first (36%), then the navbar follows and swallows it. Down: the navbar moves first (61%), stretching the blue behind it, then the blue's top edge follows. These are the desktop expand/collapse timings. Otherwise both groups stay unanimated and the trail is hidden.
 
+### `ScrollTicker.vue`
+
+Standalone `aria-hidden` band repeating `LAZY ALIEN SERVER` (solid, outlined, blue skew marks). `HomePage.vue` places one directly above `IntroSection` (`direction="left"`) and one directly below (`direction="right"`); the bands are their own blocks (112/72/48px tall on desktop/tablet/mobile) and do not touch the intro's layout. A rAF-coalesced scroll listener shifts the track by `scrollY × TICKER_SPEED`, wrapped modulo one unit's width so the loop is seamless; `direction` is the drift while scrolling down. Updates are skipped while the band is off screen; reduced motion pins the track. Cleanup cancels the frame and removes the scroll, resize, and media-query listeners.
+
 ### `LiveTimer.vue`
 
 - `establishedDate` is `2022-08-29T00:00:00+08:00`.

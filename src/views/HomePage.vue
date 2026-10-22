@@ -2,7 +2,9 @@
   <div class="home-page">
     <HeroSection />
     <main>
+      <ScrollTicker direction="left" />
       <IntroSection id="about" />
+      <ScrollTicker direction="right" />
       <LiveTimer />
       <HardwareSection />
       <GithubProjects />
@@ -16,6 +18,7 @@
 <script setup lang="ts">
 import HeroSection from "@/components/HeroSection.vue";
 import IntroSection from "@/components/IntroSection.vue";
+import ScrollTicker from "@/components/ScrollTicker.vue";
 import LiveTimer from "@/components/LiveTimer.vue";
 import HardwareSection from "@/components/HardwareSection.vue";
 import GithubProjects from "@/components/GithubProjects.vue";
