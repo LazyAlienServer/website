@@ -74,6 +74,8 @@ The page reads `route.query.path` and maps `01` and `02` to article IDs that rec
 
 Gallery motion: the empty state, grid, and index sit in one `<Transition name="swap" mode="out-in">`, keyed by view and filter, so either toggle fades the old layout out and re-mounts the new one. Frames and index rows replay a staggered `item-rise` entry via an inline `--i` index. The viewer `<dialog>` fades with `@starting-style` plus `display`/`overlay` `allow-discrete` (close fade where supported), the image opens as a `clip-path` shutter from its center line, and the info bar rises in after it. Inside the open viewer, the image is keyed in a `switch-${direction}` `<Transition>`: `step()` and `goTo()` set `direction` to `next`/`prev`, so the old image slides out while the new one wipes in from the travel side; `open()` resets it to `none` (no CSS), leaving only the shutter. All of it is disabled under reduced motion.
 
+Viewer input beyond buttons, arrow keys, and the strip: with a mouse, the outer 20% of the image on each side (`trackEdge` → `edge`) shows a thin white chevron cursor and steps on click; the leaving image ignores pointer events. A vertical wheel on the dialog steps (down = next) once per burst; a 200ms gap (`WHEEL_GAP`) or 700ms of continuous scrolling (`WHEEL_REPEAT`) re-arms it, so trackpad inertia does not skip several images. Horizontal-dominant wheel events are left alone. Both are disabled with fewer than two visible images.
+
 ## Stateful components and side effects
 
 ### `SiteNavbar.vue` and `HeroSection.vue`

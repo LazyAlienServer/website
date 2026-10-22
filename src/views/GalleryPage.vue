@@ -191,9 +191,10 @@
       @click.self="close"
       @keydown.left.prevent="step(-1)"
       @keydown.right.prevent="step(1)"
+      @wheel="onWheel"
     >
       <figure v-if="activeEntry" class="viewer-figure">
-        <div class="viewer-stage">
+        <div class="viewer-stage" :class="edge && `is-edge-${edge}`">
           <!-- Keyed per image so each switch swaps elements: the old image
                slides out while the new one wipes in from the travel side.
                `direction` is `none` on open, which has no CSS, so opening
@@ -205,6 +206,9 @@
               :alt="activeEntry.item.title"
               :width="activeEntry.item.width"
               :height="activeEntry.item.height"
+              @pointermove="trackEdge"
+              @pointerleave="edge = null"
+              @click="edge && step(edge === 'next' ? 1 : -1)"
             />
           </Transition>
         </div>
@@ -348,6 +352,38 @@ const goTo = (index: number) => {
   if (index === activeIndex.value) return;
   direction.value = index > activeIndex.value ? "next" : "prev";
   activeIndex.value = index;
+};
+
+// Mouse edge zones: the outer 20% of the image on each side steps on click,
+// and the stage class swaps the cursor for a direction arrow.
+const edge = ref<"next" | "prev" | null>(null);
+const trackEdge = (event: PointerEvent) => {
+  if (event.pointerType !== "mouse" || visible.value.length < 2) {
+    edge.value = null;
+    return;
+  }
+  const bounds = (event.currentTarget as HTMLElement).getBoundingClientRect();
+  const ratio = (event.clientX - bounds.left) / bounds.width;
+  edge.value = ratio < 0.2 ? "prev" : ratio > 0.8 ? "next" : null;
+};
+
+// Wheel stepping: down = next, up = previous. A wheel or trackpad gesture
+// fires a burst of events (plus inertia), so it steps once per burst. A
+// 200ms gap between events, or 700ms of continuous scrolling, re-arms it so
+// separate notches or a held spin still step more than once.
+const WHEEL_GAP = 200;
+const WHEEL_REPEAT = 700;
+let lastWheel = 0;
+let lastWheelStep = 0;
+const onWheel = (event: WheelEvent) => {
+  if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+  event.preventDefault();
+  const now = event.timeStamp;
+  const armed = now - lastWheel > WHEEL_GAP || now - lastWheelStep > WHEEL_REPEAT;
+  lastWheel = now;
+  if (!armed || visible.value.length < 2) return;
+  lastWheelStep = now;
+  step(event.deltaY > 0 ? 1 : -1);
 };
 
 onUnmounted(onClose);
@@ -1141,6 +1177,23 @@ onUnmounted(onClose);
   position: absolute;
   inset: 0;
   margin: auto;
+  pointer-events: none;
+}
+
+// Edge-zone arrow cursors: thin 64px white chevron (right-angle, rounded
+// ends); hotspot at the center, resize arrows as fallback.
+.viewer-stage.is-edge-prev img {
+  cursor:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M42 12L22 32l20 20' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+      32 32,
+    w-resize;
+}
+
+.viewer-stage.is-edge-next img {
+  cursor:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M22 12l20 20-20 20' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+      32 32,
+    e-resize;
 }
 
 .switch-next-enter-active {
