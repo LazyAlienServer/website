@@ -22,6 +22,7 @@ src/App.vue
 src/router/index.ts
   /       -> src/views/HomePage.vue
   /rules  -> src/views/RulesPage.vue
+  /gallery -> src/views/GalleryPage.vue
 ```
 
 `createWebHistory(import.meta.env.BASE_URL)` is used. `scrollBehavior` restores saved positions, scrolls to hash targets with a 72px top offset, and otherwise returns to the top.
@@ -66,6 +67,10 @@ interface Chapter {
 ```
 
 The page reads `route.query.path` and maps `01` and `02` to article IDs that receive the flash state. Hash navigation targets chapter IDs. Add or edit rules in `src/data/rules.ts`; do not hard-code new article data in the view.
+
+## Gallery page composition
+
+`src/views/GalleryPage.vue` renders `galleryItems` and `galleryCategories` from `src/data/gallery.ts` (images served from `public/`, with intrinsic `width`/`height` to reserve layout space). Archive numbers come from each item's position in the full list, so filtering never renumbers frames. A sticky toolbar under the navbar holds the category filter (`aria-pressed` segments with counts), a live visible-count status, and a GRID/INDEX view toggle. GRID lays frames on a 12-column rhythm by visible index — a full-width plate, then a 7/5 pair with the minor frame dropped — with a hover/focus data strip. INDEX is a table whose hovered or focused row drives a sticky preview (hidden at tablet width). Any frame or row opens a native modal `<dialog>` viewer over the current filtered list, with previous/next buttons, arrow keys, a thumbnail strip, Escape and backdrop close; page scroll is locked while it is open and restored on close or unmount. Add images or categories by editing the data file only.
 
 ## Stateful components and side effects
 
@@ -151,6 +156,7 @@ Section headings are intentionally bespoke and owned by each section component (
 | Change hardware data or accordion           | `src/components/HardwareSection.vue`                  | `InfrastructureFeatures.vue`, keyboard button states |
 | Change GitHub repository fields or carousel | `src/components/GithubProjects.vue`                   | Type guards, cache, desktop deck, mobile list        |
 | Change rules content                        | `src/data/rules.ts`                                   | `RulesPage.vue` query/hash highlighting              |
+| Change gallery images                       | `src/data/gallery.ts`, `public/`                      | Intrinsic image sizes, frame layout rhythm           |
 | Change rules routing                        | `src/router/index.ts`                                 | Back links and scroll behavior                       |
 | Change join destinations or clipboard       | `src/components/JoinSection.vue`                      | Rules query values and cleanup                       |
 | Change global layout tokens                 | `src/styles/variables.scss`, `src/styles/global.scss` | All components using the affected token              |

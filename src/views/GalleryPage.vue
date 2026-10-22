@@ -1,0 +1,1156 @@
+<template>
+  <div class="gallery-page">
+    <header class="gallery-heading">
+      <div class="gallery-shell heading-grid">
+        <div class="heading-main">
+          <p class="gallery-kicker">
+            <span class="kicker-mark" aria-hidden="true"></span>
+            LAS // VISUAL ARCHIVE
+          </p>
+          <h1>画廊<span class="heading-en">GALLERY</span></h1>
+          <p class="heading-lead">
+            服务器中的建筑、机械与红石工程，记录 Lazy Alien Server 成员共同建造的世界。
+          </p>
+        </div>
+        <dl class="gallery-spec">
+          <div class="spec-field">
+            <dt>FRAMES</dt>
+            <dd>{{ pad(galleryItems.length) }}</dd>
+          </div>
+          <div class="spec-field">
+            <dt>CATEGORIES</dt>
+            <dd>{{ pad(galleryCategories.length) }}</dd>
+          </div>
+          <div class="spec-field">
+            <dt>SINCE</dt>
+            <dd><time datetime="2022-08-29">2022.08.29</time></dd>
+          </div>
+        </dl>
+      </div>
+    </header>
+
+    <div class="gallery-toolbar">
+      <div class="gallery-shell toolbar-inner">
+        <div class="filter" role="group" aria-label="按类别筛选">
+          <button
+            v-for="option in filterOptions"
+            :key="option.id"
+            type="button"
+            class="filter-btn"
+            :aria-pressed="filter === option.id"
+            @click="filter = option.id"
+          >
+            {{ option.label }}
+            <span class="filter-count">{{ pad(option.count) }}</span>
+          </button>
+        </div>
+
+        <p class="toolbar-status" aria-live="polite">
+          SHOWING <strong>{{ pad(visible.length) }}</strong> / {{ pad(galleryItems.length) }}
+        </p>
+
+        <div class="view-toggle" role="group" aria-label="显示方式">
+          <button
+            type="button"
+            :aria-pressed="view === 'grid'"
+            aria-label="网格视图"
+            @click="view = 'grid'"
+          >
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+              <path d="M1 1h6v6H1zM9 1h6v6H9zM1 9h6v6H1zM9 9h6v6H9z" />
+            </svg>
+            GRID
+          </button>
+          <button
+            type="button"
+            :aria-pressed="view === 'index'"
+            aria-label="索引视图"
+            @click="view = 'index'"
+          >
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+              <path d="M1 2h14v2H1zM1 7h14v2H1zM1 12h14v2H1z" />
+            </svg>
+            INDEX
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <main class="gallery-shell gallery-body">
+      <p v-if="!visible.length" class="gallery-empty">该类别暂无作品 // NO FRAMES</p>
+
+      <ol v-else-if="view === 'grid'" class="gallery-grid" aria-label="画廊作品">
+        <li
+          v-for="(entry, index) in visible"
+          :key="entry.item.id"
+          class="frame"
+          :class="`frame--${layoutOf(index)}`"
+        >
+          <button
+            type="button"
+            class="frame-trigger"
+            :aria-label="`查看大图：${entry.item.title}`"
+            @click="open(index)"
+          >
+            <span class="frame-media">
+              <img
+                :src="entry.item.src"
+                :alt="entry.item.title"
+                :width="entry.item.width"
+                :height="entry.item.height"
+                :loading="index === 0 ? 'eager' : 'lazy'"
+                decoding="async"
+              />
+              <span class="frame-plate" aria-hidden="true">{{ entry.number }}</span>
+              <span class="frame-hud" aria-hidden="true">
+                <span>{{ entry.item.width }} × {{ entry.item.height }} PX</span>
+                <span class="hud-action">查看 / VIEW</span>
+              </span>
+            </span>
+            <span class="frame-caption">
+              <span class="frame-index">{{ entry.number }}</span>
+              <span class="frame-title">
+                <span class="frame-title-cn">{{ entry.item.title }}</span>
+                <span class="frame-title-en">{{ entry.item.titleEn }}</span>
+              </span>
+              <span class="frame-category">
+                {{ entry.category.label }} / {{ entry.category.labelEn }}
+              </span>
+            </span>
+          </button>
+        </li>
+      </ol>
+
+      <div v-else class="gallery-index">
+        <div class="index-table">
+          <p class="index-head" aria-hidden="true">
+            <span>NO.</span><span>标题 / TITLE</span><span>类别</span><span>尺寸 / PX</span>
+          </p>
+          <ol aria-label="画廊索引">
+            <li v-for="(entry, index) in visible" :key="entry.item.id">
+              <button
+                type="button"
+                class="index-row"
+                :class="{ 'is-previewed': previewEntry === entry }"
+                :aria-label="`查看大图：${entry.item.title}`"
+                @mouseenter="previewIndex = index"
+                @focus="previewIndex = index"
+                @click="open(index)"
+              >
+                <span class="index-no">{{ entry.number }}</span>
+                <span class="index-title">
+                  {{ entry.item.title }}<span>{{ entry.item.titleEn }}</span>
+                </span>
+                <span class="index-category">{{ entry.category.label }}</span>
+                <span class="index-size">{{ entry.item.width }} × {{ entry.item.height }}</span>
+              </button>
+            </li>
+          </ol>
+        </div>
+
+        <figure v-if="previewEntry" class="index-preview" aria-hidden="true">
+          <span class="frame-media">
+            <img
+              :src="previewEntry.item.src"
+              alt=""
+              :width="previewEntry.item.width"
+              :height="previewEntry.item.height"
+            />
+            <span class="frame-plate">{{ previewEntry.number }}</span>
+          </span>
+          <figcaption>
+            <span>{{ previewEntry.item.titleEn }}</span>
+            <span>{{ previewEntry.category.labelEn }}</span>
+          </figcaption>
+        </figure>
+      </div>
+    </main>
+
+    <dialog
+      ref="viewer"
+      class="viewer"
+      aria-label="图片查看器"
+      @close="onClose"
+      @click.self="close"
+      @keydown.left.prevent="step(-1)"
+      @keydown.right.prevent="step(1)"
+    >
+      <figure v-if="activeEntry" class="viewer-figure">
+        <div class="viewer-stage">
+          <img
+            :src="activeEntry.item.src"
+            :alt="activeEntry.item.title"
+            :width="activeEntry.item.width"
+            :height="activeEntry.item.height"
+          />
+        </div>
+        <figcaption class="viewer-bar">
+          <span class="viewer-count">
+            <strong>{{ pad(activeIndex + 1) }}</strong> / {{ pad(visible.length) }}
+          </span>
+          <span class="viewer-title">
+            {{ activeEntry.item.title }}
+            <span>
+              {{ activeEntry.item.titleEn }} // {{ activeEntry.category.labelEn }} //
+              {{ activeEntry.item.width }} × {{ activeEntry.item.height }} PX
+            </span>
+          </span>
+          <span class="viewer-controls">
+            <button type="button" aria-label="上一张" @click="step(-1)">
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path d="M15 5l-7 7 7 7" />
+              </svg>
+            </button>
+            <button type="button" aria-label="下一张" @click="step(1)">
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+            <button type="button" class="viewer-close" aria-label="关闭" @click="close">
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            </button>
+          </span>
+        </figcaption>
+        <div class="viewer-strip" role="group" aria-label="选择图片">
+          <button
+            v-for="(entry, index) in visible"
+            :key="entry.item.id"
+            type="button"
+            :aria-label="entry.item.title"
+            :aria-current="index === activeIndex ? 'true' : undefined"
+            @click="activeIndex = index"
+          >
+            <img :src="entry.item.src" alt="" loading="lazy" decoding="async" />
+            <span>{{ entry.number }}</span>
+          </button>
+        </div>
+      </figure>
+    </dialog>
+
+    <FooterSection />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed, onUnmounted, ref, useTemplateRef, watch } from "vue";
+import FooterSection from "@/components/FooterSection.vue";
+import { galleryCategories, galleryItems } from "@/data/gallery";
+
+const pad = (value: number): string => String(value).padStart(2, "0");
+
+// Archive numbers come from the full list, so filtering never renumbers a frame.
+const entries = galleryItems.map((item, index) => ({
+  item,
+  number: pad(index + 1),
+  category: galleryCategories.find((category) => category.id === item.category) ?? {
+    id: item.category,
+    label: item.category,
+    labelEn: item.category.toUpperCase(),
+  },
+}));
+type Entry = (typeof entries)[number];
+
+const ALL = "all";
+const filterOptions = [
+  { id: ALL, label: "全部", count: entries.length },
+  ...galleryCategories.map((category) => ({
+    id: category.id,
+    label: category.label,
+    count: entries.filter((entry) => entry.item.category === category.id).length,
+  })),
+];
+
+const filter = ref(ALL);
+const view = ref<"grid" | "index">("grid");
+const visible = computed<Entry[]>(() =>
+  filter.value === ALL ? entries : entries.filter((entry) => entry.item.category === filter.value),
+);
+
+// Repeating three-frame rhythm: a full-width plate, then a 7/5 column pair.
+const layouts = ["wide", "major", "minor"] as const;
+const layoutOf = (index: number) => layouts[index % layouts.length];
+
+const previewIndex = ref(0);
+const previewEntry = computed(() => visible.value[previewIndex.value] ?? visible.value[0]);
+watch(filter, () => {
+  previewIndex.value = 0;
+});
+
+const viewer = useTemplateRef<HTMLDialogElement>("viewer");
+const activeIndex = ref(0);
+const activeEntry = computed(() => visible.value[activeIndex.value]);
+
+const open = (index: number) => {
+  activeIndex.value = index;
+  document.documentElement.style.overflow = "hidden";
+  viewer.value?.showModal();
+};
+const close = () => viewer.value?.close();
+const onClose = () => {
+  document.documentElement.style.overflow = "";
+};
+const step = (delta: number) => {
+  const total = visible.value.length;
+  activeIndex.value = (activeIndex.value + delta + total) % total;
+};
+
+onUnmounted(onClose);
+</script>
+
+<style scoped lang="scss">
+.gallery-page {
+  background: $color-primary-black;
+  min-height: 100vh;
+  padding-top: var(--site-nav-height, 84px);
+}
+
+.gallery-shell {
+  max-width: calc(#{$content-max-width} + 2 * #{$spacing-md});
+  margin: 0 auto;
+  padding-inline: $spacing-md;
+}
+
+// ---------- Header: blueprint band, 12-column type block ----------
+.gallery-heading {
+  position: relative;
+  border-bottom: 1px solid $color-gray-dark;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: linear-gradient(180deg, #000 0%, transparent 100%);
+    pointer-events: none;
+  }
+}
+
+.heading-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: $spacing-md;
+  align-items: end;
+  padding-top: 72px;
+  padding-bottom: 40px;
+}
+
+.heading-main {
+  grid-column: 1 / span 7;
+
+  h1 {
+    display: flex;
+    align-items: baseline;
+    gap: $spacing-sm;
+    font-size: clamp(32px, 4vw, 48px);
+    line-height: 1.05;
+    color: $color-white;
+  }
+}
+
+.heading-en {
+  font-family: $font-display;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: $color-blue-bright;
+}
+
+.gallery-kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  font-family: $font-display;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: $color-gray-mid;
+}
+
+.kicker-mark {
+  flex: none;
+  width: 22px;
+  height: 10px;
+  margin-right: 4px;
+  background: $color-blue-bright;
+  transform: skewX(-20deg);
+}
+
+.heading-lead {
+  max-width: 34em;
+  margin-top: $spacing-sm;
+  color: $color-gray-light;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.gallery-spec {
+  grid-column: 9 / span 4;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 3px solid $color-blue-bright;
+}
+
+.spec-field {
+  padding: 10px 12px 0 0;
+
+  & + & {
+    padding-left: 12px;
+    border-left: 1px solid $color-gray-dark;
+  }
+
+  dt {
+    font-family: $font-display;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: $color-gray-mid;
+  }
+
+  dd {
+    font-family: $font-display;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-variant-numeric: tabular-nums;
+    color: $color-white;
+  }
+}
+
+// ---------- Toolbar: sticky control strip ----------
+.gallery-toolbar {
+  position: sticky;
+  top: var(--site-nav-height, 84px);
+  z-index: 4;
+  border-bottom: 1px solid $color-gray-dark;
+  background: rgba(10, 10, 10, 0.92);
+  backdrop-filter: blur(8px);
+}
+
+.toolbar-inner {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  min-height: 56px;
+}
+
+// Segmented controls share one hairline frame; the pressed segment fills blue.
+%segment {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid $color-gray-dark;
+  background: none;
+  color: $color-gray-mid;
+  font-family: $font-display;
+  font-size: 12px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition:
+    color $transition-fast,
+    background-color $transition-fast,
+    border-color $transition-fast;
+
+  & + & {
+    margin-left: -1px;
+  }
+
+  &:hover {
+    color: $color-white;
+  }
+
+  &[aria-pressed="true"] {
+    position: relative;
+    border-color: $color-blue-bright;
+    background: $color-primary-blue;
+    color: $color-white;
+  }
+
+  &:focus-visible {
+    position: relative;
+    z-index: 1;
+    outline: 2px solid $color-blue-bright;
+    outline-offset: 2px;
+  }
+}
+
+.filter {
+  display: flex;
+}
+
+.filter-btn {
+  @extend %segment;
+}
+
+.filter-count {
+  font-size: 10px;
+  letter-spacing: 1px;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.6;
+}
+
+.toolbar-status {
+  margin-left: auto;
+  font-family: $font-display;
+  font-size: 11px;
+  letter-spacing: 2px;
+  font-variant-numeric: tabular-nums;
+  color: $color-gray-mid;
+
+  strong {
+    color: $color-blue-bright;
+  }
+}
+
+.view-toggle {
+  display: flex;
+
+  button {
+    @extend %segment;
+  }
+
+  svg {
+    fill: currentColor;
+  }
+}
+
+// ---------- Grid view: 12 / 7+5 rhythm ----------
+.gallery-body {
+  padding-top: 56px;
+  padding-bottom: 120px;
+}
+
+.gallery-empty {
+  padding: 96px 0;
+  border: 1px dashed $color-gray-dark;
+  text-align: center;
+  font-family: $font-display;
+  letter-spacing: 3px;
+  color: $color-gray-mid;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 56px $spacing-md;
+  list-style: none;
+}
+
+.frame {
+  min-width: 0;
+
+  &--wide {
+    grid-column: 1 / -1;
+
+    .frame-media {
+      aspect-ratio: 21 / 9;
+    }
+  }
+
+  &--major {
+    grid-column: 1 / span 7;
+  }
+
+  // Dropped one module so the pair reads as an asymmetric composition.
+  &--minor {
+    grid-column: 8 / span 5;
+    margin-top: 56px;
+  }
+}
+
+.frame-trigger {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: zoom-in;
+
+  &:focus-visible {
+    outline: 2px solid $color-blue-bright;
+    outline-offset: 6px;
+  }
+}
+
+.frame-media {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: $color-black-soft;
+  border: 1px solid $color-gray-dark;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.7) brightness(0.85);
+    transition: filter $transition-med;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    @include corner-brackets(16px, 2px, $color-blue-bright, 10px);
+    opacity: 0;
+    transition: opacity $transition-med;
+    pointer-events: none;
+  }
+}
+
+// Flush-left index plate on the frame's top edge.
+.frame-plate {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 4px 12px;
+  background: $color-primary-blue;
+  color: $color-white;
+  font-family: $font-display;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+// Data strip slides up from the bottom edge on hover/focus.
+.frame-hud {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(10, 10, 10, 0.82);
+  border-top: 1px solid $color-blue-bright;
+  font-family: $font-display;
+  font-size: 11px;
+  letter-spacing: 2px;
+  font-variant-numeric: tabular-nums;
+  color: $color-gray-light;
+  transform: translateY(100%);
+  transition: transform $transition-med;
+}
+
+.hud-action {
+  color: $color-blue-bright;
+}
+
+.frame-caption {
+  position: relative;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: $spacing-sm;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid $color-gray-dark;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: $color-blue-bright;
+    transition: width $transition-med;
+  }
+}
+
+.frame-index {
+  font-family: $font-display;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: $color-blue-bright;
+}
+
+.frame-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 12px;
+  min-width: 0;
+}
+
+.frame-title-cn {
+  font-size: 16px;
+  font-weight: 700;
+  color: $color-white;
+}
+
+.frame-title-en,
+.frame-category {
+  font-family: $font-display;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: $color-gray-mid;
+}
+
+.frame-trigger:hover,
+.frame-trigger:focus-visible {
+  .frame-media img {
+    filter: none;
+  }
+
+  .frame-media::after {
+    opacity: 1;
+  }
+
+  .frame-hud {
+    transform: none;
+  }
+
+  .frame-caption::before {
+    width: 48px;
+  }
+}
+
+// ---------- Index view: Swiss table + live preview ----------
+.gallery-index {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: $spacing-md;
+  align-items: start;
+}
+
+.index-table {
+  grid-column: 1 / span 7;
+
+  ol {
+    list-style: none;
+  }
+}
+
+%index-columns {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) 72px 112px;
+  align-items: baseline;
+  gap: $spacing-sm;
+}
+
+.index-head {
+  @extend %index-columns;
+  padding-bottom: 10px;
+  border-bottom: 3px solid $color-blue-bright;
+  font-family: $font-display;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: $color-gray-mid;
+}
+
+.index-row {
+  @extend %index-columns;
+  position: relative;
+  width: 100%;
+  padding: 18px 0;
+  border: none;
+  border-bottom: 1px solid $color-gray-dark;
+  background: none;
+  color: $color-gray-light;
+  font: inherit;
+  text-align: left;
+  cursor: zoom-in;
+  transition: color $transition-fast;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: -$spacing-md;
+    width: 12px;
+    height: 3px;
+    background: $color-blue-bright;
+    opacity: 0;
+    transition: opacity $transition-fast;
+  }
+
+  &.is-previewed {
+    color: $color-white;
+
+    &::before {
+      opacity: 1;
+    }
+
+    .index-no {
+      color: $color-blue-bright;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-blue-bright;
+    outline-offset: 2px;
+  }
+}
+
+.index-no,
+.index-category,
+.index-size {
+  font-family: $font-display;
+  font-size: 13px;
+  letter-spacing: 1px;
+  font-variant-numeric: tabular-nums;
+}
+
+.index-no {
+  color: $color-gray-mid;
+  transition: color $transition-fast;
+}
+
+.index-title {
+  font-size: 16px;
+  font-weight: 700;
+
+  span {
+    margin-left: 12px;
+    font-family: $font-display;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    color: $color-gray-mid;
+  }
+}
+
+.index-category,
+.index-size {
+  color: $color-gray-mid;
+}
+
+.index-size {
+  text-align: right;
+}
+
+.index-preview {
+  grid-column: 9 / span 4;
+  position: sticky;
+  top: calc(var(--site-nav-height, 84px) + 56px + #{$spacing-md});
+
+  .frame-media img {
+    filter: none;
+  }
+
+  figcaption {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-family: $font-display;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: $color-gray-mid;
+  }
+}
+
+// ---------- Viewer ----------
+.viewer {
+  max-width: none;
+  max-height: none;
+  width: 100vw;
+  height: 100dvh;
+  margin: 0;
+  padding: $spacing-md;
+  border: none;
+  background: rgba(10, 10, 10, 0.95);
+  color: $color-white;
+
+  &[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &::backdrop {
+    background: transparent;
+  }
+}
+
+.viewer-figure {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 1400px);
+  height: 100%;
+}
+
+.viewer-stage {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border: 1px solid $color-gray-dark;
+  }
+}
+
+.viewer-bar {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: $spacing-md;
+  min-height: 60px;
+  border-bottom: 3px solid $color-blue-bright;
+}
+
+.viewer-count {
+  font-family: $font-display;
+  font-size: 12px;
+  letter-spacing: 2px;
+  font-variant-numeric: tabular-nums;
+  color: $color-gray-mid;
+
+  strong {
+    font-size: 18px;
+    color: $color-blue-bright;
+  }
+}
+
+.viewer-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 15px;
+  font-weight: 700;
+
+  span {
+    margin-left: 12px;
+    font-family: $font-display;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    color: $color-gray-mid;
+  }
+}
+
+.viewer-controls {
+  display: flex;
+  gap: 4px;
+
+  button {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid $color-gray-dark;
+    background: none;
+    color: $color-gray-light;
+    cursor: pointer;
+    transition:
+      color $transition-fast,
+      border-color $transition-fast;
+
+    &:hover,
+    &:focus-visible {
+      border-color: $color-blue-bright;
+      color: $color-white;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-blue-bright;
+      outline-offset: 2px;
+    }
+  }
+
+  svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: square;
+  }
+}
+
+.viewer-close {
+  margin-left: 8px;
+}
+
+.viewer-strip {
+  display: flex;
+  gap: 8px;
+  padding-top: 12px;
+  overflow-x: auto;
+
+  button {
+    position: relative;
+    flex: none;
+    width: 96px;
+    aspect-ratio: 3 / 2;
+    padding: 0;
+    border: 1px solid $color-gray-dark;
+    background: $color-black-soft;
+    cursor: pointer;
+    opacity: 0.5;
+    transition:
+      opacity $transition-fast,
+      border-color $transition-fast;
+
+    &:hover,
+    &[aria-current="true"] {
+      opacity: 1;
+    }
+
+    &[aria-current="true"] {
+      border-color: $color-blue-bright;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-blue-bright;
+      outline-offset: 2px;
+    }
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 1px 5px;
+    background: rgba(10, 10, 10, 0.8);
+    font-family: $font-display;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: $color-gray-light;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frame-media img,
+  .frame-media::after,
+  .frame-hud,
+  .frame-caption::before,
+  .index-row,
+  .index-row::before,
+  .index-no,
+  .viewer-controls button,
+  .viewer-strip button,
+  %segment {
+    transition: none;
+  }
+}
+
+@include tablet {
+  .heading-main,
+  .gallery-spec {
+    grid-column: 1 / -1;
+  }
+
+  .gallery-spec {
+    margin-top: 32px;
+    max-width: 420px;
+  }
+
+  .frame--major {
+    grid-column: 1 / span 6;
+  }
+
+  .frame--minor {
+    grid-column: 7 / span 6;
+    margin-top: 40px;
+  }
+
+  .index-table {
+    grid-column: 1 / -1;
+  }
+
+  .index-preview {
+    display: none;
+  }
+}
+
+@include mobile {
+  .gallery-shell {
+    padding-inline: $spacing-sm;
+  }
+
+  .heading-grid {
+    padding-top: 48px;
+    padding-bottom: 32px;
+  }
+
+  .toolbar-inner {
+    flex-wrap: wrap;
+    gap: 8px $spacing-sm;
+    padding-block: 10px;
+  }
+
+  .toolbar-status {
+    display: none;
+  }
+
+  .view-toggle {
+    margin-left: auto;
+  }
+
+  .gallery-body {
+    padding-top: 40px;
+    padding-bottom: 80px;
+  }
+
+  .gallery-grid {
+    row-gap: 40px;
+  }
+
+  .frame--wide .frame-media {
+    aspect-ratio: 3 / 2;
+  }
+
+  .frame--major,
+  .frame--minor {
+    grid-column: 1 / -1;
+    margin-top: 0;
+  }
+
+  .frame-caption {
+    grid-template-columns: 36px minmax(0, 1fr);
+  }
+
+  .frame-category {
+    grid-column: 2;
+  }
+
+  %index-columns {
+    grid-template-columns: 40px minmax(0, 1fr) 56px;
+  }
+
+  .index-size,
+  .index-head span:last-child {
+    display: none;
+  }
+
+  .viewer {
+    padding: $spacing-sm;
+  }
+
+  .viewer-bar {
+    grid-template-columns: auto minmax(0, 1fr);
+    padding-block: 8px;
+  }
+
+  .viewer-controls {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+  }
+}
+</style>

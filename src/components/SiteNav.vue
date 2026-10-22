@@ -7,6 +7,7 @@
     <div class="nav-links">
       <router-link to="/" :class="{ active: route.name === 'home' }">首页</router-link>
       <router-link to="/rules" :class="{ active: route.name === 'rules' }">规章</router-link>
+      <router-link to="/gallery" :class="{ active: route.name === 'gallery' }">画廊</router-link>
     </div>
   </div>
 </template>
