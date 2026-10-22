@@ -196,7 +196,7 @@
       <figure v-if="activeEntry" class="viewer-figure">
         <div class="viewer-stage" :class="edge && `is-edge-${edge}`">
           <!-- Keyed per image so each switch swaps elements: the old image
-               slides out while the new one wipes in from the travel side.
+               slides and shrinks away while the new one slides in and grows.
                `direction` is `none` on open, which has no CSS, so opening
                keeps only the dialog shutter. -->
           <Transition :name="`switch-${direction}`">
@@ -1174,9 +1174,12 @@ onUnmounted(onClose);
   }
 }
 
-// Image switch. Keyframe animations, not transitions, so they override the
-// shutter's `clip-path` transition on the re-mounted image. The leaving
-// image paints above the entering one while it fades.
+// Image switch: the old image slides off toward the travel side while
+// shrinking and fading, and the new one slides in from the opposite side,
+// growing to full size. Keyframe animations, not transitions, so they
+// override the shutter's `clip-path` transition on the re-mounted image.
+// The stage's paint containment clips both at its edges; the leaving image
+// paints above the entering one.
 .switch-next-leave-active,
 .switch-prev-leave-active {
   z-index: 1;
@@ -1200,25 +1203,26 @@ onUnmounted(onClose);
 }
 
 .switch-next-enter-active {
-  animation: switch-in-next 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: switch-in-next 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .switch-prev-enter-active {
-  animation: switch-in-prev 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: switch-in-prev 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .switch-next-leave-active {
-  animation: switch-out-next 0.3s ease-out both;
+  animation: switch-out-next 0.4s cubic-bezier(0.55, 0, 0.45, 1) both;
 }
 
 .switch-prev-leave-active {
-  animation: switch-out-prev 0.3s ease-out both;
+  animation: switch-out-prev 0.4s cubic-bezier(0.55, 0, 0.45, 1) both;
 }
 
 @keyframes switch-in-next {
   from {
-    clip-path: inset(0 0 0 100%);
-    transform: translateX(32px);
+    clip-path: inset(0);
+    opacity: 0;
+    transform: translateX(40%) scale(0.8);
   }
   to {
     clip-path: inset(0);
@@ -1227,8 +1231,9 @@ onUnmounted(onClose);
 
 @keyframes switch-in-prev {
   from {
-    clip-path: inset(0 100% 0 0);
-    transform: translateX(-32px);
+    clip-path: inset(0);
+    opacity: 0;
+    transform: translateX(-40%) scale(0.8);
   }
   to {
     clip-path: inset(0);
@@ -1238,14 +1243,14 @@ onUnmounted(onClose);
 @keyframes switch-out-next {
   to {
     opacity: 0;
-    transform: translateX(-32px);
+    transform: translateX(-40%) scale(0.8);
   }
 }
 
 @keyframes switch-out-prev {
   to {
     opacity: 0;
-    transform: translateX(32px);
+    transform: translateX(40%) scale(0.8);
   }
 }
 
