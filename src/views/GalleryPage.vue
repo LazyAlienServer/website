@@ -595,6 +595,7 @@ onUnmounted(onClose);
 }
 
 .frame-trigger {
+  position: relative;
   display: block;
   width: 100%;
   padding: 0;
@@ -604,6 +605,17 @@ onUnmounted(onClose);
   font: inherit;
   text-align: left;
   cursor: zoom-in;
+
+  // Corner brackets just outside the whole frame (image + caption).
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -12px;
+    @include corner-brackets(16px, 2px, $color-blue-bright, 0px);
+    opacity: 0;
+    transition: opacity $transition-med;
+    pointer-events: none;
+  }
 
   &:focus-visible {
     outline: 2px solid $color-blue-bright;
@@ -625,16 +637,6 @@ onUnmounted(onClose);
     object-fit: cover;
     filter: saturate(0.7) brightness(0.85);
     transition: filter $transition-med;
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    @include corner-brackets(16px, 2px, $color-blue-bright, 10px);
-    opacity: 0;
-    transition: opacity $transition-med;
-    pointer-events: none;
   }
 }
 
@@ -834,7 +836,7 @@ onUnmounted(onClose);
     filter: none;
   }
 
-  .frame-media::after {
+  &::after {
     opacity: 1;
   }
 
@@ -1164,7 +1166,7 @@ onUnmounted(onClose);
 
 @media (prefers-reduced-motion: reduce) {
   .frame-media img,
-  .frame-media::after,
+  .frame-trigger::after,
   .frame-cursor,
   .frame-hud,
   .frame-caption::before,
