@@ -194,12 +194,19 @@
     >
       <figure v-if="activeEntry" class="viewer-figure">
         <div class="viewer-stage">
-          <img
-            :src="activeEntry.item.src"
-            :alt="activeEntry.item.title"
-            :width="activeEntry.item.width"
-            :height="activeEntry.item.height"
-          />
+          <!-- Keyed per image so each switch swaps elements: the old image
+               slides out while the new one wipes in from the travel side.
+               `direction` is `none` on open, which has no CSS, so opening
+               keeps only the dialog shutter. -->
+          <Transition :name="`switch-${direction}`">
+            <img
+              :key="activeEntry.item.id"
+              :src="activeEntry.item.src"
+              :alt="activeEntry.item.title"
+              :width="activeEntry.item.width"
+              :height="activeEntry.item.height"
+            />
+          </Transition>
         </div>
         <figcaption class="viewer-bar">
           <span class="viewer-count">
@@ -237,7 +244,7 @@
             type="button"
             :aria-label="entry.item.title"
             :aria-current="index === activeIndex ? 'true' : undefined"
-            @click="activeIndex = index"
+            @click="goTo(index)"
           >
             <img :src="entry.item.src" alt="" loading="lazy" decoding="async" />
             <span>{{ entry.number }}</span>
@@ -319,10 +326,12 @@ watch(filter, () => {
 
 const viewer = useTemplateRef<HTMLDialogElement>("viewer");
 const activeIndex = ref(0);
+const direction = ref<"next" | "prev" | "none">("none");
 const activeEntry = computed(() => visible.value[activeIndex.value]);
 
 const open = (index: number) => {
   activeIndex.value = index;
+  direction.value = "none";
   document.documentElement.style.overflow = "hidden";
   viewer.value?.showModal();
 };
@@ -332,7 +341,13 @@ const onClose = () => {
 };
 const step = (delta: number) => {
   const total = visible.value.length;
+  direction.value = delta > 0 ? "next" : "prev";
   activeIndex.value = (activeIndex.value + delta + total) % total;
+};
+const goTo = (index: number) => {
+  if (index === activeIndex.value) return;
+  direction.value = index > activeIndex.value ? "next" : "prev";
+  activeIndex.value = index;
 };
 
 onUnmounted(onClose);
@@ -1100,6 +1115,7 @@ onUnmounted(onClose);
 }
 
 .viewer-stage {
+  position: relative;
   display: flex;
   flex: 1;
   align-items: center;
@@ -1113,6 +1129,67 @@ onUnmounted(onClose);
     height: auto;
     object-fit: contain;
     border: 1px solid $color-gray-dark;
+  }
+}
+
+// Image switch. Keyframe animations, not transitions, so they override the
+// shutter's `clip-path` transition on the re-mounted image. The leaving
+// image is pulled out of flow and re-centered (`inset: 0; margin: auto`
+// centers a replaced element) so both stack during the swap.
+.switch-next-leave-active,
+.switch-prev-leave-active {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+}
+
+.switch-next-enter-active {
+  animation: switch-in-next 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.switch-prev-enter-active {
+  animation: switch-in-prev 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.switch-next-leave-active {
+  animation: switch-out-next 0.3s ease-out both;
+}
+
+.switch-prev-leave-active {
+  animation: switch-out-prev 0.3s ease-out both;
+}
+
+@keyframes switch-in-next {
+  from {
+    clip-path: inset(0 0 0 100%);
+    transform: translateX(32px);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
+@keyframes switch-in-prev {
+  from {
+    clip-path: inset(0 100% 0 0);
+    transform: translateX(-32px);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
+@keyframes switch-out-next {
+  to {
+    opacity: 0;
+    transform: translateX(-32px);
+  }
+}
+
+@keyframes switch-out-prev {
+  to {
+    opacity: 0;
+    transform: translateX(32px);
   }
 }
 
@@ -1271,7 +1348,8 @@ onUnmounted(onClose);
   }
 
   .frame,
-  .index-table li {
+  .index-table li,
+  .viewer-stage img {
     animation: none;
   }
 }
