@@ -1150,15 +1150,21 @@ onUnmounted(onClose);
   height: 100%;
 }
 
+// The stage takes its size only from the flex column (`contain: strict`
+// ignores its content), so the switching images can never resize or shift
+// the bar and strip, and their slide is clipped at the stage edge. Both
+// images share one fixed grid cell during a swap instead of the leaving one
+// going out of flow.
 .viewer-stage {
-  position: relative;
-  display: flex;
+  display: grid;
   flex: 1;
-  align-items: center;
-  justify-content: center;
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+  place-items: center;
   min-height: 0;
+  contain: strict;
 
   img {
+    grid-area: 1 / 1;
     max-width: 100%;
     max-height: 100%;
     width: auto;
@@ -1170,13 +1176,10 @@ onUnmounted(onClose);
 
 // Image switch. Keyframe animations, not transitions, so they override the
 // shutter's `clip-path` transition on the re-mounted image. The leaving
-// image is pulled out of flow and re-centered (`inset: 0; margin: auto`
-// centers a replaced element) so both stack during the swap.
+// image paints above the entering one while it fades.
 .switch-next-leave-active,
 .switch-prev-leave-active {
-  position: absolute;
-  inset: 0;
-  margin: auto;
+  z-index: 1;
   pointer-events: none;
 }
 
