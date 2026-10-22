@@ -25,7 +25,9 @@ src/router/index.ts
   /gallery -> src/views/GalleryPage.vue
 ```
 
-`createWebHistory(import.meta.env.BASE_URL)` is used. `scrollBehavior` restores saved positions, scrolls to hash targets with a 72px top offset, and otherwise returns to the top.
+`createWebHistory(import.meta.env.BASE_URL)` is used. `scrollBehavior` restores saved positions, scrolls to hash targets with a 72px top offset, and otherwise returns to the top instantly (`behavior: "instant"`, overriding the global smooth scroll so the new page is not mid-scroll when the view transition captures it).
+
+Route changes between different pages run a View Transition. `router.beforeResolve` calls `document.startViewTransition` and lets navigation proceed only inside its update callback, after the old page is captured. `router.afterEach` ends the callback after `nextTick` plus one macrotask, so the new route has rendered and scrolled before capture. Initial load, same-route hash/query changes, browsers without the API, and `prefers-reduced-motion` skip it. Direction follows the navbar order: each route's `meta.navIndex` (typed via a `RouteMeta` augmentation, kept in sync with the link order in `SiteNav.vue`) sets `--page-dir` on `<html>` to `1` (toward a link on the right) or `-1`, cleared when the latest transition finishes. The animations live in `src/styles/global.scss`: `root` slides away from the travel side and fades, then the new page slides in from the other side behind a `clip-path` shutter opening from its leading edge. `SiteNavbar.vue` has `view-transition-name: site-nav` and is shown live and unanimated, so it keeps its own width/seam transition instead of moving with the page. When adding a route to the navbar, give it the next `navIndex`.
 
 The Vite alias `@` resolves to `src/`. SCSS receives `src/styles/variables.scss` through Vite's `additionalData`, so component styles can use the shared tokens and mixins without importing the file manually.
 

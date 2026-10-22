@@ -85,6 +85,8 @@ onUnmounted(() => {
   top: 0;
   left: 0;
   z-index: 100;
+  // Captured apart from the page in route view transitions (global.scss).
+  view-transition-name: site-nav;
   display: flex;
   align-items: center;
   justify-content: space-between;

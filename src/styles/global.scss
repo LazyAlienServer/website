@@ -163,6 +163,50 @@ button {
   }
 }
 
+// Page-to-page View Transition (started by `src/router/index.ts`). Direction
+// follows the navbar order via `--page-dir` on `<html>` (1 = to a link on the
+// right, -1 = to the left): the old page slides away from the travel side
+// and fades, the new one slides in from the other side, revealed by a
+// shutter that opens from its leading edge. The navbar is captured on its
+// own, shown live and unanimated, so it stays put and plays its own
+// width/seam transition instead of moving with the page.
+::view-transition-old(root) {
+  animation: page-out 0.25s cubic-bezier(0.55, 0, 1, 0.45) both;
+}
+
+::view-transition-new(root) {
+  animation: page-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+::view-transition-group(site-nav),
+::view-transition-new(site-nav) {
+  animation: none;
+}
+
+::view-transition-old(site-nav) {
+  display: none;
+}
+
+@keyframes page-out {
+  to {
+    opacity: 0;
+    transform: translateX(calc(var(--page-dir, 1) * -40px));
+  }
+}
+
+// Forward: inset(0 0 0 100%) opens from the right edge; back mirrors it.
+@keyframes page-in {
+  from {
+    clip-path: inset(
+      0 calc(max(0, var(--page-dir, 1) * -1) * 100%) 0 calc(max(0, var(--page-dir, 1)) * 100%)
+    );
+    transform: translateX(calc(var(--page-dir, 1) * 48px));
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
