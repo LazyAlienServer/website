@@ -85,6 +85,7 @@ Viewer input beyond buttons, arrow keys, and the strip: with a mouse, the outer 
 - Desktop nav derives `--seam-top` and `--seam-bottom` from the actual hero visual bounds and its 8%-to-0 clip slope. Both nav surfaces use these same coordinates; registered progress properties animate independently of scroll geometry. Do not reintroduce skew transforms or pixel-offset seam patches.
 - Navbar observes its own dimensions and publishes `--site-nav-height` for page offsets. Cleanup cancels frames, disconnects the observer, and removes event listeners.
 - The navbar's gray underline remains separate from its seam surfaces.
+- Mobile home (≤640px, `nav--home`): the navbar is `position: sticky` in flow with a top margin of `$hero-visual-height-mobile`, so it starts directly under the stacked hero image and sticks to the viewport top once scrolled there. `HeroSection.vue` pulls `.hero-visual` up by that height plus `--site-nav-height` and leaves `--site-nav-height` below it. Change the image height only through the shared token. Other routes and wider viewports keep the fixed bar.
 
 ### `LiveTimer.vue`
 

@@ -40,6 +40,9 @@ $breakpoint-desktop: 1280px;
 // Layout
 $content-max-width: 1200px;
 $section-padding-y: 120px;
+// Stacked (mobile) hero image height. The home navbar sits directly below it
+// in flow, so `HeroSection.vue` and `SiteNavbar.vue` must share this value.
+$hero-visual-height-mobile: 36vh;
 
 // Transitions
 $transition-fast: 0.2s ease;

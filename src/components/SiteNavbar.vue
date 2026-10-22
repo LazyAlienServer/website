@@ -1,5 +1,10 @@
 <template>
-  <nav ref="navbar" class="nav" :class="{ 'nav--expanded': expanded }" aria-label="主导航">
+  <nav
+    ref="navbar"
+    class="nav"
+    :class="{ 'nav--expanded': expanded, 'nav--home': route.name === 'home' }"
+    aria-label="主导航"
+  >
     <span class="nav-surface" aria-hidden="true"></span>
     <span class="nav-underline" aria-hidden="true"></span>
     <SiteNav />
@@ -205,6 +210,14 @@ onUnmounted(() => {
   .nav,
   .nav.nav--expanded {
     --nav-inline: #{$spacing-sm};
+  }
+
+  // Home: dock in flow right under the stacked hero image, then stick to the
+  // viewport top once scrolled there. `HeroSection.vue` pulls its image up
+  // into this top margin; other routes keep the fixed bar.
+  .nav.nav--home {
+    position: sticky;
+    margin-top: $hero-visual-height-mobile;
   }
 }
 </style>

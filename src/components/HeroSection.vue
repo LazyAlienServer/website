@@ -347,8 +347,13 @@ h1 {
     gap: $spacing-xs;
   }
 
+  // The navbar is docked in flow under this image (see `SiteNavbar.vue`):
+  // pull the image up over the nav's top margin to the page top, and leave
+  // the nav's height below it so the panel starts after the nav.
   .hero-visual {
-    height: 36vh;
+    height: $hero-visual-height-mobile;
+    margin-top: calc(-1 * ($hero-visual-height-mobile + var(--site-nav-height, 0px)));
+    margin-bottom: var(--site-nav-height, 0px);
   }
 }
 </style>
