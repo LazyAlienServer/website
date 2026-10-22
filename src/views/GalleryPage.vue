@@ -77,100 +77,110 @@
     </div>
 
     <main class="gallery-shell gallery-body">
-      <p v-if="!visible.length" class="gallery-empty">该类别暂无作品 // NO FRAMES</p>
+      <!-- Keyed by view + filter so both toggles fade the old layout out
+           and re-mount the new one, which replays the staggered entry. -->
+      <Transition name="swap" mode="out-in">
+        <p v-if="!visible.length" key="empty" class="gallery-empty">该类别暂无作品 // NO FRAMES</p>
 
-      <ol v-else-if="view === 'grid'" class="gallery-grid" aria-label="画廊作品">
-        <li
-          v-for="(entry, index) in visible"
-          :key="entry.item.id"
-          class="frame"
-          :class="`frame--${layoutOf(index)}`"
+        <ol
+          v-else-if="view === 'grid'"
+          :key="`grid-${filter}`"
+          class="gallery-grid"
+          aria-label="画廊作品"
         >
-          <button
-            type="button"
-            class="frame-trigger"
-            :aria-label="`查看大图：${entry.item.title}`"
-            @click="open(index)"
+          <li
+            v-for="(entry, index) in visible"
+            :key="entry.item.id"
+            class="frame"
+            :class="`frame--${layoutOf(index)}`"
+            :style="{ '--i': index }"
           >
-            <span
-              class="frame-media"
-              @pointermove="trackCursor($event, entry.item.width, entry.item.height)"
+            <button
+              type="button"
+              class="frame-trigger"
+              :aria-label="`查看大图：${entry.item.title}`"
+              @click="open(index)"
             >
-              <img
-                :src="entry.item.src"
-                :alt="entry.item.title"
-                :width="entry.item.width"
-                :height="entry.item.height"
-                :loading="index === 0 ? 'eager' : 'lazy'"
-                decoding="async"
-              />
-              <span class="frame-cursor" aria-hidden="true">
-                <span class="cursor-reticle"></span>
-                <span class="cursor-coords"> X<b>0000</b>Y<b>0000</b> </span>
-              </span>
-              <span class="frame-plate" aria-hidden="true">{{ entry.number }}</span>
-              <span class="frame-hud" aria-hidden="true">
-                <span>{{ entry.item.width }} × {{ entry.item.height }} PX</span>
-                <span class="hud-action">查看 / VIEW</span>
-              </span>
-            </span>
-            <span class="frame-caption">
-              <span class="frame-index">{{ entry.number }}</span>
-              <span class="frame-title">
-                <span class="frame-title-cn">{{ entry.item.title }}</span>
-                <span class="frame-title-en">{{ entry.item.titleEn }}</span>
-              </span>
-              <span class="frame-category">
-                {{ entry.category.label }} / {{ entry.category.labelEn }}
-              </span>
-            </span>
-          </button>
-        </li>
-      </ol>
-
-      <div v-else class="gallery-index">
-        <div class="index-table">
-          <p class="index-head" aria-hidden="true">
-            <span>NO.</span><span>标题 / TITLE</span><span>类别</span><span>尺寸 / PX</span>
-          </p>
-          <ol aria-label="画廊索引">
-            <li v-for="(entry, index) in visible" :key="entry.item.id">
-              <button
-                type="button"
-                class="index-row"
-                :class="{ 'is-previewed': previewEntry === entry }"
-                :aria-label="`查看大图：${entry.item.title}`"
-                @mouseenter="previewIndex = index"
-                @focus="previewIndex = index"
-                @click="open(index)"
+              <span
+                class="frame-media"
+                @pointermove="trackCursor($event, entry.item.width, entry.item.height)"
               >
-                <span class="index-no">{{ entry.number }}</span>
-                <span class="index-title">
-                  {{ entry.item.title }}<span>{{ entry.item.titleEn }}</span>
+                <img
+                  :src="entry.item.src"
+                  :alt="entry.item.title"
+                  :width="entry.item.width"
+                  :height="entry.item.height"
+                  :loading="index === 0 ? 'eager' : 'lazy'"
+                  decoding="async"
+                />
+                <span class="frame-cursor" aria-hidden="true">
+                  <span class="cursor-reticle"></span>
+                  <span class="cursor-coords"> X<b>0000</b>Y<b>0000</b> </span>
                 </span>
-                <span class="index-category">{{ entry.category.label }}</span>
-                <span class="index-size">{{ entry.item.width }} × {{ entry.item.height }}</span>
-              </button>
-            </li>
-          </ol>
-        </div>
+                <span class="frame-plate" aria-hidden="true">{{ entry.number }}</span>
+                <span class="frame-hud" aria-hidden="true">
+                  <span>{{ entry.item.width }} × {{ entry.item.height }} PX</span>
+                  <span class="hud-action">查看 / VIEW</span>
+                </span>
+              </span>
+              <span class="frame-caption">
+                <span class="frame-index">{{ entry.number }}</span>
+                <span class="frame-title">
+                  <span class="frame-title-cn">{{ entry.item.title }}</span>
+                  <span class="frame-title-en">{{ entry.item.titleEn }}</span>
+                </span>
+                <span class="frame-category">
+                  {{ entry.category.label }} / {{ entry.category.labelEn }}
+                </span>
+              </span>
+            </button>
+          </li>
+        </ol>
 
-        <figure v-if="previewEntry" class="index-preview" aria-hidden="true">
-          <span class="frame-media">
-            <img
-              :src="previewEntry.item.src"
-              alt=""
-              :width="previewEntry.item.width"
-              :height="previewEntry.item.height"
-            />
-            <span class="frame-plate">{{ previewEntry.number }}</span>
-          </span>
-          <figcaption>
-            <span>{{ previewEntry.item.titleEn }}</span>
-            <span>{{ previewEntry.category.labelEn }}</span>
-          </figcaption>
-        </figure>
-      </div>
+        <div v-else :key="`index-${filter}`" class="gallery-index">
+          <div class="index-table">
+            <p class="index-head" aria-hidden="true">
+              <span>NO.</span><span>标题 / TITLE</span><span>类别</span><span>尺寸 / PX</span>
+            </p>
+            <ol aria-label="画廊索引">
+              <li v-for="(entry, index) in visible" :key="entry.item.id" :style="{ '--i': index }">
+                <button
+                  type="button"
+                  class="index-row"
+                  :class="{ 'is-previewed': previewEntry === entry }"
+                  :aria-label="`查看大图：${entry.item.title}`"
+                  @mouseenter="previewIndex = index"
+                  @focus="previewIndex = index"
+                  @click="open(index)"
+                >
+                  <span class="index-no">{{ entry.number }}</span>
+                  <span class="index-title">
+                    {{ entry.item.title }}<span>{{ entry.item.titleEn }}</span>
+                  </span>
+                  <span class="index-category">{{ entry.category.label }}</span>
+                  <span class="index-size">{{ entry.item.width }} × {{ entry.item.height }}</span>
+                </button>
+              </li>
+            </ol>
+          </div>
+
+          <figure v-if="previewEntry" class="index-preview" aria-hidden="true">
+            <span class="frame-media">
+              <img
+                :src="previewEntry.item.src"
+                alt=""
+                :width="previewEntry.item.width"
+                :height="previewEntry.item.height"
+              />
+              <span class="frame-plate">{{ previewEntry.number }}</span>
+            </span>
+            <figcaption>
+              <span>{{ previewEntry.item.titleEn }}</span>
+              <span>{{ previewEntry.category.labelEn }}</span>
+            </figcaption>
+          </figure>
+        </div>
+      </Transition>
     </main>
 
     <dialog
@@ -570,6 +580,32 @@ onUnmounted(onClose);
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 56px $spacing-md;
   list-style: none;
+}
+
+// ---------- View / filter swap ----------
+// The old layout fades out (`<Transition mode="out-in">`), then frames and
+// index rows of the new one rise in one after another, staggered by `--i`.
+.swap-enter-active,
+.swap-leave-active {
+  transition: opacity $transition-fast;
+}
+
+.swap-enter-from,
+.swap-leave-to {
+  opacity: 0;
+}
+
+@keyframes item-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+.frame,
+.index-table li {
+  animation: item-rise 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 60ms);
 }
 
 .frame {
@@ -984,6 +1020,10 @@ onUnmounted(onClose);
 }
 
 // ---------- Viewer ----------
+// Opens and closes with a fade; the image opens like a shutter from its
+// horizontal center line and the bar rises under it. `@starting-style`
+// supplies the open-from state; `display`/`overlay` keep the dialog in the
+// top layer until the closing fade ends.
 .viewer {
   max-width: none;
   max-height: none;
@@ -994,15 +1034,61 @@ onUnmounted(onClose);
   border: none;
   background: rgba(10, 10, 10, 0.95);
   color: $color-white;
+  // Centering lives outside `[open]`: while closing, `allow-discrete` keeps
+  // `display: flex` until the fade ends, but `[open]`-only rules drop at once.
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition:
+    opacity $transition-med,
+    display 0.3s allow-discrete,
+    overlay 0.3s allow-discrete;
 
   &[open] {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    opacity: 1;
+
+    @starting-style {
+      opacity: 0;
+    }
   }
 
   &::backdrop {
     background: transparent;
+  }
+}
+
+.viewer-stage img,
+.viewer-bar {
+  transition:
+    clip-path 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity $transition-med;
+}
+
+.viewer:not([open]) .viewer-stage img {
+  clip-path: inset(50% 0 50% 0);
+}
+
+.viewer[open] .viewer-stage img {
+  clip-path: inset(0);
+
+  @starting-style {
+    clip-path: inset(50% 0 50% 0);
+  }
+}
+
+.viewer:not([open]) .viewer-bar {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.viewer[open] .viewer-bar {
+  transition-delay: 0.1s;
+
+  @starting-style {
+    opacity: 0;
+    transform: translateY(16px);
   }
 }
 
@@ -1173,10 +1259,20 @@ onUnmounted(onClose);
   .index-row,
   .index-row::before,
   .index-no,
+  .viewer,
+  .viewer-stage img,
+  .viewer-bar,
   .viewer-controls button,
   .viewer-strip button,
+  .swap-enter-active,
+  .swap-leave-active,
   %segment {
     transition: none;
+  }
+
+  .frame,
+  .index-table li {
+    animation: none;
   }
 }
 
