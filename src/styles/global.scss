@@ -10,6 +10,25 @@
   box-sizing: border-box;
 }
 
+// Hero slant: the single tilt for every slanted mark, edge, and panel (see
+// AGENTS.md). It is the angle of `.hero-visual`'s clipped left edge in
+// `HeroSection.vue`: 8% of the 60%-wide image (4.8vw) across the hero height
+// (100vh, min 640px), so it follows the viewport. Use it as
+// `skewX(calc(-1 * var(--hero-slant)))` (leans like `/`); for a clip-path
+// edge on a box of known height h, offset by `h * var(--hero-slant-tan)`.
+// The fixed values are the 1920×1080 result, for browsers without CSS trig.
+:root {
+  --hero-slant: 4.88deg;
+  --hero-slant-tan: 0.0854;
+}
+
+@supports (transform: skewX(atan2(1vw, 1vh))) {
+  :root {
+    --hero-slant: atan2(4.8vw, max(100vh, 640px));
+    --hero-slant-tan: tan(atan2(4.8vw, max(100vh, 640px)));
+  }
+}
+
 html {
   scroll-behavior: smooth;
 }

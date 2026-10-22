@@ -151,6 +151,7 @@ Both routes render the same footer, including the closing blue wordmark. A norma
 - Spacing: `$spacing-xs` through `$spacing-xl`.
 - Breakpoint mixins: `mobile` (max 640px), `tablet` (max 1024px), and `desktop` (min 641px).
 - Industrial mixins: `clipped-panel`, `corner-brackets`, and `hatch-strip`.
+- Hero slant: `src/styles/global.scss` defines `--hero-slant` and `--hero-slant-tan` on `:root`, the viewport-dependent angle of the hero image's clipped left edge (`atan2(4.8vw, max(100vh, 640px))`), with fixed 1920×1080 fallbacks. Every slant uses it (the AGENTS.md tilt rule): kicker marks (hero, rules, gallery), the hero primary button and intro tab label (skewed `::before` clipped by `overflow: hidden`), ticker marks, the hardware accordion, and the join divider and group tint.
 
 Section headings are intentionally bespoke and owned by each section component (hero identity kicker, intro profile tab, timer founding timeline, hardware TECH SUPPORT kicker, GitHub title, admin roster manifest, join index row). The hero carries no section index. There is no shared section-header component or global header class; derive header data from the section's own constants (`hardware`, `operators`, `establishedDate`).
 

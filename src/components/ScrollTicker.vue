@@ -104,16 +104,12 @@ onUnmounted(() => {
   -webkit-text-stroke: 1px rgba(255, 255, 255, 0.45);
 }
 
-// Slanted blue plate, leaning at the hero split line's angle. That line is
-// `.hero-visual`'s clipped left edge in `HeroSection.vue`: 8% of the 60%-wide
-// image (4.8vw) across the hero height (100vh, min 640px). The fixed skew is
-// a fallback for browsers without CSS `atan2()`.
+// Slanted blue plate at the shared hero slant (global.scss).
 .ticker-mark {
   width: calc(var(--ticker-size) * 0.5);
   height: calc(var(--ticker-size) * 0.5);
   background: $color-blue-bright;
-  transform: skewX(-5deg);
-  transform: skewX(calc(-1 * atan2(4.8vw, max(100vh, 640px))));
+  transform: skewX(calc(-1 * var(--hero-slant)));
 }
 
 @include tablet {

@@ -306,15 +306,8 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
   margin-top: calc(-1 * $section-padding-y);
   margin-bottom: calc(-1 * $section-padding-y);
   transform-origin: 0 100%;
-  transform: skewX(-4deg);
+  transform: skewX(calc(-1 * var(--hero-slant)));
   @include hatch-strip(rgba(30, 144, 255, 0.55), 45deg, 2px, 8px);
-
-  // hero visual: left edge runs 8% of a 60vw panel over 100vh — the skew
-  // scales the horizontal shift with the element's own height, so the angle
-  // matches the hero exactly at every viewport
-  @supports (transform: skewX(atan2(1vw, 1vh))) {
-    transform: skewX(atan2(-4.8vw, 100vh));
-  }
 }
 
 // ---------- Group zone (right) ----------
@@ -339,11 +332,7 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
     inset: 0;
     background: rgba(0, 102, 204, 0.1);
     transform-origin: 0 100%;
-    transform: skewX(-4deg);
-
-    @supports (transform: skewX(atan2(1vw, 1vh))) {
-      transform: skewX(atan2(-4.8vw, 100vh));
-    }
+    transform: skewX(calc(-1 * var(--hero-slant)));
   }
 }
 

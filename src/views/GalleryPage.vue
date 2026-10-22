@@ -469,7 +469,7 @@ onUnmounted(onClose);
   height: 10px;
   margin-right: 4px;
   background: $color-blue-bright;
-  transform: skewX(-20deg);
+  transform: skewX(calc(-1 * var(--hero-slant)));
 }
 
 .heading-lead {

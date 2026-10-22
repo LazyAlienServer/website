@@ -17,6 +17,8 @@ Detailed runtime boundaries, state ownership, data flows, and modification entry
 
 The visual language is neo-industrial and technological: blue and black are primary colors, white is used for contrast, and interfaces use panels, grid lines, status indicators, clipped corners, and restrained motion. Preserve the existing Chinese-language content and responsive behavior when changing UI. Respect `prefers-reduced-motion` and keep interactive controls keyboard-accessible.
 
+Tilt rule: every slanted mark, edge, or panel uses the hero split-line angle, never a hand-picked degree. The angle is the shared `--hero-slant` (with `--hero-slant-tan`) defined in `src/styles/global.scss`. It is computed from the hero image's clipped left edge, so it follows the viewport. Apply it as `transform: skewX(calc(-1 * var(--hero-slant)))` so slants lean like `/`. For a slanted edge on one side only, skew a background pseudo-element and clip it with `overflow: hidden` rather than hard-coding a pixel offset in `clip-path`. Out of scope: 45° corner chamfers (`clipped-panel`), diagonal hatch patterns, rotations (clock hands, arrows, vertical labels), and the hero seam itself.
+
 ## Important Rules
 
 - Do not perform browser-based verification or use browser tooling unless the user explicitly asks for it.

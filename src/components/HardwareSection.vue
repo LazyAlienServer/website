@@ -297,19 +297,13 @@ onUnmounted(() => {
   flex: 1 1 auto;
   min-width: 0;
   display: flex;
-  // slant matches the hero exactly: horizontal offset = height × (4.8vw / 100vh)
+  // slant matches the hero exactly (shared `--hero-slant`, global.scss):
+  // horizontal offset = accordion height × tan(hero slant)
   --accordion-h: clamp(440px, 55vw, 580px);
-  --slant-angle: 4deg; // fallback matching the hero's skewX(-4deg) magnitude
-  --slant-tan: 0.07; // ≈ tan(4°) fallback
+  --slant-angle: var(--hero-slant);
+  --slant-tan: var(--hero-slant-tan);
   --slant: calc(var(--slant-tan) * var(--accordion-h));
   height: var(--accordion-h);
-}
-
-@supports (transform: skewX(atan2(1vw, 1vh))) {
-  .hw-accordion {
-    --slant-angle: atan2(4.8vw, 100vh);
-    --slant-tan: tan(atan2(4.8vw, 100vh));
-  }
 }
 
 .hw-panel {

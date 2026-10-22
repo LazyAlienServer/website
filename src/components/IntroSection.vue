@@ -130,11 +130,25 @@ import ParticleLogo from "./ParticleLogo.vue";
   font-weight: 700;
 }
 
+// Slanted right edge at the hero slant (leaning `/`): a gray layer skewed
+// from its top-right corner, clipped by the label so the left edge stays
+// square. Skew scales with the label's own height.
 .intro-tab-label {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   padding-right: 28px;
-  background: $color-gray-dark;
   color: $color-gray-light;
-  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 100%, 0 100%);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: $color-gray-dark;
+    transform-origin: 100% 0;
+    transform: skewX(calc(-1 * var(--hero-slant)));
+  }
 }
 
 .intro-record {

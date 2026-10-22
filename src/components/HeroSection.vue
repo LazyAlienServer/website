@@ -119,7 +119,7 @@ onUnmounted(() => {
   height: 10px;
   margin-right: 4px;
   background: $color-blue-bright;
-  transform: skewX(-20deg);
+  transform: skewX(calc(-1 * var(--hero-slant)));
 }
 
 .kicker-lead {
@@ -179,10 +179,24 @@ h1 {
   }
 }
 
+// Slanted left edge at the hero slant: a background layer skewed from its
+// bottom-left corner, clipped by the button so the right edge stays square.
+// Skew scales with the button's own height, so no height is hard-coded.
 .btn-primary {
-  background: $color-primary-blue;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   color: $color-white;
-  clip-path: polygon(14px 0, 100% 0, 100% 100%, 0 100%);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: $color-primary-blue;
+    transform-origin: 0 100%;
+    transform: skewX(calc(-1 * var(--hero-slant)));
+  }
 }
 
 .btn-ghost {
