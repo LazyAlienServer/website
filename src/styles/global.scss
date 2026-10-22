@@ -168,8 +168,8 @@ button {
 // right, -1 = to the left): the old page slides away from the travel side
 // and fades, the new one slides in from the other side, revealed by a
 // shutter that opens from its leading edge. The navbar is captured on its
-// own, shown live and unanimated, so it stays put and plays its own
-// width/seam transition instead of moving with the page.
+// own and shown live, so it plays its own width/seam transition instead of
+// moving with the page; it only travels when its top changes (below).
 ::view-transition-old(root) {
   animation: page-out 0.25s cubic-bezier(0.55, 0, 1, 0.45) both;
 }
@@ -179,12 +179,118 @@ button {
 }
 
 ::view-transition-group(site-nav),
-::view-transition-new(site-nav) {
+::view-transition-new(site-nav),
+::view-transition-group(nav-trail) {
   animation: none;
 }
 
-::view-transition-old(site-nav) {
+::view-transition-old(site-nav),
+::view-transition-old(nav-trail),
+::view-transition-new(nav-trail) {
   display: none;
+}
+
+// Navbar travel (mobile home ↔ other pages), mirroring the desktop expand:
+// `--nav-from`/`--nav-to` are the navbar's viewport tops on the old/new page
+// (set by the router with `data-nav-move`). The blue only ever fills the gap
+// between the navbar's top edge and the far end of the travel, so it never
+// depends on the navbar's height and cannot show below it.
+// Up (leaving the docked home navbar): blue grows from the navbar's top edge
+// to the target first, then the navbar follows, swallowing the blue.
+// Down (arriving at home): the navbar moves first, stretching the blue
+// behind it from the top, then the blue's top edge follows down into it.
+::view-transition-group(site-nav) {
+  z-index: 2;
+}
+
+::view-transition-group(nav-trail) {
+  z-index: 1;
+  background: $color-blue-bright;
+  visibility: hidden;
+}
+
+html[data-nav-move] {
+  &::view-transition-group(nav-trail) {
+    visibility: visible;
+  }
+}
+
+html[data-nav-move="up"] {
+  &::view-transition-group(site-nav) {
+    animation: nav-follow-up 0.66s both;
+  }
+
+  &::view-transition-group(nav-trail) {
+    animation: nav-trail-up 0.66s both;
+  }
+}
+
+html[data-nav-move="down"] {
+  &::view-transition-group(site-nav) {
+    animation: nav-lead-down 0.69s both;
+  }
+
+  &::view-transition-group(nav-trail) {
+    animation: nav-trail-down 0.69s both;
+  }
+}
+
+// Keyframe splits match the desktop timings: blue 240ms then body 420ms on
+// expand (36%), body 420ms then blue 270ms on collapse (61%).
+@keyframes nav-trail-up {
+  from {
+    height: 0;
+    transform: translateY(var(--nav-from));
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  36% {
+    height: calc(var(--nav-from) - var(--nav-to));
+    transform: translateY(var(--nav-to));
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  to {
+    height: 0;
+    transform: translateY(var(--nav-to));
+  }
+}
+
+@keyframes nav-follow-up {
+  from,
+  36% {
+    transform: translateY(var(--nav-from));
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  to {
+    transform: translateY(var(--nav-to));
+  }
+}
+
+@keyframes nav-trail-down {
+  from {
+    height: 0;
+    transform: translateY(var(--nav-from));
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  61% {
+    height: calc(var(--nav-to) - var(--nav-from));
+    transform: translateY(var(--nav-from));
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  to {
+    height: 0;
+    transform: translateY(var(--nav-to));
+  }
+}
+
+@keyframes nav-lead-down {
+  from {
+    transform: translateY(var(--nav-from));
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  61%,
+  to {
+    transform: translateY(var(--nav-to));
+  }
 }
 
 @keyframes page-out {

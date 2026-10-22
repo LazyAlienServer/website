@@ -1,5 +1,6 @@
 <template>
   <nav
+    id="site-nav"
     ref="navbar"
     class="nav"
     :class="{ 'nav--expanded': expanded, 'nav--home': route.name === 'home' }"
@@ -7,6 +8,7 @@
   >
     <span class="nav-surface" aria-hidden="true"></span>
     <span class="nav-underline" aria-hidden="true"></span>
+    <span class="nav-trail" aria-hidden="true"></span>
     <SiteNav />
   </nav>
 </template>
@@ -119,6 +121,16 @@ onUnmounted(() => {
 
 .nav-underline {
   position: absolute;
+}
+
+// Invisible stand-in captured as its own `nav-trail` view-transition group;
+// global.scss paints that group blue when the router's page transition moves
+// the navbar (`data-nav-move`). The router finds the navbar by `#site-nav`.
+.nav-trail {
+  position: absolute;
+  inset: 0;
+  view-transition-name: nav-trail;
+  pointer-events: none;
 }
 
 // Both surfaces use the Hero's exact seam coordinates. Blue expands first;
