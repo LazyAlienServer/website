@@ -65,8 +65,8 @@
         </footer>
       </article>
 
-      <nav ref="toc" class="rules-toc" :class="{ 'is-open': tocOpen }" aria-label="章节目录">
-        <div class="toc-panel">
+      <nav class="rules-toc" :class="{ 'is-open': tocOpen }" aria-label="章节目录">
+        <div ref="toc" class="toc-panel">
           <button
             type="button"
             class="toc-toggle"
@@ -653,8 +653,10 @@ onUnmounted(() => {
 
   // Collapsed index rail: fixed to the right edge, dashes only, with the
   // reading column padded clear of it. The toggle covers the whole rail, so
-  // any tap opens the panel; open, the titles slide in from zero width over a
-  // dark backing that fades in.
+  // any tap opens it; open, the titles slide in from zero width while a
+  // translucent scrim (`.rules-toc::before`, under the navbar's z-index)
+  // fades in over the page. The scrim catches taps, and since it is outside
+  // `.toc-panel` (the `toc` ref) a tap on it closes the index.
   // Dashes keep their place in both states: every row is a fixed 32px tall
   // (so the vertically centered panel keeps its height), the right padding
   // never changes, and the hidden title takes no width or gap (`gap: 0`,
@@ -672,6 +674,21 @@ onUnmounted(() => {
     width: auto;
     max-width: calc(100vw - #{$spacing-lg});
     pointer-events: none;
+
+    &::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: rgba(10, 10, 10, 0.85);
+      opacity: 0;
+      visibility: hidden;
+      backdrop-filter: blur(0);
+      transition:
+        opacity $transition-med,
+        visibility $transition-med,
+        backdrop-filter $transition-med;
+    }
 
     a {
       gap: 0;
@@ -704,11 +721,11 @@ onUnmounted(() => {
         opacity: 1;
       }
 
-      .toc-panel {
-        padding-left: $spacing-sm;
-        border-left-color: $color-gray-dark;
-        background-color: rgba(10, 10, 10, 0.94);
-        backdrop-filter: blur(8px);
+      &::before {
+        opacity: 1;
+        visibility: visible;
+        backdrop-filter: blur(3px);
+        pointer-events: auto;
       }
     }
   }
@@ -718,14 +735,7 @@ onUnmounted(() => {
     max-height: 100%;
     overflow-y: auto;
     padding: 4px 8px;
-    border-left: 1px solid transparent;
-    background-color: transparent;
     pointer-events: auto;
-    transition:
-      padding $transition-med,
-      border-color $transition-med,
-      background-color $transition-med,
-      backdrop-filter $transition-med;
   }
 
   .toc-toggle {
@@ -745,7 +755,7 @@ onUnmounted(() => {
 
   @media (prefers-reduced-motion: reduce) {
     .rules-toc .toc-title,
-    .toc-panel {
+    .rules-toc::before {
       transition: none;
     }
   }
