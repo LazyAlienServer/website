@@ -75,6 +75,9 @@
             aria-label="展开章节目录"
             @click="tocOpen = true"
           ></button>
+          <span class="toc-count" aria-hidden="true">
+            {{ outline[activeChapterIndex]?.anchor }}/{{ pad(outline.length) }}
+          </span>
           <ol id="rules-toc-list" :inert="tocCompact && !tocOpen">
             <li v-for="(chapter, ci) in outline" :key="chapter.id">
               <a
@@ -83,9 +86,6 @@
                 :aria-current="activeChapterIndex === ci ? 'location' : undefined"
                 @click="tocOpen = false"
               >
-                <span v-if="ci === 0" class="toc-count" aria-hidden="true">
-                  {{ outline[activeChapterIndex]?.anchor }}/{{ pad(outline.length) }}
-                </span>
                 <span class="toc-title">{{ chapter.title }}</span>
                 <span class="toc-dash" aria-hidden="true"></span>
               </a>
@@ -545,13 +545,22 @@ onUnmounted(() => {
   }
 }
 
+// Sits just above the first entry, right-aligned with the dashes. Absolute,
+// so the list itself stays vertically centered in the rail.
+.toc-panel {
+  position: relative;
+}
+
 .toc-count {
-  flex: none;
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
   padding: 1px 5px;
   border: 1px solid $color-gray-dark;
   font-family: $font-display;
   font-size: 10px;
   letter-spacing: 1px;
+  white-space: nowrap;
   font-variant-numeric: tabular-nums;
   color: $color-gray-mid;
 }
@@ -648,8 +657,8 @@ onUnmounted(() => {
   // dark backing that fades in.
   // Dashes keep their place in both states: every row is a fixed 32px tall
   // (so the vertically centered panel keeps its height), the right padding
-  // never changes, and the hidden count and title take no width or gap
-  // (`gap: 0`, spacing via `margin-right`, zero padding and border).
+  // never changes, and the hidden title takes no width or gap (`gap: 0`,
+  // spacing via `margin-right`). The `xx/09` count is not shown on mobile.
   .rules-layout {
     padding-right: 40px;
   }
@@ -670,7 +679,10 @@ onUnmounted(() => {
       padding: 0;
     }
 
-    .toc-count,
+    .toc-count {
+      display: none;
+    }
+
     .toc-title {
       max-width: 0;
       margin-right: 0;
@@ -678,15 +690,7 @@ onUnmounted(() => {
       transition:
         max-width $transition-med,
         margin-right $transition-med,
-        padding $transition-med,
-        border-width $transition-med,
         opacity $transition-med;
-    }
-
-    .toc-count {
-      overflow: hidden;
-      padding-inline: 0;
-      border-inline-width: 0;
     }
 
     &.is-open {
@@ -694,16 +698,10 @@ onUnmounted(() => {
         display: none;
       }
 
-      .toc-count,
       .toc-title {
         max-width: calc(100vw - 96px);
         margin-right: 10px;
         opacity: 1;
-      }
-
-      .toc-count {
-        padding-inline: 5px;
-        border-inline-width: 1px;
       }
 
       .toc-panel {
@@ -746,7 +744,6 @@ onUnmounted(() => {
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .rules-toc .toc-count,
     .rules-toc .toc-title,
     .toc-panel {
       transition: none;
