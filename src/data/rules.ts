@@ -20,7 +20,7 @@ const TANH = "https://space.bilibili.com/454721668";
 export const chapters: Chapter[] = [
   {
     id: "chapter-1",
-    title: "第一章 关于 Lazy Alien Server 服务器",
+    title: "第一章 关于服务器",
     articles: [
       {
         id: "article-1",
