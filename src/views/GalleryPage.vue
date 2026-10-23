@@ -59,7 +59,7 @@
             <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
               <path d="M1 1h6v6H1zM9 1h6v6H9zM1 9h6v6H1zM9 9h6v6H9z" />
             </svg>
-            GRID
+            <span class="view-label">GRID</span>
           </button>
           <button
             type="button"
@@ -70,7 +70,7 @@
             <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
               <path d="M1 2h14v2H1zM1 7h14v2H1zM1 12h14v2H1z" />
             </svg>
-            INDEX
+            <span class="view-label">INDEX</span>
           </button>
         </div>
       </div>
@@ -1454,18 +1454,38 @@ onUnmounted(onClose);
     padding-bottom: 32px;
   }
 
+  // One row: the filter takes the free width and scrolls sideways if more
+  // categories than fit are added; the view toggle drops its labels (names
+  // stay in `aria-label`) and becomes two square icon buttons on the right.
   .toolbar-inner {
-    flex-wrap: wrap;
-    gap: 8px $spacing-sm;
-    padding-block: 10px;
+    gap: $spacing-sm;
   }
 
-  .toolbar-status {
+  .filter {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .filter-btn {
+    flex: none;
+    padding: 0 12px;
+  }
+
+  .toolbar-status,
+  .view-label {
     display: none;
   }
 
   .view-toggle {
-    margin-left: auto;
+    flex: none;
+
+    button {
+      justify-content: center;
+      width: 32px;
+      padding: 0;
+    }
   }
 
   .gallery-body {
