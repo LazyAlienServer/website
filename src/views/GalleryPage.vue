@@ -995,15 +995,19 @@ onUnmounted(onClose);
     transition: opacity $transition-fast;
   }
 
-  &.is-previewed {
-    color: $color-white;
+  // Marks the row shown in `.index-preview`, so it exists only where the
+  // preview does (hidden by the `tablet` block, ≤1024px).
+  @media (min-width: 1025px) {
+    &.is-previewed {
+      color: $color-white;
 
-    &::before {
-      opacity: 1;
-    }
+      &::before {
+        opacity: 1;
+      }
 
-    .index-no {
-      color: $color-blue-bright;
+      .index-no {
+        color: $color-blue-bright;
+      }
     }
   }
 
