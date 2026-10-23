@@ -153,9 +153,10 @@ const scheduleChapter = () => {
   if (!frame) frame = requestAnimationFrame(updateChapter);
 };
 
-// Mobile index: the rail collapses to its dashes; a toggle covering it opens
-// the full titles. While collapsed the links are `inert`, so taps and Tab
-// reach the toggle instead. A link tap, Escape, or a tap outside closes it,
+// Mobile index: the rail collapses to its dashes; a toggle over the dash
+// column opens the full titles. While collapsed the links are `inert`, so taps and Tab
+// reach the toggle instead. A link tap, Escape, or a tap anywhere else
+// (including the panel's empty space beside short titles) closes it,
 // and leaving mobile width resets it. `COMPACT_QUERY` must match the
 // `mobile` mixin that styles the collapsed rail.
 const COMPACT_QUERY = "(max-width: 640px)";
@@ -167,8 +168,9 @@ const syncCompact = () => {
   tocCompact.value = compactMedia?.matches ?? false;
   if (!tocCompact.value) tocOpen.value = false;
 };
-const closeOnOutside = (event: PointerEvent) => {
-  if (!toc.value?.contains(event.target as Node)) tocOpen.value = false;
+const closeOffLink = (event: PointerEvent) => {
+  const link = (event.target as Element | null)?.closest?.("a");
+  if (!link || !toc.value?.contains(link)) tocOpen.value = false;
 };
 const closeOnEscape = (event: KeyboardEvent) => {
   if (event.key !== "Escape") return;
@@ -177,10 +179,10 @@ const closeOnEscape = (event: KeyboardEvent) => {
 };
 watch(tocOpen, (open) => {
   if (open) {
-    document.addEventListener("pointerdown", closeOnOutside);
+    document.addEventListener("pointerdown", closeOffLink);
     document.addEventListener("keydown", closeOnEscape);
   } else {
-    document.removeEventListener("pointerdown", closeOnOutside);
+    document.removeEventListener("pointerdown", closeOffLink);
     document.removeEventListener("keydown", closeOnEscape);
   }
 });
@@ -198,7 +200,7 @@ onUnmounted(() => {
   window.removeEventListener("scroll", scheduleChapter);
   window.removeEventListener("resize", scheduleChapter);
   compactMedia?.removeEventListener("change", syncCompact);
-  document.removeEventListener("pointerdown", closeOnOutside);
+  document.removeEventListener("pointerdown", closeOffLink);
   document.removeEventListener("keydown", closeOnEscape);
 });
 </script>
@@ -520,10 +522,18 @@ onUnmounted(() => {
     list-style: none;
   }
 
+  // Each link is only as wide as its title plus dash, right-aligned in its
+  // row, so the empty space left of a short title is not clickable.
+  li {
+    display: flex;
+    justify-content: flex-end;
+  }
+
   a {
     display: flex;
     align-items: center;
     justify-content: flex-end;
+    max-width: 100%;
     gap: 10px;
     padding: 7px 0;
     color: $color-gray-mid;
@@ -652,8 +662,8 @@ onUnmounted(() => {
   }
 
   // Collapsed index rail: fixed to the right edge, dashes only, with the
-  // reading column padded clear of it. The toggle covers the whole rail, so
-  // any tap opens it; open, the titles slide in from zero width while a
+  // reading column padded clear of it. The toggle covers the dash column, so
+  // a tap there opens it; open, the titles slide in from zero width while a
   // translucent scrim (`.rules-toc::before`, under the navbar's z-index)
   // fades in over the page. The scrim catches taps, and since it is outside
   // `.toc-panel` (the `toc` ref) a tap on it closes the index.
@@ -738,10 +748,15 @@ onUnmounted(() => {
     pointer-events: auto;
   }
 
+  // Covers only the dash column (8px panel padding + 16px widest dash + 8px
+  // padding), not the whole panel: while the titles slide shut after a
+  // close, a full-width toggle would sit under the finger and the tap's
+  // `click` would reopen the index at once.
   .toc-toggle {
     display: block;
     position: absolute;
-    inset: 0;
+    inset: 0 0 0 auto;
+    width: 32px;
     z-index: 1;
     border: none;
     background: none;
