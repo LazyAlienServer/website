@@ -65,22 +65,33 @@
         </footer>
       </article>
 
-      <nav class="rules-toc" aria-label="章节目录">
-        <ol>
-          <li v-for="(chapter, ci) in outline" :key="chapter.id">
-            <a
-              :href="`#${chapter.anchor}`"
-              :class="{ 'is-active': activeChapterIndex === ci }"
-              :aria-current="activeChapterIndex === ci ? 'location' : undefined"
-            >
-              <span v-if="ci === 0" class="toc-count" aria-hidden="true">
-                {{ outline[activeChapterIndex]?.anchor }}/{{ pad(outline.length) }}
-              </span>
-              <span class="toc-title">{{ chapter.title }}</span>
-              <span class="toc-dash" aria-hidden="true"></span>
-            </a>
-          </li>
-        </ol>
+      <nav ref="toc" class="rules-toc" :class="{ 'is-open': tocOpen }" aria-label="章节目录">
+        <div class="toc-panel">
+          <button
+            type="button"
+            class="toc-toggle"
+            :aria-expanded="tocOpen"
+            aria-controls="rules-toc-list"
+            aria-label="展开章节目录"
+            @click="tocOpen = true"
+          ></button>
+          <ol id="rules-toc-list" :inert="tocCompact && !tocOpen">
+            <li v-for="(chapter, ci) in outline" :key="chapter.id">
+              <a
+                :href="`#${chapter.anchor}`"
+                :class="{ 'is-active': activeChapterIndex === ci }"
+                :aria-current="activeChapterIndex === ci ? 'location' : undefined"
+                @click="tocOpen = false"
+              >
+                <span v-if="ci === 0" class="toc-count" aria-hidden="true">
+                  {{ outline[activeChapterIndex]?.anchor }}/{{ pad(outline.length) }}
+                </span>
+                <span class="toc-title">{{ chapter.title }}</span>
+                <span class="toc-dash" aria-hidden="true"></span>
+              </a>
+            </li>
+          </ol>
+        </div>
       </nav>
     </div>
     <FooterSection />
@@ -88,7 +99,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref, useTemplateRef, watch } from "vue";
 import { useRoute } from "vue-router";
 import { chapters } from "@/data/rules";
 import FooterSection from "@/components/FooterSection.vue";
@@ -141,15 +152,54 @@ const updateChapter = () => {
 const scheduleChapter = () => {
   if (!frame) frame = requestAnimationFrame(updateChapter);
 };
+
+// Mobile index: the rail collapses to its dashes; a toggle covering it opens
+// the full titles. While collapsed the links are `inert`, so taps and Tab
+// reach the toggle instead. A link tap, Escape, or a tap outside closes it,
+// and leaving mobile width resets it. `COMPACT_QUERY` must match the
+// `mobile` mixin that styles the collapsed rail.
+const COMPACT_QUERY = "(max-width: 640px)";
+const toc = useTemplateRef<HTMLElement>("toc");
+const tocOpen = ref(false);
+const tocCompact = ref(false);
+let compactMedia: MediaQueryList | undefined;
+const syncCompact = () => {
+  tocCompact.value = compactMedia?.matches ?? false;
+  if (!tocCompact.value) tocOpen.value = false;
+};
+const closeOnOutside = (event: PointerEvent) => {
+  if (!toc.value?.contains(event.target as Node)) tocOpen.value = false;
+};
+const closeOnEscape = (event: KeyboardEvent) => {
+  if (event.key !== "Escape") return;
+  tocOpen.value = false;
+  toc.value?.querySelector<HTMLElement>(".toc-toggle")?.focus();
+};
+watch(tocOpen, (open) => {
+  if (open) {
+    document.addEventListener("pointerdown", closeOnOutside);
+    document.addEventListener("keydown", closeOnEscape);
+  } else {
+    document.removeEventListener("pointerdown", closeOnOutside);
+    document.removeEventListener("keydown", closeOnEscape);
+  }
+});
+
 onMounted(() => {
   updateChapter();
   window.addEventListener("scroll", scheduleChapter, { passive: true });
   window.addEventListener("resize", scheduleChapter);
+  compactMedia = window.matchMedia(COMPACT_QUERY);
+  syncCompact();
+  compactMedia.addEventListener("change", syncCompact);
 });
 onUnmounted(() => {
   cancelAnimationFrame(frame);
   window.removeEventListener("scroll", scheduleChapter);
   window.removeEventListener("resize", scheduleChapter);
+  compactMedia?.removeEventListener("change", syncCompact);
+  document.removeEventListener("pointerdown", closeOnOutside);
+  document.removeEventListener("keydown", closeOnEscape);
 });
 </script>
 
@@ -529,6 +579,11 @@ onUnmounted(() => {
   background: $color-blue-bright;
 }
 
+// Only the mobile rail collapses; elsewhere the toggle does not exist.
+.toc-toggle {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .article--flash {
     animation: none;
@@ -585,6 +640,117 @@ onUnmounted(() => {
   .rules-signoff {
     flex-direction: column;
     align-items: flex-end;
+  }
+
+  // Collapsed index rail: fixed to the right edge, dashes only, with the
+  // reading column padded clear of it. The toggle covers the whole rail, so
+  // any tap opens the panel; open, the titles slide in from zero width over a
+  // dark backing that fades in.
+  // Dashes keep their place in both states: every row is a fixed 32px tall
+  // (so the vertically centered panel keeps its height), the right padding
+  // never changes, and the hidden count and title take no width or gap
+  // (`gap: 0`, spacing via `margin-right`, zero padding and border).
+  .rules-layout {
+    padding-right: 40px;
+  }
+
+  .rules-toc {
+    display: flex;
+    position: fixed;
+    top: var(--site-nav-height, 84px);
+    right: 0;
+    z-index: 5;
+    width: auto;
+    max-width: calc(100vw - #{$spacing-lg});
+    pointer-events: none;
+
+    a {
+      gap: 0;
+      height: 32px;
+      padding: 0;
+    }
+
+    .toc-count,
+    .toc-title {
+      max-width: 0;
+      margin-right: 0;
+      opacity: 0;
+      transition:
+        max-width $transition-med,
+        margin-right $transition-med,
+        padding $transition-med,
+        border-width $transition-med,
+        opacity $transition-med;
+    }
+
+    .toc-count {
+      overflow: hidden;
+      padding-inline: 0;
+      border-inline-width: 0;
+    }
+
+    &.is-open {
+      .toc-toggle {
+        display: none;
+      }
+
+      .toc-count,
+      .toc-title {
+        max-width: calc(100vw - 96px);
+        margin-right: 10px;
+        opacity: 1;
+      }
+
+      .toc-count {
+        padding-inline: 5px;
+        border-inline-width: 1px;
+      }
+
+      .toc-panel {
+        padding-left: $spacing-sm;
+        border-left-color: $color-gray-dark;
+        background-color: rgba(10, 10, 10, 0.94);
+        backdrop-filter: blur(8px);
+      }
+    }
+  }
+
+  .toc-panel {
+    position: relative;
+    max-height: 100%;
+    overflow-y: auto;
+    padding: 4px 8px;
+    border-left: 1px solid transparent;
+    background-color: transparent;
+    pointer-events: auto;
+    transition:
+      padding $transition-med,
+      border-color $transition-med,
+      background-color $transition-med,
+      backdrop-filter $transition-med;
+  }
+
+  .toc-toggle {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border: none;
+    background: none;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 1px solid $color-blue-bright;
+      outline-offset: -1px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rules-toc .toc-count,
+    .rules-toc .toc-title,
+    .toc-panel {
+      transition: none;
+    }
   }
 }
 </style>

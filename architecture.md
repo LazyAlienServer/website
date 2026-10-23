@@ -54,6 +54,8 @@ When changing section order or adding a landing section, start in `HomePage.vue`
 
 RulesPage lays out a centered 900px document column inside a three-column grid. The chapter index is an unframed list of right-aligned titles, each ending in a dash; it is `position: sticky` in the right column, so it stops at the end of the document instead of overlapping the footer, and it is hidden at 1360px and below. Links reuse the `01`–`09` heading anchors (the route-hash contract used by JoinSection), and CSS scroll margins account for the persistent navbar. A coalesced scroll/resize callback selects the last heading above the navbar offset and sets `aria-current`; the active item turns blue and its dash lengthens. Chapter titles are split into a "第X章" label and a short title at module load; edit titles in `src/data/rules.ts` only.
 
+On mobile (≤640px) the index returns as a collapsed rail: `position: fixed` at the right edge below the navbar, dashes only, with `.rules-layout` padded 40px on the right to stay clear of it. A `.toc-toggle` button covering the rail sets `tocOpen`; the count and titles then grow from zero width and fade in while a dark panel backing fades in (instant under reduced motion). Dashes stay in place across both states: rows are a fixed 32px tall, the panel's right padding never changes, and the hidden count and title take no width or gap. The links are `inert` while collapsed, so taps and Tab reach the toggle. A link tap, Escape (focus returns to the toggle), or a pointerdown outside closes it, and leaving mobile width resets it. `COMPACT_QUERY` in the script must match the `mobile` mixin. Between 641px and 1360px the index stays hidden.
+
 ```ts
 interface Article {
   id: string;
