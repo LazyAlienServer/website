@@ -218,6 +218,13 @@ button {
 // to the target first, then the navbar follows, swallowing the blue.
 // Down (arriving at home): the navbar moves first, stretching the blue
 // behind it from the top, then the blue's top edge follows down into it.
+// Positions are offsets from the new navbar via `translate`, never absolute
+// `transform`s: the UA keeps each group's own `transform` (the new navbar's
+// place in the snapshot containing block), and on mobile that block extends
+// under the browser's top bar, so viewport tops used as absolute transforms
+// put the groups off by the bar's height, a jump when the transition starts
+// and ends. Only the difference of two viewport tops survives, so `0`
+// (`--nav-to`) lands exactly on the live navbar.
 ::view-transition-group(site-nav) {
   z-index: 2;
 }
@@ -259,56 +266,56 @@ html[data-nav-move="down"] {
 @keyframes nav-trail-up {
   from {
     height: 0;
-    transform: translateY(var(--nav-from));
+    translate: 0 calc(var(--nav-from) - var(--nav-to));
     animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   }
   36% {
     height: calc(var(--nav-from) - var(--nav-to));
-    transform: translateY(var(--nav-to));
+    translate: 0 0;
     animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   }
   to {
     height: 0;
-    transform: translateY(var(--nav-to));
+    translate: 0 0;
   }
 }
 
 @keyframes nav-follow-up {
   from,
   36% {
-    transform: translateY(var(--nav-from));
+    translate: 0 calc(var(--nav-from) - var(--nav-to));
     animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   }
   to {
-    transform: translateY(var(--nav-to));
+    translate: 0 0;
   }
 }
 
 @keyframes nav-trail-down {
   from {
     height: 0;
-    transform: translateY(var(--nav-from));
+    translate: 0 calc(var(--nav-from) - var(--nav-to));
     animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   }
   61% {
     height: calc(var(--nav-to) - var(--nav-from));
-    transform: translateY(var(--nav-from));
+    translate: 0 calc(var(--nav-from) - var(--nav-to));
     animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   }
   to {
     height: 0;
-    transform: translateY(var(--nav-to));
+    translate: 0 0;
   }
 }
 
 @keyframes nav-lead-down {
   from {
-    transform: translateY(var(--nav-from));
+    translate: 0 calc(var(--nav-from) - var(--nav-to));
     animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   }
   61%,
   to {
-    transform: translateY(var(--nav-to));
+    translate: 0 0;
   }
 }
 
