@@ -26,11 +26,12 @@ body {
   background: var(--black);
 }
 
-/* CSS transitions; motion/react tweens are handled by `useIntro` and MotionConfig */
+/* CSS transitions and loops; motion/react tweens are handled by `useIntro` and MotionConfig */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     transition-duration: 0.01ms !important;
+    animation: none !important;
   }
 }

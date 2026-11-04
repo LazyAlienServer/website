@@ -12,11 +12,22 @@
  *
  * Color: blue is the brand (wordmark, logo, corner letters, flags, nav
  * arrows and the active item); black is structure and information (rails,
- * circles, hairlines, nav labels, info text).
+ * circles, hairlines, nav labels, info text). On the about panel the card
+ * turns blue and everything on it is white.
+ *
+ * Scroll: `.track` is tall and `.stage` sticks to the viewport inside it,
+ * so the card stays put while scroll progress scrubs the transition.
  */
 
-.stage {
+/* scroll distance of the pinned transition: track height minus one screen (1.5 screens) */
+.track {
   position: relative;
+  height: 250svh;
+}
+
+.stage {
+  position: sticky;
+  top: 0;
   display: grid;
   place-items: center;
   height: 100svh;
@@ -105,6 +116,16 @@
   --meta-top: calc(60 * var(--u));
   --meta-bottom: calc(60 * var(--u));
 
+  /* about panel: text right of the shifted logo (logo box in transition.ts) */
+  --about-x: calc(880 * var(--u));
+  --about-w: calc(560 * var(--u));
+  --about-y: 50%;
+  --about-shift: -50%;
+  --about-title: calc(60 * var(--u));
+  --about-body: calc(17 * var(--u));
+  /* corner rows: gap between each word and its rule */
+  --row-gap: calc(48 * var(--u));
+
   position: absolute;
   inset: 0;
 }
@@ -151,12 +172,37 @@
     --meta-value: calc(12 * var(--u));
     --meta-top: calc(28 * var(--u));
     --meta-bottom: calc(28 * var(--u));
+
+    /* about text below the logo, which moves up instead of left */
+    --about-x: calc(40 * var(--u));
+    --about-w: calc(320 * var(--u));
+    --about-y: calc(350 * var(--u));
+    --about-shift: 0%;
+    --about-title: calc(34 * var(--u));
+    --about-body: calc(13 * var(--u));
+    --row-gap: calc(20 * var(--u));
   }
 
   /* portrait keeps the first two blocks of each band (see content.ts) */
   .metaItem:nth-child(n + 3) {
     display: none;
   }
+}
+
+/* hero layer: everything on the white card; inert once the panel covers it */
+.hero {
+  position: absolute;
+  inset: 0;
+}
+
+.veil {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
 /* content that slides in from an `overflow: hidden` parent */
@@ -440,5 +486,140 @@
     font-weight: 500;
     letter-spacing: 0.02em;
     font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ---------- about panel (white on the blue veil) ---------- */
+
+.about {
+  position: absolute;
+  z-index: 3;
+  top: var(--about-y);
+  left: var(--about-x);
+  width: var(--about-w);
+  translate: 0 var(--about-shift);
+  color: var(--white);
+}
+
+.aboutMask {
+  overflow: hidden;
+}
+
+/*
+ * Corner rows: ABOUT / US are the panel's counterpart to the hero's L / A / S
+ * (same size and vertical anchors, inset like the hero logo), each with a
+ * rule running from the word to the opposite edge.
+ */
+.aboutRow {
+  position: absolute;
+  z-index: 3;
+  right: var(--logo-x);
+  left: var(--logo-x);
+  display: flex;
+  align-items: center;
+  color: var(--white);
+  pointer-events: none;
+}
+
+.aboutRowTop {
+  top: var(--corner-top);
+}
+
+.aboutRowBottom {
+  bottom: var(--corner-bottom);
+}
+
+.aboutCorner {
+  flex: none;
+  font-size: var(--corner-size);
+  font-weight: 700;
+  line-height: 0.8;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+/* on the caps' optical center, a little below the 0.8 line box's center */
+.aboutRule {
+  flex: 1;
+  height: var(--stroke);
+  background: currentColor;
+  translate: 0 calc(var(--corner-size) * 0.03);
+}
+
+.aboutRuleTop {
+  margin-left: var(--row-gap);
+  transform-origin: left;
+}
+
+.aboutRuleBottom {
+  margin-right: var(--row-gap);
+  transform-origin: right;
+}
+
+/* the one divider: under the title, separating it from the body */
+.aboutTitle {
+  margin: 0;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid rgb(255 255 255 / 0.4);
+  font-size: var(--about-title);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.aboutBodyMask {
+  margin-top: 0.9em;
+  font-size: var(--about-body);
+}
+
+.aboutBody {
+  margin: 0;
+  color: rgb(255 255 255 / 0.9);
+  line-height: 1.75;
+}
+
+/* ---------- scroll cue (below the card, fades out on first scroll) ---------- */
+
+.cue {
+  position: absolute;
+  bottom: 2.5svh;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  translate: -50% 0;
+  color: var(--white);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  pointer-events: none;
+}
+
+/* a line that draws down and away, on a loop */
+.cueLine {
+  width: 1px;
+  height: 28px;
+  background: currentColor;
+  animation: cue 1.8s var(--ease) infinite;
+}
+
+@keyframes cue {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+
+  50% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+
+  50.01% {
+    transform-origin: bottom;
+  }
+
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
   }
 }
