@@ -8,11 +8,12 @@ All LAS facts (identity, copy, routes, hardware, team, join paths, the full rule
 
 - React 19 with TypeScript, built and checked with Vite+ (`vp`), pnpm as package manager.
 - Motion: `motion` (`motion/react`). Components use `m.*` from `motion/react-m` under `<LazyMotion features={domAnimation} strict>` in `src/App.tsx`; a full `motion.*` component throws at runtime by design. `MotionConfig reducedMotion="user"` wraps the app.
-- `src/home/` is the homepage (currently the only page, a single full-screen stage):
-  - `Home.tsx` — stage, backdrop, card, logo, corner letters; owns pointer tracking.
+- `src/home/` is the homepage (currently the only page): a card pinned to the viewport while the page scrolls, first the hero, then the about panel.
+  - `Home.tsx` — scroll track and sticky stage, backdrop, card, logo, corner letters; owns pointer tracking and scroll progress; makes the hero layer `inert` once the blue panel covers it.
   - `Wordmark.tsx` (`<h1>` LAZY / ALIEN / SERVER), `Rail.tsx` (double rule, band hairlines, circles, JOIN US / MORE flags), `StageNav.tsx` (nav list), `Meta.tsx` (key/value info bands, live uptime).
+  - `transition.ts` — the scroll transition as a pure function of progress: `PHASE` ranges, module grid geometry (`boardFor`), logo sampling into particles, `drawVeil`. `Veil.tsx` is the canvas that calls it; `About.tsx` is the about text (DOM) that rises in at the end.
   - `motion.ts` — the intro timeline (`AT`), easing, shared variants, `useIntro`.
-  - `content.ts` — nav items, wordmark lines, info band items, `FOUNDED` (uptime origin).
+  - `content.ts` — nav items, wordmark lines, info band items, `FOUNDED` (uptime origin), about copy (verbatim from v2).
   - `Home.module.css` — all homepage layout.
 - `src/index.css` — color tokens (`--blue #0f66dd`, `--black`, `--white`, `--ink-mute` for secondary text), `--ease`, font (Noto Sans, Noto Sans SC for Chinese), resets.
 - Assets from v2: `public/hero.webp`, `public/floatingcity.webp`, `public/ftl-ender-pearl.webp`, `public/favicon.svg`, `src/assets/logo.svg` (white-filled wordmark, used as a CSS mask so it takes `currentColor`).
@@ -28,7 +29,8 @@ The card has a fixed ratio: 2:1 on landscape viewports (`min(80vw, 150svh)` wide
 - The intro is one timeline: retime it only through `AT` in `src/home/motion.ts`. Order: backdrop settles, card unfolds from a horizontal line, rails draw and band hairlines branch off them, then wordmark, nav, circles and flags, corner letters and logo, and the info text last.
 - Reveals slide content inside an `overflow: hidden` mask (`rise`) or animate `clip-path` (`wipe`, `unfold`). Masks clip focus outlines, so focus styles inside masks must draw within the box (nav links use an underline).
 - Pointer-driven motion (backdrop parallax, wordmark line shear, circles sliding along the rail) reacts to mouse pointers only, through springs; touch input leaves the stage still.
-- Respect `prefers-reduced-motion`: `useIntro()` returns `initial={false}` so elements render in their final state, pointer tracking is off, and CSS transitions are cut in `src/index.css`. Every new animation must follow the same path.
+- Respect `prefers-reduced-motion`: `useIntro()` returns `initial={false}` so elements render in their final state, pointer tracking is off, and CSS transitions and loops are cut in `src/index.css`. Every new animation must follow the same path.
+- Scroll transition: `.track` (250svh, so 1.5 screens of scroll) holds the sticky `.stage`; `useScroll` progress over the track, smoothed by a spring, scrubs `PHASE` in `transition.ts`. Each 100u module cell flips once from edge-on to a flat blue face, in a seeded random order with overlapping windows (about 50 tiles mid-turn at once on landscape; random axis and direction per tile), and the panel is covered at 0.40; white particles then appear one by one at scattered points over the first half of the assemble phase (each fading and growing in, then holding briefly) and fly into the sampled logo, the logo shifts left (up on portrait), and the about content rises: two corner rows (top: ABOUT and a rule growing right to the edge; bottom: a rule growing left from US; the words are white at the size and anchors of the hero's L / A / S), the title with one divider under it, and the body. Everything is a function of progress, so it reverses on scroll up. Under reduced motion it is a plain fade of the panel, the logo already in place, and opacity-only text and rules. The logo position in `transition.ts` and the `--about-*` properties in CSS must stay in step.
 - Keep interactive controls keyboard-accessible with visible focus.
 
 Typography rule: use only the four weight tokens (`$font-weight-regular`, `-medium`, `-bold`, `-black`) and never introduce another weight. Text below body size (16px) uses exactly two size tokens: `$font-size-small` (14px: secondary copy, descriptions, nav links, notes, small controls) and `$font-size-label` (12px: keys, plates, badges, indices, counts, HUD readouts, metadata); never write a raw size under 16px and never scale small text with the viewport (exceptions: decorative glyph art and the clamp minimum of fluid display sizes). The “all caps + small type + wide letter-spacing” label pattern is prohibited: small labels use normal case and no tracking. Uppercase is reserved for brand wordmarks and oversized display type. Em dashes and centered dots are not used in interface copy; separate labels with layout (gaps, rules, or separate lines) instead.
@@ -36,6 +38,7 @@ Typography rule: use only the four weight tokens (`$font-weight-regular`, `-medi
 ## Important Rules
 
 - Do not perform browser-based verification or use browser tooling unless the user explicitly asks for it.
+- Avoid file names in one folder that differ only by case (e.g. `Veil.tsx` beside `veil.ts`): on Windows the type checker loses the project's ambient types for one of them.
 
 ## Deployment
 

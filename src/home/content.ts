@@ -47,3 +47,16 @@ export const META_BOTTOM: readonly MetaItem[] = [
 
 /** Uptime origin, the same instant as v2's live timer. */
 export const FOUNDED = Date.parse("2022-08-29T00:00:00+08:00");
+
+/** About panel copy, verbatim from v2's IntroSection (docs/las-handoff.md §3). */
+export const ABOUT = {
+  /** decorative corner words, top-left and bottom-right */
+  corners: ["ABOUT", "US"],
+  title: "关于我们",
+  body: [
+    "Lazy Alien Server简称LAS~是以学生群体为主的技术交流向Minecraft服务器。",
+    "我们充分鼓励技术探索与交流，并欢迎有能力的玩家加入。",
+    "我们为成员提供强大的硬件支持，依托于高性能物理机和完善的存储与备份方案，我们能够提供充足的性能并保障数据安全。",
+    "除此之外，我们还设有开发团队，并有多个自主开发的模组和插件。",
+  ],
+} as const;
