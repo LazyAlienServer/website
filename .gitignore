@@ -7,12 +7,10 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Dependencies
 node_modules
-
-# Build output
 dist
 dist-ssr
+.cloudflare
 *.local
 
 # Editor directories and files
@@ -26,23 +24,8 @@ dist-ssr
 *.sln
 *.sw?
 
-# Astro
-.astro
-
-# OS
-Thumbs.db
-.DS_Store
-
-# Installed skills
-.agents/skills
-
-.design/
-design-concepts/
-
-# wrangler files
-.wrangler
-.dev.vars*
-!.dev.vars.example
-.env*
+# dotenv environment variable files
+.env
+.env.*
 !.env.example
 .cloudflare
