@@ -1,0 +1,36 @@
+:root {
+  --blue: #0f66dd;
+  --black: #0a0a0a;
+  --white: #ffffff;
+  /* secondary text: black at reduced strength, no extra hue */
+  --ink-mute: rgb(10 10 10 / 0.45);
+  /* expo-out, matching EASE in src/home/motion.ts */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  font-family: "Noto Sans", "Noto Sans SC", system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--black);
+}
+
+/* CSS transitions; motion/react tweens are handled by `useIntro` and MotionConfig */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}

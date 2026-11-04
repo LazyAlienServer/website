@@ -1,0 +1,444 @@
+/*
+ * The card has a fixed ratio, 2:1 on landscape screens and 1:2 on portrait
+ * ones, and is a size container. `.board` lays everything out in artboard
+ * units `--u` on a 100u module: landscape 1600 × 800 (16 × 8 modules),
+ * portrait 400 × 800 (4 × 8). Every size and offset below is a multiple of
+ * `--u`, so the composition scales with the card.
+ *
+ * Landscape grid: left column 0–200 (logo, L), double rail at 200, content
+ * 224–1400, right column 1400–1600 (A, S). Hairline bands at 160 and 640
+ * split the content into a top info band, the middle stage (wordmark, nav,
+ * circles), and a bottom info band.
+ *
+ * Color: blue is the brand (wordmark, logo, corner letters, flags, nav
+ * arrows and the active item); black is structure and information (rails,
+ * circles, hairlines, nav labels, info text).
+ */
+
+.stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 100svh;
+  min-height: 480px;
+  overflow: hidden;
+  background: var(--black);
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* flat dim so the white card reads as a plane in front of the photo */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgb(10 10 10 / 0.24);
+  }
+}
+
+.card {
+  position: relative;
+  width: min(80vw, 150svh);
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
+  container: card / size;
+  background: var(--white);
+  color: var(--black);
+}
+
+@media (max-aspect-ratio: 1 / 1) {
+  .card {
+    width: min(88vw, 44svh);
+    aspect-ratio: 1 / 2;
+  }
+}
+
+.board {
+  --u: min(100cqw / 1600, 100cqh / 800);
+  --stroke: clamp(1.5px, calc(3 * var(--u)), 3px);
+
+  --col-l: calc(200 * var(--u));
+  --col-r: calc(200 * var(--u));
+  --logo-x: calc(50 * var(--u));
+  --logo-y: calc(60 * var(--u));
+  --logo-w: calc(100 * var(--u));
+  /* corner boxes sit so the caps start 60u from the top and end 60u from the bottom */
+  --corner-size: calc(100 * var(--u));
+  --corner-top: calc(53 * var(--u));
+  --corner-bottom: calc(59 * var(--u));
+
+  --rail-x: calc(200 * var(--u));
+  --rail-gap: calc(24 * var(--u));
+  --band-top: calc(160 * var(--u));
+  --band-bottom: calc(640 * var(--u));
+  --circle-d: calc(160 * var(--u));
+  --c1-x: calc(197 * var(--u));
+  --c1-y: calc(50% - 56 * var(--u));
+  --c2-x: calc(240 * var(--u));
+  --c2-y: calc(50% + 48 * var(--u));
+  --flag-size: calc(25 * var(--u));
+  --flag-h: calc(46 * var(--u));
+  --flag1-dy: calc(2 * var(--u));
+  --flag2-dy: calc(-17 * var(--u));
+
+  --title-size: calc(130 * var(--u));
+  --title-x: calc(500 * var(--u));
+  --title-y: 50%;
+  --nav-size: calc(40 * var(--u));
+  --nav-right: calc(240 * var(--u));
+  --nav-y: 50%;
+
+  /* info bands: three 400u columns from 300u, aligned with the logo and L */
+  --meta-x: calc(300 * var(--u));
+  --meta-col: calc(400 * var(--u));
+  --meta-key: calc(11 * var(--u));
+  --meta-value: calc(15 * var(--u));
+  --meta-top: calc(60 * var(--u));
+  --meta-bottom: calc(60 * var(--u));
+
+  position: absolute;
+  inset: 0;
+}
+
+@container card (aspect-ratio < 1) {
+  .board {
+    --u: min(100cqw / 400, 100cqh / 800);
+    --stroke: clamp(1px, calc(2 * var(--u)), 3px);
+
+    --col-l: calc(80 * var(--u));
+    --col-r: calc(80 * var(--u));
+    --logo-x: calc(20 * var(--u));
+    --logo-y: calc(28 * var(--u));
+    --logo-w: calc(40 * var(--u));
+    --corner-size: calc(52 * var(--u));
+    --corner-top: calc(24 * var(--u));
+    --corner-bottom: calc(27 * var(--u));
+
+    --rail-x: calc(80 * var(--u));
+    --rail-gap: calc(12 * var(--u));
+    --band-top: calc(110 * var(--u));
+    --band-bottom: calc(690 * var(--u));
+    --circle-d: calc(96 * var(--u));
+    --c1-x: calc(77 * var(--u));
+    --c1-y: calc(50% + 70 * var(--u));
+    --c2-x: calc(102 * var(--u));
+    --c2-y: calc(50% + 130 * var(--u));
+    --flag-size: calc(13 * var(--u));
+    --flag-h: calc(24 * var(--u));
+    --flag1-dy: 0px;
+    --flag2-dy: calc(-9 * var(--u));
+
+    --title-size: calc(72 * var(--u));
+    --title-x: calc(116 * var(--u));
+    --title-y: 37.5%;
+    --nav-size: calc(24 * var(--u));
+    --nav-right: calc(40 * var(--u));
+    --nav-y: calc(50% + 160 * var(--u));
+
+    /* two 100u columns between the rail and the A / S column */
+    --meta-x: calc(116 * var(--u));
+    --meta-col: calc(100 * var(--u));
+    --meta-key: calc(9 * var(--u));
+    --meta-value: calc(12 * var(--u));
+    --meta-top: calc(28 * var(--u));
+    --meta-bottom: calc(28 * var(--u));
+  }
+
+  /* portrait keeps the first two blocks of each band (see content.ts) */
+  .metaItem:nth-child(n + 3) {
+    display: none;
+  }
+}
+
+/* content that slides in from an `overflow: hidden` parent */
+.rise {
+  display: block;
+}
+
+/* ---------- logo and corner letters ---------- */
+
+.logo {
+  position: absolute;
+  top: var(--logo-y);
+  left: var(--logo-x);
+  width: var(--logo-w);
+  aspect-ratio: 97 / 73;
+  background: var(--blue);
+  mask: url("../assets/logo.svg") center / contain no-repeat;
+}
+
+/*
+ * Bold caps on a 0.8 line box: the cap sits inside the box with no clipping,
+ * so the box edges track the letter's edges closely.
+ */
+.corner {
+  position: absolute;
+  overflow: hidden;
+  color: var(--blue);
+  font-size: var(--corner-size);
+  font-weight: 700;
+  line-height: 0.8;
+  text-align: center;
+}
+
+.cornerL {
+  bottom: var(--corner-bottom);
+  left: 0;
+  width: var(--col-l);
+}
+
+.cornerA {
+  top: var(--corner-top);
+  right: 0;
+  width: var(--col-r);
+}
+
+.cornerS {
+  right: 0;
+  bottom: var(--corner-bottom);
+  width: var(--col-r);
+}
+
+/* ---------- rail, bands, circles, flags ---------- */
+
+.rail {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--stroke);
+  background: currentColor;
+}
+
+/* the two rules draw toward each other: one from the top, one from the bottom */
+.rail1 {
+  left: var(--rail-x);
+  transform-origin: top;
+}
+
+.rail2 {
+  left: calc(var(--rail-x) + var(--rail-gap));
+  transform-origin: bottom;
+}
+
+/* hairlines branching right from the rail */
+.band {
+  position: absolute;
+  right: 0;
+  left: calc(var(--rail-x) + var(--rail-gap) + var(--stroke));
+  height: 1px;
+  background: currentColor;
+  transform-origin: left;
+}
+
+.bandTop {
+  top: var(--band-top);
+}
+
+.bandBottom {
+  top: var(--band-bottom);
+}
+
+.circle {
+  position: absolute;
+  width: var(--circle-d);
+  height: var(--circle-d);
+  margin: calc(var(--circle-d) / -2) 0 0 calc(var(--circle-d) / -2);
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  /* 2 viewBox units ≈ the rail stroke at both artboard diameters */
+  circle {
+    fill: transparent;
+    stroke: currentColor;
+    stroke-width: 2;
+    transition: fill 0.5s var(--ease);
+  }
+}
+
+.c1 {
+  top: var(--c1-y);
+  left: var(--c1-x);
+}
+
+.c2 {
+  top: var(--c2-y);
+  left: var(--c2-x);
+}
+
+.flag {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  height: var(--flag-h);
+  margin-top: calc(var(--flag-h) / -2);
+  padding-inline: 0.42em;
+  background: var(--blue);
+  color: var(--white);
+  font-size: var(--flag-size);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  transition: padding 0.5s var(--ease);
+}
+
+/* JOIN US ends at the second rule and hangs left; MORE starts there and hangs right */
+.flag1 {
+  top: calc(var(--c1-y) + var(--flag1-dy));
+  right: calc(100% - var(--rail-x) - var(--rail-gap));
+}
+
+.flag2 {
+  top: calc(var(--c2-y) + var(--flag2-dy));
+  left: calc(var(--rail-x) + var(--rail-gap));
+}
+
+/* hover: the flag extends away from the rail and its circle tints blue */
+.flag:hover {
+  padding-inline: 0.8em;
+}
+
+.board:has(.flag1:hover) .c1 circle,
+.board:has(.flag2:hover) .c2 circle {
+  fill: color-mix(in srgb, var(--blue) 10%, transparent);
+}
+
+/* ---------- wordmark ---------- */
+
+.title {
+  position: absolute;
+  top: var(--title-y);
+  left: var(--title-x);
+  margin: 0;
+  translate: 0 -50%;
+  color: var(--blue);
+  font-size: var(--title-size);
+  font-weight: 700;
+  line-height: 0.8;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.titleLine {
+  display: block;
+  overflow: hidden;
+}
+
+/* ---------- nav ---------- */
+
+.nav {
+  position: absolute;
+  top: var(--nav-y);
+  right: var(--nav-right);
+  translate: 0 -50%;
+}
+
+.navList {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--nav-size);
+  line-height: 1.69;
+}
+
+.navItem {
+  overflow: hidden;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 0.26em;
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.4s var(--ease);
+
+  /* the item mask clips outlines, so focus draws inside it */
+  &:focus-visible {
+    outline: none;
+    text-decoration: underline;
+    text-decoration-thickness: max(2px, 0.06em);
+    text-underline-offset: 0.16em;
+  }
+}
+
+.arrow {
+  width: 0.62em;
+  height: 0.62em;
+  fill: none;
+  stroke: var(--blue);
+  stroke-width: 2.2;
+  transition: transform 0.5s var(--ease);
+}
+
+/* current page and hover: label turns blue, arrow turns to point across */
+.navLink[aria-current="page"],
+.navLink:hover,
+.navLink:focus-visible {
+  color: var(--blue);
+
+  .arrow {
+    transform: rotate(-45deg);
+  }
+}
+
+/* ---------- info bands ---------- */
+
+.meta {
+  position: absolute;
+  left: var(--meta-x);
+  display: grid;
+  grid-auto-columns: var(--meta-col);
+  grid-auto-flow: column;
+  margin: 0;
+  font-size: var(--meta-value);
+  line-height: 1.4;
+}
+
+.metaTop {
+  top: var(--meta-top);
+}
+
+.metaBottom {
+  bottom: var(--meta-bottom);
+  align-items: end;
+}
+
+.metaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3em;
+  padding-right: 1em;
+
+  dt {
+    color: var(--ink-mute);
+    font-size: var(--meta-key);
+    font-weight: 500;
+    letter-spacing: 0.14em;
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+}

@@ -1,27 +1,4 @@
 {
-  "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "strict": true,
-    "jsx": "preserve",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "skipLibCheck": true,
-    "noEmit": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  },
-  "contentMappers": [
-    {
-      "package": "@vue/content-mapper",
-      "extensions": [".vue"],
-      "options": { "target": 3.5 }
-    }
-  ],
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue", "vite.config.ts"]
+  "files": [],
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
 }
