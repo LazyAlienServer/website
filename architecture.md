@@ -108,10 +108,12 @@ Standalone `aria-hidden` band repeating `LAZY ALIEN SERVER` (solid, outlined, bl
 
 ### `HardwareSection.vue`
 
-- Hardware data and SVG icon strings are local constants in the component.
+- Hardware data and SVG icon strings are local constants in the component. Panels are flat color blocks (black collapsed, solid blue expanded) with hairline frames; each part's icon sits as a hairline mark in the panel's bottom-right corner. Text keeps `--text-gap` (40px) from the slanted left edge: the expanded face uses a full-height left float whose `shape-outside` runs parallel to the slant, so `.hw-detail` must stay block layout with no vertical padding.
 - `activeIndex` controls the accordion panel.
 - Automatic rotation runs every five seconds, pauses on hover, and stops for a ten-second click cooldown.
 - `motionSafe` is initialized from `prefers-reduced-motion`; timers do not start when motion is reduced.
+- `rotating` mirrors the auto-rotation timer and `cycle` counts its restarts; the active panel's progress line (`.hw-progress`, keyed on index + cycle, CSS duration `--hw-cycle` = `AUTO_INTERVAL`) only renders while rotating, so it restarts in step with each interval and disappears on hover, click cooldown, or reduced motion.
+- Each hardware entry has a `metric` (value, unit): the large figure on the expanded panel.
 - `InfrastructureFeatures.vue` is presentational data plus icon markup and has no shared state contract with the accordion.
 
 ### `GithubProjects.vue`
@@ -157,7 +159,7 @@ Both routes render the same footer, including the closing blue wordmark. A norma
 - Industrial mixins: `clipped-panel`, `corner-brackets`, and `hatch-strip`.
 - Hero slant: `src/styles/global.scss` defines `--hero-slant` and `--hero-slant-tan` on `:root`, the viewport-dependent angle of the hero image's clipped left edge (`atan2(4.8vw, max(100vh, 640px))`), with fixed 1920×1080 fallbacks. Every slant uses it (the AGENTS.md tilt rule): kicker marks (hero, rules, gallery), the hero primary button and intro tab label (skewed `::before` clipped by `overflow: hidden`), ticker marks, the hardware accordion, and the join divider and group tint.
 
-Section headings are intentionally bespoke and owned by each section component (hero identity kicker, intro profile tab, timer founding timeline, hardware TECH SUPPORT kicker, GitHub title, admin roster manifest, join index row). The hero carries no section index. There is no shared section-header component or global header class; derive header data from the section's own constants (`hardware`, `operators`, `establishedDate`).
+Section headings are intentionally bespoke and owned by each section component (hero identity kicker, intro profile tab, timer founding timeline, hardware title with blue rule plus oversized `TECH SUPPORT` display type on the accordion's bottom line, GitHub title, admin roster manifest, join index row). The hero carries no section index. There is no shared section-header component or global header class; derive header data from the section's own constants (`hardware`, `operators`, `establishedDate`).
 
 `src/styles/global.scss` owns resets, body defaults, typography scale, utility panels, blueprint grids, signal animation, section shells, reveal transitions, and the global reduced-motion rules. Prefer existing tokens/mixins over local duplicate values.
 
