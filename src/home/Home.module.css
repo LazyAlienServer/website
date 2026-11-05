@@ -16,13 +16,12 @@
  * turns blue and everything on it is white.
  *
  * Scroll: `.track` is tall and `.stage` sticks to the viewport inside it,
- * so the card stays put while scroll progress scrubs the transition.
+ * so the cards stay put while scroll progress scrubs the transitions. The
+ * track's height is set inline from the scroll segments (scroll.ts).
  */
 
-/* scroll distance of the pinned transition: track height minus one screen (1.5 screens) */
 .track {
   position: relative;
-  height: 250svh;
 }
 
 .stage {
@@ -56,21 +55,46 @@
   }
 }
 
-.card {
+/* extra dim behind the uptime layout, which sits on the photo with no card */
+.shade {
+  position: absolute;
+  inset: 0;
+  background: rgb(10 10 10 / 0.55);
+  pointer-events: none;
+}
+
+/*
+ * The hero/about card leaves upward: at `--lift: 1` it has moved its own
+ * half height plus half the viewport, so its bottom edge clears the top.
+ */
+.lift {
+  translate: 0 calc(var(--lift, 0) * (-50svh - 50%));
+}
+
+/*
+ * Card-sized box in the stage's one grid cell, shared by the hero/about card
+ * and the uptime layout so both use the same artboard (`--u`).
+ */
+.frame {
   position: relative;
+  grid-area: 1 / 1;
   width: min(80vw, 150svh);
   aspect-ratio: 2 / 1;
-  overflow: hidden;
   container: card / size;
-  background: var(--white);
-  color: var(--black);
 }
 
 @media (max-aspect-ratio: 1 / 1) {
-  .card {
+  .frame {
     width: min(88vw, 44svh);
     aspect-ratio: 1 / 2;
   }
+}
+
+/* the white surface of the hero/about card */
+.card {
+  overflow: hidden;
+  background: var(--white);
+  color: var(--black);
 }
 
 .board {

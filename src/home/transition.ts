@@ -1,3 +1,5 @@
+import { clamp01, easeInOutCubic, easeOutCubic, seg } from "./scroll.ts";
+
 /*
  * Scroll transition from the hero card to the about panel, drawn on one
  * canvas over the card. `drawVeil` is a pure function of scroll progress p
@@ -49,11 +51,6 @@ const BLUE = [15, 102, 221] as const;
 const BLACK = [10, 10, 10] as const;
 const WHITE = "#ffffff";
 const blue = `rgb(${BLUE.join(" ")})`;
-
-const clamp01 = (t: number) => Math.min(1, Math.max(0, t));
-export const seg = (p: number, a: number, b: number) => clamp01((p - a) / (b - a));
-export const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
-const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
 
 /** Deterministic PRNG, so every visit plays the same flip order and particle scatter. */
 const mulberry32 = (seed: number) => () => {

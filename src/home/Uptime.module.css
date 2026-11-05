@@ -1,0 +1,412 @@
+/*
+ * Uptime layout, set straight on the dimmed photo (no card). It sits in the
+ * same frame as the hero/about card (`.frame` in Home.module.css), so `--u`
+ * fits the same artboard: 1600 × 800 landscape, 400 × 800 portrait.
+ *
+ * Landscape: clock on the left (dial 560u at 40–600); the content column
+ * runs 820–1420: days, h/m/s, timeline, stacked as one block centered on
+ * the dial's center (196–607). Portrait: clock on top, content below, the
+ * whole stack centered in the frame.
+ *
+ * Grid (decorative): a rule across the whole stage under the layout and a
+ * double rule down the whole stage right of the readout (1528 and 1552,
+ * the hero rail's 24u gap), all at the rail's stroke weight, with v2's
+ * timer slogan under the rule, one line per column.
+ *
+ * Three parallax layers (`.layer`) that Home's pointer shifts by depth:
+ * grid, clock, and the readout as one panel (UptimeSection.tsx).
+ *
+ * Color: white is structure and figures (ring, ticks, hands, rules, the
+ * counter); blue marks the brand points as solid blocks and the seconds
+ * hand: the day-unit block, the founding square, the current-year bar.
+ */
+
+.section {
+  pointer-events: none;
+}
+
+.board {
+  --u: min(100cqw / 1600, 100cqh / 800);
+  --stroke: clamp(1.5px, calc(3 * var(--u)), 3px);
+  --mute: rgb(255 255 255 / 0.6);
+
+  --dial: calc(560 * var(--u));
+  --dial-x: calc(40 * var(--u));
+  --dial-y: calc(120 * var(--u));
+
+  --col-x: calc(820 * var(--u));
+  --col-w: calc(600 * var(--u));
+  --days-y: calc(196 * var(--u));
+  --days-size: calc(220 * var(--u));
+  --days-unit: calc(36 * var(--u));
+  --hms-y: calc(420 * var(--u));
+  --hms-size: calc(64 * var(--u));
+  --hms-unit: calc(18 * var(--u));
+  --hms-gap: calc(40 * var(--u));
+  --line-y: calc(575 * var(--u));
+  --line-label: calc(14 * var(--u));
+  --line-gap: calc(18 * var(--u));
+  --tick-h: calc(12 * var(--u));
+  --bar-h: calc(8 * var(--u));
+  --start: calc(12 * var(--u));
+
+  --grid-y: calc(730 * var(--u));
+  /*
+   * Blue rules framing the clock with the same 50u gap as the white rule
+   * below it (dial 120–680 → rule at 730): one above the dial (its bottom
+   * edge at 70) and one right of it (left edge at 650).
+   */
+  --grid-top: calc(70 * var(--u));
+  --split-x: calc(650 * var(--u));
+  --rail-x: calc(1528 * var(--u));
+  --rail-gap: calc(24 * var(--u));
+  --dream-gap: calc(16 * var(--u));
+  --dream-size: calc(14 * var(--u));
+  --dream-en-x: var(--dial-x);
+  --dream-cn-left: var(--col-x);
+  --dream-cn-right: auto;
+
+  position: absolute;
+  inset: 0;
+  color: var(--white);
+}
+
+@container card (aspect-ratio < 1) {
+  .board {
+    --u: min(100cqw / 400, 100cqh / 800);
+    --stroke: clamp(1px, calc(2 * var(--u)), 3px);
+
+    --dial: calc(280 * var(--u));
+    --dial-x: calc(60 * var(--u));
+    --dial-y: calc(118 * var(--u));
+
+    --col-x: calc(40 * var(--u));
+    --col-w: calc(320 * var(--u));
+    --days-y: calc(458 * var(--u));
+    --days-size: calc(100 * var(--u));
+    --days-unit: calc(18 * var(--u));
+    --hms-y: calc(564 * var(--u));
+    --hms-size: calc(32 * var(--u));
+    --hms-unit: calc(11 * var(--u));
+    --hms-gap: calc(18 * var(--u));
+    --line-y: calc(656 * var(--u));
+    --line-label: calc(11 * var(--u));
+    --line-gap: calc(14 * var(--u));
+    --tick-h: calc(8 * var(--u));
+    --bar-h: calc(5 * var(--u));
+    --start: calc(8 * var(--u));
+
+    --grid-y: calc(740 * var(--u));
+    --grid-top: calc(68 * var(--u));
+    --rail-x: calc(376 * var(--u));
+    --rail-gap: calc(12 * var(--u));
+    --dream-gap: calc(12 * var(--u));
+    --dream-size: calc(11 * var(--u));
+    --dream-en-x: var(--col-x);
+    --dream-cn-left: auto;
+    --dream-cn-right: calc(40 * var(--u));
+  }
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* full-board parallax layer; its contents keep their board positions */
+.layer {
+  position: absolute;
+  inset: 0;
+}
+
+/* content that slides in from an `overflow: hidden` parent */
+.mask {
+  position: absolute;
+  left: var(--col-x);
+  overflow: hidden;
+}
+
+/* ---------- grid and slogan (decorative, on the photo) ---------- */
+
+/*
+ * Lines reach past the frame to the stage edges (plus slack for parallax):
+ * percentages here are of the board, which is centered in the stage.
+ */
+.grid {
+  position: absolute;
+  background: rgb(255 255 255 / 0.8);
+}
+
+.gridH {
+  top: var(--grid-y);
+  right: calc((100% - 100vw) / 2 - 40px);
+  left: calc((100% - 100vw) / 2 - 40px);
+  height: var(--stroke);
+  transform-origin: left;
+}
+
+.gridV {
+  top: calc((100% - max(100svh, 480px)) / 2 - 40px);
+  bottom: calc((100% - max(100svh, 480px)) / 2 - 40px);
+  width: var(--stroke);
+}
+
+/* the two rules draw toward each other, like the hero rail */
+.gridV1 {
+  left: var(--rail-x);
+  transform-origin: top;
+}
+
+.gridV2 {
+  left: calc(var(--rail-x) + var(--rail-gap));
+  transform-origin: bottom;
+}
+
+/*
+ * Blue rules are half the white rules' weight (1px minimum) and come first
+ * in the DOM, so the white rules paint over them where they cross.
+ */
+.gridBlue {
+  --blue-stroke: max(1px, calc(var(--stroke) / 2));
+  background: var(--blue);
+}
+
+/* above the dial, drawing in from the right to meet the white rule's start */
+.gridTop {
+  top: calc(var(--grid-top) - var(--blue-stroke));
+  height: var(--blue-stroke);
+  transform-origin: right;
+}
+
+.gridSplit {
+  left: var(--split-x);
+  width: var(--blue-stroke);
+  transform-origin: top;
+}
+
+/* portrait stacks clock over readout, so there is no side-by-side split */
+@container card (aspect-ratio < 1) {
+  .gridSplit {
+    display: none;
+  }
+}
+
+.dreamEn,
+.dreamCn {
+  top: calc(var(--grid-y) + var(--dream-gap));
+  font-size: var(--dream-size);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.2em;
+  white-space: nowrap;
+}
+
+.dreamEn {
+  left: var(--dream-en-x);
+  text-transform: uppercase;
+}
+
+.dreamCn {
+  right: var(--dream-cn-right);
+  left: var(--dream-cn-left);
+}
+
+/* ---------- clock (lines on the photo) ---------- */
+
+.clockBox {
+  position: absolute;
+  top: var(--dial-y);
+  left: var(--dial-x);
+  width: var(--dial);
+  height: var(--dial);
+}
+
+.clock svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* drawn from 12 by Clock.tsx through `stroke-dashoffset` (1 → 0) */
+.ring {
+  fill: none;
+  stroke: var(--white);
+  stroke-width: 0.5;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+/* `--ticks` (0–1, set by Clock.tsx) reveals the 60 ticks clockwise */
+.tick {
+  fill: var(--white);
+  opacity: clamp(0, calc(var(--ticks, 1) * 60 - var(--i)), 1);
+}
+
+.zone {
+  fill: var(--mute);
+  font-size: 4px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-anchor: middle;
+}
+
+.hand {
+  fill: var(--white);
+}
+
+.second {
+  fill: var(--blue);
+}
+
+/* ---------- counter ---------- */
+
+.daysMask {
+  top: var(--days-y);
+}
+
+.days {
+  display: flex;
+  align-items: flex-end;
+  gap: calc(var(--days-size) * 0.08);
+  margin: 0;
+  font-size: var(--days-size);
+  font-weight: 700;
+  line-height: 0.8;
+  letter-spacing: -0.02em;
+}
+
+/* the day unit as a solid blue label block, sitting on the figures' baseline */
+.daysUnit {
+  padding: 0.18em 0.3em;
+  background: var(--blue);
+  font-size: var(--days-unit);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.hmsMask {
+  top: var(--hms-y);
+}
+
+.hms {
+  display: flex;
+  align-items: baseline;
+  gap: var(--hms-gap);
+  margin: 0;
+  font-size: var(--hms-size);
+  font-weight: 700;
+  line-height: 0.8;
+}
+
+.hmsUnit {
+  margin-left: 0.4em;
+  color: var(--mute);
+  font-size: var(--hms-unit);
+  font-weight: 500;
+}
+
+/* one digit: a mask sized by an invisible `0`, faces rolling through it */
+.digit {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  font-variant-numeric: tabular-nums;
+}
+
+.sizer {
+  visibility: hidden;
+}
+
+.digitFace {
+  position: absolute;
+  inset: 0;
+}
+
+/* ---------- timeline (a zero-height box on the line) ---------- */
+
+.line {
+  position: absolute;
+  top: var(--line-y);
+  left: var(--col-x);
+  width: var(--col-w);
+  height: 0;
+  font-size: var(--line-label);
+  font-weight: 500;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.lineRule {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--white);
+  transform-origin: left;
+}
+
+/* current year so far, standing on the line */
+.lineBar {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  height: var(--bar-h);
+  background: var(--blue);
+  transform-origin: left;
+}
+
+.lineMarks {
+  position: absolute;
+  inset: 0;
+}
+
+.lineStart {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--start);
+  height: var(--start);
+  translate: 0 -50%;
+  background: var(--blue);
+}
+
+.lineFounded,
+.lineNow {
+  position: absolute;
+  bottom: var(--line-gap);
+}
+
+.lineFounded {
+  left: 0;
+}
+
+.lineNow {
+  right: 0;
+  bottom: calc(var(--bar-h) + var(--line-gap) * 0.6);
+}
+
+/* year label under the line, its tick drawn down from the line above it */
+.lineYear {
+  position: absolute;
+  top: var(--line-gap);
+  translate: -50% 0;
+  color: var(--mute);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: calc(-1 * var(--line-gap));
+    left: 50%;
+    width: 1px;
+    height: var(--tick-h);
+    background: var(--white);
+  }
+}

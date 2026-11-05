@@ -48,6 +48,20 @@ export const META_BOTTOM: readonly MetaItem[] = [
 /** Uptime origin, the same instant as v2's live timer. */
 export const FOUNDED = Date.parse("2022-08-29T00:00:00+08:00");
 
+/**
+ * Uptime layout copy. `units`, `founded`, `now` and `zone` label values on
+ * the layout; `title` names it for assistive tech only; `dream` is v2's
+ * live-timer slogan, set under the grid rule as decoration.
+ */
+export const UPTIME_COPY = {
+  title: "运行时间",
+  units: { days: "天", hours: "小时", minutes: "分钟", seconds: "秒" },
+  founded: "2022.08.29",
+  now: "NOW",
+  zone: "UTC+8",
+  dream: ["A Realistic Dream.", "做一场现实的梦"],
+} as const;
+
 /** About panel copy, verbatim from v2's IntroSection (docs/las-handoff.md §3). */
 export const ABOUT = {
   /** decorative corner words, top-left and bottom-right */

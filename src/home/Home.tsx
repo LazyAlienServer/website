@@ -7,6 +7,7 @@ import {
   useSpring,
   useTransform,
 } from "motion/react";
+import type { MotionStyle } from "motion/react";
 import type { PointerEvent } from "react";
 import { useRef, useState } from "react";
 import { About } from "./About.tsx";
@@ -16,7 +17,9 @@ import { Meta } from "./Meta.tsx";
 import { Rail } from "./Rail.tsx";
 import { StageNav } from "./StageNav.tsx";
 import { Veil } from "./Veil.tsx";
+import { TRACK_SCROLL, UPTIME, UPTIME_START, easeInOutCubic } from "./scroll.ts";
 import { PHASE } from "./transition.ts";
+import { UptimeSection } from "./UptimeSection.tsx";
 import { Wordmark } from "./Wordmark.tsx";
 
 /** Max backdrop shift in px at the viewport edge, opposite to the pointer. */
@@ -33,11 +36,13 @@ const CORNERS = [
 
 /**
  * Homepage: a white card over the full-bleed build screenshot, pinned while
- * the page scrolls through a tall track. Scroll progress over the track
- * scrubs the transition to the about panel (transition.ts). Mouse position
- * (normalized to -1..1) drives backdrop parallax, wordmark shear, and the
- * circles sliding along the rail; touch and reduced motion leave those
- * still.
+ * the page scrolls through a tall track. The track's scroll progress is
+ * split into segments (scroll.ts): the first scrubs the transition to the
+ * about panel (transition.ts), the second lifts that panel away, dims the
+ * photo, and builds the uptime layout directly on it, with no card. Mouse
+ * position (normalized to -1..1) drives backdrop parallax, wordmark shear,
+ * and the circles sliding along the rail; touch and reduced motion leave
+ * those still.
  */
 export function Home() {
   const reduce = useReducedMotion();
@@ -47,11 +52,17 @@ export function Home() {
   const trackRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: trackRef, offset: ["start start", "end end"] });
   const smooth = useSpring(scrollYProgress, SCRUB);
-  const progress = reduce ? scrollYProgress : smooth;
-  const cue = useTransform(progress, [0, 0.03], [1, 0]);
+  const track = reduce ? scrollYProgress : smooth;
+  const about = useTransform(track, [0, UPTIME_START], [0, 1]);
+  const uptimeProgress = useTransform(track, [UPTIME_START, 1], [0, 1]);
+  const cue = useTransform(about, [0, 0.03], [1, 0]);
+  // the about card leaves upward: 0 in place, 1 fully above the viewport
+  const lift = useTransform(uptimeProgress, [...UPTIME.lift], [0, 1], { ease: easeInOutCubic });
+  const leave = useTransform(lift, [0, 1], [1, 0]);
+  const shade = useTransform(uptimeProgress, [...UPTIME.shade], [0, 1]);
   // once the blue panel covers the hero, its links leave the tab order
   const [covered, setCovered] = useState(false);
-  useMotionValueEvent(progress, "change", (v) => setCovered(v >= PHASE.covered));
+  useMotionValueEvent(about, "change", (v) => setCovered(v >= PHASE.covered));
 
   const px = useMotionValue(0);
   const py = useMotionValue(0);
@@ -59,7 +70,7 @@ export function Home() {
   const sy = useSpring(py, FOLLOW);
   const bgX = useTransform(sx, (v) => v * -PARALLAX.x);
   const bgY = useTransform(sy, (v) => v * -PARALLAX.y);
-  const track = (event: PointerEvent<HTMLElement>) => {
+  const follow = (event: PointerEvent<HTMLElement>) => {
     if (reduce || event.pointerType !== "mouse") return;
     px.set((event.clientX / window.innerWidth) * 2 - 1);
     py.set((event.clientY / window.innerHeight) * 2 - 1);
@@ -70,8 +81,8 @@ export function Home() {
   };
 
   return (
-    <main ref={trackRef} className={s.track}>
-      <div className={s.stage} onPointerMove={track} onPointerLeave={release}>
+    <main ref={trackRef} className={s.track} style={{ height: `${100 + TRACK_SCROLL}svh` }}>
+      <div className={s.stage} onPointerMove={follow} onPointerLeave={release}>
         {/* scaled past the viewport so parallax never exposes an edge */}
         <m.div className={s.backdrop} style={{ x: bgX, y: bgY, scale: 1.06 }}>
           <m.img
@@ -85,8 +96,15 @@ export function Home() {
             onLoad={() => setLoaded(true)}
           />
         </m.div>
+        <m.div className={s.shade} style={{ opacity: shade }} aria-hidden="true" />
 
-        <m.div className={s.card} variants={unfold} initial={intro} animate="show">
+        <m.div
+          className={`${s.frame} ${s.card} ${s.lift}`}
+          style={reduce ? { opacity: leave } : ({ "--lift": lift } as MotionStyle)}
+          variants={unfold}
+          initial={intro}
+          animate="show"
+        >
           <div className={s.board}>
             <div className={s.hero} inert={covered}>
               <m.span
@@ -118,10 +136,12 @@ export function Home() {
               <StageNav />
               <Meta />
             </div>
-            <Veil progress={progress} />
-            <About progress={progress} />
+            <Veil progress={about} />
+            <About progress={about} />
           </div>
         </m.div>
+
+        <UptimeSection progress={uptimeProgress} pointer={{ x: sx, y: sy }} />
 
         <m.div className={s.cue} style={{ opacity: cue }} aria-hidden="true">
           SCROLL
