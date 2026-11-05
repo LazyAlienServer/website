@@ -110,7 +110,7 @@ Standalone `aria-hidden` band repeating `LAZY ALIEN SERVER` (solid, outlined, bl
 
 ### `HardwareSection.vue`
 
-- Hardware data and SVG icon strings are local constants in the component. Panels are flat color blocks (background collapsed, solid accent expanded: blue in dark, yellow with black text in light) with hairline frames; each part's icon sits as a hairline mark in the panel's bottom-right corner. Text keeps `--text-gap` (40px) from the slanted left edge: the expanded face uses a full-height left float whose `shape-outside` runs parallel to the slant, so `.hw-detail` must stay block layout with no vertical padding.
+- Hardware data and SVG icon strings are local constants in the component. Panels are flat color blocks (background collapsed, solid accent expanded: blue in dark, yellow with black text in light) with hairline frames; each part's icon sits as a hairline mark in the panel's bottom-right corner. Text keeps `--text-gap` (40px) from the slanted left edge: the expanded face uses a full-height left float whose `shape-outside` runs parallel to the slant, so `.hw-detail` must stay block layout with no vertical padding. The collapsed code (`.hw-code`, one `.hw-char` per letter) is centered on the panel's slanted midline instead: the column is sheared at the hero slant from its bottom center and each letter shears back, so the letters step right with height without distorting.
 - `activeIndex` controls the accordion panel.
 - Automatic rotation runs every five seconds, pauses on hover, and stops for a ten-second click cooldown.
 - `motionSafe` is initialized from `prefers-reduced-motion`; timers do not start when motion is reduced.

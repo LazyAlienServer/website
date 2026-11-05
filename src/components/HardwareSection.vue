@@ -47,7 +47,9 @@
             </span>
             <span class="hw-head" aria-hidden="true">
               <span class="hw-index">{{ pad(i + 1) }}</span>
-              <span class="hw-code">{{ item.short }}</span>
+              <span class="hw-code">
+                <span v-for="(char, c) in item.short" :key="c" class="hw-char">{{ char }}</span>
+              </span>
             </span>
             <span class="hw-detail">
               <span class="hw-metric" aria-hidden="true">
@@ -339,7 +341,7 @@ onUnmounted(() => {
   margin-top: auto;
   padding-top: $spacing-md;
   font-family: $font-display;
-  font-size: clamp(56px, 7.5vw, 112px);
+  font-size: clamp(50px, 6.6vw, 98px);
   font-weight: 500;
   line-height: 0.88;
   letter-spacing: -1px;
@@ -372,7 +374,7 @@ onUnmounted(() => {
   --hw-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --hw-dur: 0.55s;
   // distance from the slanted left edge to every line of text (index,
-  // collapsed code, expanded face)
+  // expanded face); the collapsed code is centered instead
   --text-gap: 40px;
   height: var(--accordion-h);
 }
@@ -547,14 +549,23 @@ onUnmounted(() => {
   }
 }
 
-// collapsed only: rotated to read bottom-up along the panel's left edge
+// Collapsed only: reads bottom-up, centered on the panel's slanted midline,
+// which at height d above the bottom edge is at (W - slant) / 2 + tan * d.
+// The column shears at the hero slant from its bottom center, placed on the
+// midline 24px up; each letter undoes the shear about its own center, so the
+// letters keep their shape and only step right with height (`hw-char`).
 .hw-code {
-  align-self: flex-start;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
+  position: absolute;
+  bottom: 24px;
+  left: calc((100% - var(--slant)) / 2 + var(--hero-slant-tan) * 24px);
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 4px;
   font-size: clamp(28px, 3vw, 40px);
-  letter-spacing: 4px;
   color: $color-fg-muted;
+  transform: translateX(-50%) skewX(calc(-1 * var(--hero-slant)));
+  transform-origin: 50% 100%;
   transition:
     opacity $transition-med 0.3s,
     color $transition-med;
@@ -576,6 +587,12 @@ onUnmounted(() => {
       color: $color-on-accent;
     }
   }
+}
+
+// rotate and shear commute, so this leaves each letter only rotated
+.hw-char {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg) skewX(var(--hero-slant));
 }
 
 // expanded face: figure, title, and description stacked from the top
@@ -718,11 +735,16 @@ onUnmounted(() => {
 
   .hw-code,
   .hw-panel.active .hw-code {
-    align-self: auto;
-    writing-mode: horizontal-tb;
+    position: static;
+    flex-direction: row;
     transform: none;
     opacity: 1;
     font-size: 20px;
+  }
+
+  .hw-char {
+    writing-mode: horizontal-tb;
+    transform: none;
   }
 
   // the icon only shows on the open panel; in a 56px row it is just noise
