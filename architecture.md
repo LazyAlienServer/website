@@ -38,7 +38,7 @@ The Vite alias `@` resolves to `src/`. SCSS receives `src/styles/variables.scss`
 1. `HeroSection.vue` — fixed navigation, hero visual, scroll-driven seam/parallax.
 2. `IntroSection.vue` — LAS introduction, particle emblem (`ParticleLogo.vue`), and decorative technology rail.
 3. `LiveTimer.vue` — founding-date uptime counter, UTC+8 analog clock, image carousel, and parallax.
-4. `HardwareSection.vue` — hardware accordion; composes `InfrastructureFeatures.vue`.
+4. `HardwareSection.vue` — hardware spec sheet; composes `InfrastructureFeatures.vue`.
 5. `GithubProjects.vue` — remote GitHub repository index and carousel.
 6. `AdminTeam.vue` — operator cards, avatar fallback, and optional Bilibili links.
 7. `JoinSection.vue` — rules entry points, QQ group link, and clipboard action.
@@ -110,13 +110,10 @@ Standalone `aria-hidden` band repeating `LAZY ALIEN SERVER` (solid, outlined, bl
 
 ### `HardwareSection.vue`
 
-- Hardware data and SVG icon strings are local constants in the component. Panels are flat color blocks (background collapsed, solid accent expanded: blue in dark, yellow with black text in light) with hairline frames; each part's icon sits as a hairline mark in the panel's bottom-right corner. Text keeps `--text-gap` (40px) from the slanted left edge: the expanded face uses a full-height left float whose `shape-outside` runs parallel to the slant, so `.hw-detail` must stay block layout with no vertical padding. The collapsed code (`.hw-code`, one `.hw-char` per letter) is centered on the panel's slanted midline instead: the column is sheared at the hero slant from its bottom center and each letter shears back, so the letters step right with height without distorting.
-- `activeIndex` controls the accordion panel.
-- Automatic rotation runs every five seconds, pauses on hover, and stops for a ten-second click cooldown.
-- `motionSafe` is initialized from `prefers-reduced-motion`; timers do not start when motion is reduced.
-- `rotating` mirrors the auto-rotation timer and `cycle` counts its restarts; the active panel's progress line (`.hw-progress`, keyed on index + cycle, CSS duration `--hw-cycle` = `AUTO_INTERVAL`) only renders while rotating, so it restarts in step with each interval and disappears on hover, click cooldown, or reduced motion.
-- Each hardware entry has a `metric` (value, unit): the large figure on the expanded panel.
-- `InfrastructureFeatures.vue` is presentational data plus icon markup and has no shared state contract with the accordion.
+- Static Swiss data sheet with industrial marks, no state or timers. Hardware data, the six tags, and SVG icon strings are local constants in the component.
+- One 12-column grid with a `--hw-gap` gutter (24px, 16px on mobile): the `h2` and subtitle on columns 1–4, the tags as flat-square shields (index key, accent value; same build as the intro badges) from column 5, and three part columns (span 4; full width on mobile). `InfrastructureFeatures.vue` repeats the 3-column split and inherits `--hw-gap`, so its edges line up with the part columns; keep the two grids in step.
+- Rules carry the hierarchy, not boxes: a 2px rule heads each part, hairlines head each feature. The accent is limited to the part nameplates (same build as the admin `CREW MANIFEST` plate), the tag values, and the hatched tape under the parts.
+- Each hardware entry has a `metric` (value, unit): the large figure in its column, with the unit set small at the cap height.
 
 ### `GithubProjects.vue`
 
@@ -160,9 +157,9 @@ Both routes render the same footer, including the closing blue wordmark. A norma
 - Spacing: `$spacing-xs` through `$spacing-xl`.
 - Breakpoint mixins: `mobile` (max 640px), `tablet` (max 1024px), and `desktop` (min 641px).
 - Industrial mixins: `clipped-panel`, `corner-brackets`, and `hatch-strip`.
-- Hero slant: `src/styles/global.scss` defines `--hero-slant` and `--hero-slant-tan` on `:root`, the viewport-dependent angle of the hero image's clipped left edge (`atan2(4.8vw, max(100vh, 640px))`), with fixed 1920×1080 fallbacks. Every slant uses it (the AGENTS.md tilt rule): kicker marks (hero, rules, gallery), the hero primary button (skewed `::before` clipped by `overflow: hidden`), ticker marks, the hardware accordion, and the join divider and group tint.
+- Hero slant: `src/styles/global.scss` defines `--hero-slant` and `--hero-slant-tan` on `:root`, the viewport-dependent angle of the hero image's clipped left edge (`atan2(4.8vw, max(100vh, 640px))`), with fixed 1920×1080 fallbacks. Every slant uses it (the AGENTS.md tilt rule): kicker marks (hero, rules, gallery), the hero primary button (skewed `::before` clipped by `overflow: hidden`), ticker marks, and the join divider and group tint.
 
-Section headings are intentionally bespoke and owned by each section component (hero identity kicker, intro title with flat-square key/value shield badges, timer founding timeline, hardware title with blue rule plus oversized `TECH SUPPORT` display type on the accordion's bottom line, GitHub title, admin `CREW MANIFEST` nameplate with a scribed rule plus roster manifest, join index row). The hero carries no section index. There is no shared section-header component or global header class; derive header data from the section's own constants (`hardware`, `operators`, `establishedDate`).
+Section headings are intentionally bespoke and owned by each section component (hero identity kicker, intro title with flat-square key/value shield badges, timer founding timeline, hardware title with the same shields beside it, GitHub title, admin `CREW MANIFEST` nameplate with a scribed rule plus roster manifest, join index row). The hero carries no section index. There is no shared section-header component or global header class; derive header data from the section's own constants (`hardware`, `operators`, `establishedDate`).
 
 `src/styles/global.scss` owns resets, body defaults, typography scale, utility panels, blueprint grids, signal animation, section shells, reveal transitions, and the global reduced-motion rules. Prefer existing tokens/mixins over local duplicate values.
 
@@ -170,18 +167,18 @@ Section headings are intentionally bespoke and owned by each section component (
 
 ## Modification map
 
-| Change                                      | Primary file(s)                                       | Also check                                           |
-| ------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------- |
-| Add or reorder homepage content             | `src/views/HomePage.vue`                              | Section component imports and anchor targets         |
-| Change hero/nav scroll behavior             | `src/components/HeroSection.vue`                      | Reduced-motion styles and listener cleanup           |
-| Change founding timer or image carousel     | `src/components/LiveTimer.vue`                        | Timer interval, cooldown, and public image paths     |
-| Change hardware data or accordion           | `src/components/HardwareSection.vue`                  | `InfrastructureFeatures.vue`, keyboard button states |
-| Change GitHub repository fields or carousel | `src/components/GithubProjects.vue`                   | Type guards, cache, desktop deck, mobile list        |
-| Change rules content                        | `src/data/rules.ts`                                   | `RulesPage.vue` query/hash highlighting              |
-| Change gallery images                       | `src/data/gallery.ts`, `public/`                      | Intrinsic image sizes, frame layout rhythm           |
-| Change rules routing                        | `src/router/index.ts`                                 | Back links and scroll behavior                       |
-| Change join destinations or clipboard       | `src/components/JoinSection.vue`                      | Rules query values and cleanup                       |
-| Change global layout tokens                 | `src/styles/variables.scss`, `src/styles/global.scss` | All components using the affected token              |
+| Change                                      | Primary file(s)                                       | Also check                                       |
+| ------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------ |
+| Add or reorder homepage content             | `src/views/HomePage.vue`                              | Section component imports and anchor targets     |
+| Change hero/nav scroll behavior             | `src/components/HeroSection.vue`                      | Reduced-motion styles and listener cleanup       |
+| Change founding timer or image carousel     | `src/components/LiveTimer.vue`                        | Timer interval, cooldown, and public image paths |
+| Change hardware data or spec sheet          | `src/components/HardwareSection.vue`                  | `InfrastructureFeatures.vue` grid and gutter     |
+| Change GitHub repository fields or carousel | `src/components/GithubProjects.vue`                   | Type guards, cache, desktop deck, mobile list    |
+| Change rules content                        | `src/data/rules.ts`                                   | `RulesPage.vue` query/hash highlighting          |
+| Change gallery images                       | `src/data/gallery.ts`, `public/`                      | Intrinsic image sizes, frame layout rhythm       |
+| Change rules routing                        | `src/router/index.ts`                                 | Back links and scroll behavior                   |
+| Change join destinations or clipboard       | `src/components/JoinSection.vue`                      | Rules query values and cleanup                   |
+| Change global layout tokens                 | `src/styles/variables.scss`, `src/styles/global.scss` | All components using the affected token          |
 
 ## Tooling and validation
 

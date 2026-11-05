@@ -107,7 +107,8 @@ import ParticleLogo from "./ParticleLogo.vue";
 // Flat-square shield, about 20px tall like shields.io: a neutral key segment
 // and an accent value segment of equal height. Light inverts the key to a
 // black block, so it reads like the label/value tags on the Endfield site
-// (black key, yellow value).
+// (black key, yellow value). The hardware tags in HardwareSection.vue use the
+// same build; change both together.
 .intro-badge {
   display: flex;
 

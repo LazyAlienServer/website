@@ -44,76 +44,51 @@ const capabilities: Capability[] = [
 
 <template>
   <div class="infra-features" v-reveal>
-    <template v-for="(capability, index) in capabilities" :key="capability.title">
-      <article class="infra-feature">
-        <span class="infra-icon" aria-hidden="true" v-html="capability.icon"></span>
-        <span class="infra-copy">
-          <strong class="infra-title">{{ capability.title }}</strong>
-          <span class="infra-description">{{ capability.description }}</span>
-        </span>
-      </article>
-      <span v-if="index < capabilities.length - 1" class="infra-divider" aria-hidden="true"></span>
-    </template>
+    <article v-for="capability in capabilities" :key="capability.title" class="infra-feature">
+      <span class="infra-icon" aria-hidden="true" v-html="capability.icon"></span>
+      <strong class="infra-title">{{ capability.title }}</strong>
+      <span class="infra-description">{{ capability.description }}</span>
+    </article>
   </div>
 </template>
 
 <style scoped lang="scss">
+// The 3-column split and gutter of `HardwareSection.vue`'s 12-column sheet
+// (`--hw-gap`, inherited), so each feature starts on a part column's edge.
+// Each one is headed by a hairline, like the sheet's ledger cells.
 .infra-features {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr) 1px) minmax(0, 1fr);
-  align-items: stretch;
-  gap: clamp(16px, 2.5vw, 32px);
-  margin-top: clamp(48px, 8vw, 72px);
-}
-
-.infra-divider {
-  width: 1px;
-  background: fade($color-fg, 0.18);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $spacing-lg var(--hw-gap, 24px);
+  margin-top: $spacing-lg;
 }
 
 .infra-feature {
   display: flex;
-  align-items: center;
   min-width: 0;
-  gap: clamp(16px, 2vw, 24px);
-
-  &:hover .infra-icon {
-    color: $color-fg;
-
-    // Ink and hover color are both black in light: mark hover with a fill.
-    @include light {
-      background: $color-accent;
-      color: $color-on-accent;
-    }
-  }
+  flex-direction: column;
+  gap: 8px;
+  padding-top: $spacing-sm;
+  border-top: 1px solid $color-line;
 }
 
 .infra-icon {
-  display: grid;
-  flex: 0 0 clamp(44px, 4vw, 56px);
-  width: clamp(44px, 4vw, 56px);
-  height: clamp(44px, 4vw, 56px);
-  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-bottom: 8px;
   color: $color-accent-ink;
-  transition: color $transition-fast;
 
   :deep(svg) {
-    width: 58%;
-    height: 58%;
+    display: block;
+    width: 100%;
+    height: 100%;
   }
-}
-
-.infra-copy {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  gap: 6px;
 }
 
 .infra-title {
   color: $color-fg;
   font-family: $font-display;
-  font-size: clamp(15px, 1.35vw, 19px);
+  font-size: clamp(15px, 1.35vw, 18px);
   font-weight: 700;
   line-height: 1.35;
   overflow-wrap: anywhere;
@@ -121,48 +96,14 @@ const capabilities: Capability[] = [
 
 .infra-description {
   color: $color-fg-subtle;
-  font-size: clamp(12px, 1vw, 14px);
+  font-size: 13px;
   line-height: 1.7;
   overflow-wrap: anywhere;
 }
 
-@include tablet {
-  .infra-features {
-    gap: 16px;
-  }
-
-  .infra-feature {
-    gap: 14px;
-  }
-
-  .infra-icon {
-    flex-basis: 44px;
-    width: 44px;
-    height: 44px;
-  }
-}
-
 @include mobile {
   .infra-features {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    margin-top: 48px;
-  }
-
-  // .infra-feature {
-  //   min-height: 92px;
-  // }
-
-  .infra-divider {
-    width: 100%;
-    height: 1px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .infra-icon {
-    transition: none;
+    grid-template-columns: 1fr;
   }
 }
 </style>
