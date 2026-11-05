@@ -91,15 +91,6 @@ const route = useRoute();
       color: $color-fg;
       border-bottom: 2px solid $color-accent-ink;
       padding-bottom: 4px;
-
-      // the current page is a yellow tab in light; the negative margin keeps
-      // the row's spacing unchanged
-      @include light {
-        margin-inline: -6px;
-        padding-inline: 6px;
-        background: $color-accent;
-        color: $color-on-accent;
-      }
     }
   }
 }
