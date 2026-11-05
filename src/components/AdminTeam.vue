@@ -3,7 +3,7 @@
     <div class="section-shell">
       <header class="admin-header" v-reveal>
         <div class="admin-heading">
-          <p class="admin-kicker">CREW MANIFEST // 名册</p>
+          <p class="admin-kicker"><span class="admin-plate">CREW MANIFEST</span></p>
           <h2 class="admin-title">管理团队</h2>
         </div>
         <div class="admin-manifest">
@@ -220,22 +220,32 @@ const onAvatarError = (name: string): void => {
   margin-bottom: $spacing-lg;
 }
 
+// Nameplate: a solid brand plate (blue in dark, yellow with black text in
+// light) with a scribed rule running on to the headcount column.
 .admin-kicker {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: $spacing-sm;
+
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: $color-line;
+  }
+}
+
+.admin-plate {
+  flex: none;
+  padding: 6px 12px;
+  background: $color-accent;
+  color: $color-on-accent;
   font-family: $font-display;
   font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
   letter-spacing: 3px;
-  color: $color-fg-subtle;
-
-  &::before {
-    content: "";
-    width: 18px;
-    height: 2px;
-    background: $color-accent-ink;
-  }
 }
 
 .admin-manifest {
