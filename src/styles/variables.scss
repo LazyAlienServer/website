@@ -1,17 +1,71 @@
 // ============================================================
-// LAS Design Tokens — blue/black primary, white decoration
+// LAS Design Tokens — two themes on one set of color roles
 // ============================================================
 
-// Colors
-$color-primary-blue: #0f66dd;
-$color-blue-bright: #1e90ff;
-$color-blue-dim: rgba(30, 144, 255, 0.45);
-$color-primary-black: #0a0a0a;
-$color-black-soft: #111114;
-$color-white: #ffffff;
-$color-gray-dark: #2a2a2a;
-$color-gray-mid: #aaaaaa;
-$color-gray-light: #cccccc;
+// Colors are roles, not hues: each resolves to a custom property whose value
+// comes from the active theme (`:root` / `:root[data-theme="light"]` in
+// `global.scss`). Dark: blue/black on carbon. Light: industrial yellow and
+// black on white, where yellow is only ever a fill — anything that reads as
+// text or a thin line uses an ink role.
+$color-bg: var(--color-bg); // page and section background
+$color-surface: var(--color-surface); // panels raised off the background
+$color-fg: var(--color-fg); // primary text, strong rules, icons
+$color-fg-muted: var(--color-fg-muted); // body and secondary text
+$color-fg-subtle: var(--color-fg-subtle); // labels, meta, placeholders
+$color-line: var(--color-line); // hairlines, borders, dividers, neutral chips
+$color-accent: var(--color-accent); // brand fill: buttons, tabs, blocks
+$color-accent-bright: var(--color-accent-bright); // bright brand fill: marks, bars, seams
+$color-accent-deep: var(--color-accent-deep); // brand tint under translucent washes
+$color-accent-ink: var(--color-accent-ink); // brand as text, thin lines, dots, focus rings
+$color-accent-ink-deep: var(--color-accent-ink-deep); // deeper brand thin lines (brackets, rules)
+$color-on-accent: var(--color-on-accent); // text and icons on brand fills
+$color-glow: var(--color-glow); // brand glow in shadows (none in light)
+$color-danger: var(--color-danger); // error text and borders
+
+// Over photographs the theme does not apply: white type on a dark scrim.
+$color-on-photo: #ffffff;
+$color-photo-scrim: #0a0a0a;
+
+// Neutral values of the dark theme. `global.scss` emits them on `:root`, and
+// `dark-surface` re-declares them on dark sections inside the light theme.
+$dark-neutrals: (
+  "bg": #0a0a0a,
+  "surface": #111114,
+  "fg": #ffffff,
+  "fg-muted": #cccccc,
+  "fg-subtle": #aaaaaa,
+  "line": #2a2a2a,
+);
+
+// Translucent version of a role color (`fade($color-fg, 0.18)`).
+@function fade($color, $opacity) {
+  @return color-mix(in srgb, $color $opacity * 100%, transparent);
+}
+
+// Light-theme overrides for the enclosing selector, for the cases a role
+// swap alone cannot express (a state that would vanish, a white image).
+@mixin light {
+  :root[data-theme="light"] & {
+    @content;
+  }
+}
+
+// A section that stays dark in both themes, like the dark blocks between
+// Endfield's light ones: the timer over its photos, the hardware section, the
+// footer, gallery photo chrome and the viewer. In light it takes the dark
+// neutrals and resets inherited text to them, and brand ink becomes the
+// yellow fill, which reads on it where black would vanish.
+@mixin dark-surface {
+  @include light {
+    color-scheme: dark;
+    @each $role, $value in $dark-neutrals {
+      --color-#{$role}: #{$value};
+    }
+    --color-accent-ink: var(--color-accent-bright);
+    --color-accent-ink-deep: var(--color-accent-bright);
+    color: var(--color-fg);
+  }
+}
 
 // Typography
 $font-primary: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -68,14 +122,14 @@ $transition-med: 0.3s ease-out;
 }
 
 // Industrial clipped-corner panel
-@mixin clipped-panel($bg: $color-primary-black, $border: $color-gray-dark) {
+@mixin clipped-panel($bg: $color-bg, $border: $color-line) {
   background: $bg;
   border: 1px solid $border;
 }
 
 // Four corner brackets — layered background gradients, no extra markup.
 // Apply AFTER clipped-panel/background shorthand so layers aren't reset.
-@mixin corner-brackets($len: 12px, $thickness: 2px, $color: $color-primary-blue, $offset: 6px) {
+@mixin corner-brackets($len: 12px, $thickness: 2px, $color: $color-accent-ink-deep, $offset: 6px) {
   background-image:
     linear-gradient($color, $color), linear-gradient($color, $color),
     linear-gradient($color, $color), linear-gradient($color, $color),
@@ -103,7 +157,7 @@ $transition-med: 0.3s ease-out;
 }
 
 // Diagonal hatch strip — industrial tape/texture
-@mixin hatch-strip($color: $color-gray-dark, $angle: 45deg, $line: 2px, $gap: 8px) {
+@mixin hatch-strip($color: $color-line, $angle: 45deg, $line: 2px, $gap: 8px) {
   background-image: repeating-linear-gradient(
     $angle,
     $color 0,

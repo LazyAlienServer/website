@@ -62,6 +62,8 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang="scss">
+// In light the band is a solid yellow strip with black type and plates, like
+// the Endfield site's section bands.
 .ticker {
   --ticker-size: 56px;
 
@@ -69,10 +71,15 @@ onUnmounted(() => {
   align-items: center;
   height: 112px;
   overflow: hidden;
-  background: $color-primary-black;
-  border-block: 1px solid $color-gray-dark;
+  background: $color-bg;
+  border-block: 1px solid $color-line;
   pointer-events: none;
   user-select: none;
+
+  @include light {
+    background: $color-accent;
+    border-color: $color-accent;
+  }
 }
 
 .ticker-track {
@@ -96,20 +103,24 @@ onUnmounted(() => {
 }
 
 .ticker-solid {
-  color: $color-white;
+  color: $color-fg;
 }
 
 .ticker-outline {
   color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.45);
+  -webkit-text-stroke: 1px fade($color-fg, 0.45);
 }
 
-// Slanted blue plate at the shared hero slant (global.scss).
+// Slanted brand plate at the shared hero slant (global.scss).
 .ticker-mark {
   width: calc(var(--ticker-size) * 0.5);
   height: calc(var(--ticker-size) * 0.5);
-  background: $color-blue-bright;
+  background: $color-accent-bright;
   transform: skewX(calc(-1 * var(--hero-slant)));
+
+  @include light {
+    background: $color-fg;
+  }
 }
 
 @include tablet {

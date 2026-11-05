@@ -10,6 +10,46 @@
   box-sizing: border-box;
 }
 
+// Theme values for the color roles in `variables.scss`. `index.html` sets
+// `data-theme` on <html> before first paint (stored choice, else the system
+// preference) and `src/composables/theme.ts` owns it afterwards. Light keeps
+// yellow to fills that carry black text or are bands and bars at least 6px
+// thick; brand text, thin lines, dots, and focus rings are black ink there
+// (except on `dark-surface` sections). Light neutrals follow the Endfield
+// site: white ground, #f2f2f2 panels, #d9d9d9 rules.
+:root {
+  color-scheme: dark;
+  @each $role, $value in $dark-neutrals {
+    --color-#{$role}: #{$value};
+  }
+  --color-accent: #0f66dd;
+  --color-accent-bright: #1e90ff;
+  --color-accent-deep: #0066cc;
+  --color-accent-ink: #1e90ff;
+  --color-accent-ink-deep: #0f66dd;
+  --color-on-accent: #ffffff;
+  --color-glow: #1e90ff;
+  --color-danger: #ff4444;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-bg: #ffffff;
+  --color-surface: #f2f2f2;
+  --color-fg: #010101;
+  --color-fg-muted: #333333;
+  --color-fg-subtle: #666666;
+  --color-line: #d9d9d9;
+  --color-accent: #fffa00;
+  --color-accent-bright: #fffa00;
+  --color-accent-deep: #fffa00;
+  --color-accent-ink: #010101;
+  --color-accent-ink-deep: #010101;
+  --color-on-accent: #010101;
+  --color-glow: transparent;
+  --color-danger: #c62828;
+}
+
 // Hero slant: the single tilt for every slanted mark, edge, and panel (see
 // AGENTS.md). It is the angle of `.hero-visual`'s clipped left edge in
 // `HeroSection.vue`: 8% of the 60%-wide image (4.8vw) across the hero height
@@ -34,8 +74,8 @@ html {
 }
 
 body {
-  background-color: $color-primary-black;
-  color: $color-white;
+  background-color: $color-bg;
+  color: $color-fg;
   font-family: $font-primary;
   font-size: $font-size-body;
   line-height: 1.6;
@@ -45,8 +85,8 @@ body {
 }
 
 ::selection {
-  background: $color-primary-blue;
-  color: $color-white;
+  background: $color-accent;
+  color: $color-on-accent;
 }
 
 // Custom scrollbar — industrial thin
@@ -54,14 +94,14 @@ body {
   width: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: $color-primary-black;
+  background: $color-bg;
 }
 ::-webkit-scrollbar-thumb {
-  background: $color-gray-dark;
-  border: 2px solid $color-primary-black;
+  background: $color-line;
+  border: 2px solid $color-bg;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: $color-primary-blue;
+  background: $color-accent;
 }
 
 // Typography scale
@@ -89,7 +129,7 @@ h4 {
 }
 
 a {
-  color: $color-blue-bright;
+  color: $color-accent-ink;
   text-decoration: none;
 }
 
@@ -107,28 +147,28 @@ button {
 // Industrial utility classes
 // ============================================================
 
-// Carbon black content panel with hairline border
+// Raised content panel with hairline border
 .panel {
-  background: $color-black-soft;
-  border: 1px solid $color-gray-dark;
+  background: $color-surface;
+  border: 1px solid $color-line;
 }
 
 // Blueprint grid overlay (decoration)
 .grid-line {
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    linear-gradient(fade($color-fg, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, fade($color-fg, 0.045) 1px, transparent 1px);
   background-size: 56px 56px;
 }
 
-// Blinking signal indicator
+// Blinking signal indicator (a dot: black ink in light, never yellow)
 .signal-indicator {
   display: inline-block;
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: $color-blue-bright;
-  box-shadow: 0 0 10px $color-blue-bright;
+  background: $color-accent-ink;
+  box-shadow: 0 0 10px $color-glow;
   animation: signal-blink 1.4s ease-in-out infinite;
 }
 
@@ -160,7 +200,7 @@ button {
 // Crosshair plus marker — place absolutely inside positioned parents
 .plus-marker {
   position: absolute;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
   font-family: $font-display;
   font-size: 18px;
   line-height: 1;
@@ -231,7 +271,7 @@ button {
 
 ::view-transition-group(nav-trail) {
   z-index: 1;
-  background: $color-blue-bright;
+  background: $color-accent-bright;
   visibility: hidden;
 }
 

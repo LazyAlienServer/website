@@ -64,7 +64,7 @@ import ParticleLogo from "./ParticleLogo.vue";
 
 <style scoped lang="scss">
 .intro-section {
-  background: $color-primary-black;
+  background: $color-bg;
   position: relative;
 }
 
@@ -87,7 +87,7 @@ import ParticleLogo from "./ParticleLogo.vue";
   p {
     font-size: $font-size-body-lg;
     line-height: 1.8;
-    color: $color-gray-light;
+    color: $color-fg-muted;
     margin-bottom: $spacing-md;
 
     &:last-child {
@@ -111,7 +111,7 @@ import ParticleLogo from "./ParticleLogo.vue";
     content: "";
     flex: 1;
     height: 1px;
-    background: $color-gray-dark;
+    background: $color-line;
   }
 }
 
@@ -125,8 +125,8 @@ import ParticleLogo from "./ParticleLogo.vue";
 }
 
 .intro-tab-id {
-  background: $color-primary-blue;
-  color: $color-white;
+  background: $color-accent;
+  color: $color-on-accent;
   font-weight: 700;
 }
 
@@ -138,14 +138,14 @@ import ParticleLogo from "./ParticleLogo.vue";
   isolation: isolate;
   overflow: hidden;
   padding-right: 28px;
-  color: $color-gray-light;
+  color: $color-fg-muted;
 
   &::before {
     content: "";
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: $color-gray-dark;
+    background: $color-line;
     transform-origin: 100% 0;
     transform: skewX(calc(-1 * var(--hero-slant)));
   }
@@ -160,23 +160,23 @@ import ParticleLogo from "./ParticleLogo.vue";
 
 .intro-field {
   padding: 2px 24px 2px 12px;
-  border-left: 1px solid $color-gray-dark;
+  border-left: 1px solid $color-line;
 
   &:first-child {
-    border-left: 3px solid $color-white;
+    border-left: 3px solid $color-fg;
   }
 
   dt {
     font-family: $font-display;
     font-size: 10px;
     letter-spacing: 2px;
-    color: $color-gray-mid;
+    color: $color-fg-subtle;
   }
 
   dd {
     font-size: 14px;
     letter-spacing: 1px;
-    color: $color-white;
+    color: $color-fg;
   }
 }
 
@@ -197,10 +197,10 @@ import ParticleLogo from "./ParticleLogo.vue";
     height: 120px;
     background: linear-gradient(
       180deg,
-      rgba(42, 42, 42, 0) 0%,
-      $color-gray-dark 30%,
-      $color-gray-dark 70%,
-      rgba(42, 42, 42, 0) 100%
+      fade($color-line, 0) 0%,
+      $color-line 30%,
+      $color-line 70%,
+      fade($color-line, 0) 100%
     );
   }
 
@@ -208,7 +208,7 @@ import ParticleLogo from "./ParticleLogo.vue";
     writing-mode: vertical-rl;
     font-size: 11px;
     letter-spacing: 3px;
-    color: $color-gray-mid;
+    color: $color-fg-subtle;
     text-transform: uppercase;
   }
 

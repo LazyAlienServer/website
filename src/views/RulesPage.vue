@@ -207,7 +207,7 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .rules-page {
-  background: $color-primary-black;
+  background: $color-bg;
   min-height: 100vh;
   padding-top: var(--site-nav-height, 84px);
 }
@@ -215,15 +215,15 @@ onUnmounted(() => {
 // ---------- Document header: blueprint band + spec plate ----------
 .rules-heading {
   position: relative;
-  border-bottom: 1px solid $color-gray-dark;
+  border-bottom: 1px solid $color-line;
 
   &::before {
     content: "";
     position: absolute;
     inset: 0;
     background-image:
-      linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+      linear-gradient(fade($color-fg, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, fade($color-fg, 0.045) 1px, transparent 1px);
     background-size: 56px 56px;
     mask-image: linear-gradient(180deg, #000 0%, transparent 100%);
     pointer-events: none;
@@ -239,11 +239,11 @@ onUnmounted(() => {
   h1 {
     font-size: clamp(34px, 4.6vw, 60px);
     line-height: 1.02;
-    color: $color-white;
+    color: $color-fg;
   }
 
   .accent {
-    color: $color-blue-bright;
+    color: $color-accent-ink;
   }
 }
 
@@ -256,7 +256,7 @@ onUnmounted(() => {
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 3px;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 }
 
 .kicker-mark {
@@ -264,7 +264,7 @@ onUnmounted(() => {
   width: 22px;
   height: 10px;
   margin-right: 4px;
-  background: $color-blue-bright;
+  background: $color-accent-bright;
   transform: skewX(calc(-1 * var(--hero-slant)));
 }
 
@@ -277,17 +277,17 @@ onUnmounted(() => {
 
 .spec-field {
   padding: 2px 32px 2px 12px;
-  border-left: 1px solid $color-gray-dark;
+  border-left: 1px solid $color-line;
 
   &:first-child {
-    border-left: 3px solid $color-blue-bright;
+    border-left: 3px solid $color-accent-ink;
   }
 
   dt {
     font-family: $font-display;
     font-size: 10px;
     letter-spacing: 2px;
-    color: $color-gray-mid;
+    color: $color-fg-subtle;
   }
 
   dd {
@@ -296,7 +296,7 @@ onUnmounted(() => {
     font-weight: 700;
     letter-spacing: 1px;
     font-variant-numeric: tabular-nums;
-    color: $color-white;
+    color: $color-fg;
   }
 }
 
@@ -323,7 +323,7 @@ onUnmounted(() => {
   & + .chapter {
     margin-top: 72px;
     padding-top: $spacing-lg;
-    border-top: 1px solid $color-gray-dark;
+    border-top: 1px solid $color-line;
 
     &::before {
       content: "";
@@ -332,7 +332,7 @@ onUnmounted(() => {
       left: 0;
       width: 64px;
       height: 3px;
-      background: $color-blue-bright;
+      background: $color-accent-ink;
     }
   }
 }
@@ -346,7 +346,7 @@ onUnmounted(() => {
 
   h2 {
     font-size: clamp(24px, 2.6vw, 32px);
-    color: $color-white;
+    color: $color-fg;
     scroll-margin-top: calc(var(--site-nav-height, 84px) + 24px);
   }
 }
@@ -358,7 +358,7 @@ onUnmounted(() => {
   line-height: 0.8;
   font-variant-numeric: tabular-nums;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(30, 144, 255, 0.75);
+  -webkit-text-stroke: 1px fade($color-accent-ink, 0.75);
 }
 
 .chapter-meta {
@@ -366,7 +366,7 @@ onUnmounted(() => {
   font-family: $font-display;
   font-size: 12px;
   letter-spacing: 2px;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 }
 
 // ---------- Articles: label column + body column ----------
@@ -378,13 +378,13 @@ onUnmounted(() => {
   gap: $spacing-md;
   margin-inline: -12px;
   padding: 18px 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid fade($color-fg, 0.06);
 
   h3 {
     padding-top: 3px;
     font-size: 14px;
     letter-spacing: 2px;
-    color: $color-gray-mid;
+    color: $color-fg-subtle;
   }
 }
 
@@ -392,7 +392,7 @@ onUnmounted(() => {
   animation: rules-article-flash 1.6s ease-out;
 
   h3 {
-    color: $color-blue-bright;
+    color: $color-accent-ink;
   }
 }
 
@@ -405,22 +405,22 @@ onUnmounted(() => {
 
   10%,
   35% {
-    background-color: rgba(0, 102, 204, 0.32);
+    background-color: fade($color-accent-deep, 0.32);
     box-shadow:
-      0 0 0 1px rgba(30, 144, 255, 0.8),
-      0 0 22px rgba(30, 144, 255, 0.28);
+      0 0 0 1px fade($color-accent-ink, 0.8),
+      0 0 22px fade($color-glow, 0.28);
   }
 
   55% {
-    background-color: rgba(0, 102, 204, 0.1);
-    box-shadow: 0 0 0 1px rgba(30, 144, 255, 0.35);
+    background-color: fade($color-accent-deep, 0.1);
+    box-shadow: 0 0 0 1px fade($color-accent-ink, 0.35);
   }
 }
 
 .article-body {
   font-size: $font-size-body;
   line-height: 1.8;
-  color: $color-gray-light;
+  color: $color-fg-muted;
 
   :deep(p) {
     margin-bottom: $spacing-xs;
@@ -433,20 +433,20 @@ onUnmounted(() => {
   :deep(p.note) {
     margin-top: 6px;
     padding: 6px 12px;
-    border-left: 2px solid $color-primary-blue;
-    background: rgba(30, 144, 255, 0.06);
-    color: $color-gray-mid;
+    border-left: 2px solid $color-accent-ink-deep;
+    background: fade($color-accent-bright, 0.06);
+    color: $color-fg-subtle;
     font-size: 14px;
   }
 
   :deep(a) {
-    color: $color-blue-bright;
+    color: $color-accent-ink;
     text-decoration: underline;
     text-decoration-color: transparent;
     transition: text-decoration-color $transition-fast;
 
     &:hover {
-      text-decoration-color: $color-blue-bright;
+      text-decoration-color: $color-accent-ink;
     }
   }
 
@@ -467,12 +467,12 @@ onUnmounted(() => {
   gap: $spacing-md;
   margin-top: 72px;
   padding-top: $spacing-lg;
-  border-top: 1px solid $color-gray-dark;
+  border-top: 1px solid $color-line;
   text-align: right;
-  color: $color-gray-light;
+  color: $color-fg-muted;
 
   a {
-    color: $color-blue-bright;
+    color: $color-accent-ink;
   }
 }
 
@@ -483,13 +483,13 @@ onUnmounted(() => {
   font-family: $font-display;
   font-size: 11px;
   letter-spacing: 3px;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 
   &::before {
     content: "";
     width: 40px;
     height: 10px;
-    @include hatch-strip(rgba(255, 255, 255, 0.3));
+    @include hatch-strip(fade($color-fg, 0.3));
   }
 }
 
@@ -497,7 +497,7 @@ onUnmounted(() => {
   font-family: $font-display;
   font-size: 13px;
   letter-spacing: 2px;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 }
 
 // ---------- Index rail ----------
@@ -536,20 +536,27 @@ onUnmounted(() => {
     max-width: 100%;
     gap: 10px;
     padding: 7px 0;
-    color: $color-gray-mid;
+    color: $color-fg-subtle;
     font-size: 13px;
     transition: color $transition-med;
 
     &:hover {
-      color: $color-gray-light;
+      color: $color-fg-muted;
     }
 
     &.is-active {
-      color: $color-blue-bright;
+      color: $color-accent-ink;
+
+      // Light: blue text would collapse to plain ink, so mark the current
+      // chapter with a yellow block instead.
+      @include light {
+        background: $color-accent;
+        color: $color-on-accent;
+      }
     }
 
     &:focus-visible {
-      outline: 1px solid $color-blue-bright;
+      outline: 1px solid $color-accent-ink;
       outline-offset: 2px;
     }
   }
@@ -566,13 +573,13 @@ onUnmounted(() => {
   right: 0;
   bottom: calc(100% + 8px);
   padding: 1px 5px;
-  border: 1px solid $color-gray-dark;
+  border: 1px solid $color-line;
   font-family: $font-display;
   font-size: 10px;
   letter-spacing: 1px;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 }
 
 .toc-title {
@@ -585,7 +592,7 @@ onUnmounted(() => {
   flex: none;
   width: 8px;
   height: 2px;
-  background: rgba(255, 255, 255, 0.25);
+  background: fade($color-fg, 0.25);
   transition:
     width $transition-med,
     height $transition-med,
@@ -595,7 +602,7 @@ onUnmounted(() => {
 .is-active .toc-dash {
   width: 16px;
   height: 3px;
-  background: $color-blue-bright;
+  background: $color-accent-ink;
 }
 
 // Only the mobile rail collapses; elsewhere the toggle does not exist.
@@ -606,8 +613,8 @@ onUnmounted(() => {
 @media (prefers-reduced-motion: reduce) {
   .article--flash {
     animation: none;
-    background-color: rgba(0, 102, 204, 0.18);
-    box-shadow: 0 0 0 1px rgba(30, 144, 255, 0.45);
+    background-color: fade($color-accent-deep, 0.18);
+    box-shadow: 0 0 0 1px fade($color-accent-ink, 0.45);
   }
 
   .rules-toc a,
@@ -690,7 +697,7 @@ onUnmounted(() => {
       position: fixed;
       inset: 0;
       z-index: -1;
-      background: rgba(10, 10, 10, 0.85);
+      background: fade($color-bg, 0.85);
       opacity: 0;
       visibility: hidden;
       backdrop-filter: blur(0);
@@ -763,7 +770,7 @@ onUnmounted(() => {
     cursor: pointer;
 
     &:focus-visible {
-      outline: 1px solid $color-blue-bright;
+      outline: 1px solid $color-accent-ink;
       outline-offset: -1px;
     }
   }

@@ -391,7 +391,7 @@ onUnmounted(onClose);
 
 <style scoped lang="scss">
 .gallery-page {
-  background: $color-primary-black;
+  background: $color-bg;
   min-height: 100vh;
   padding-top: var(--site-nav-height, 84px);
 }
@@ -405,15 +405,15 @@ onUnmounted(onClose);
 // ---------- Header: blueprint band, 12-column type block ----------
 .gallery-heading {
   position: relative;
-  border-bottom: 1px solid $color-gray-dark;
+  border-bottom: 1px solid $color-line;
 
   &::before {
     content: "";
     position: absolute;
     inset: 0;
     background-image:
-      linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+      linear-gradient(fade($color-fg, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, fade($color-fg, 0.045) 1px, transparent 1px);
     background-size: 56px 56px;
     mask-image: linear-gradient(180deg, #000 0%, transparent 100%);
     pointer-events: none;
@@ -439,7 +439,7 @@ onUnmounted(onClose);
     gap: $spacing-sm;
     font-size: clamp(32px, 4vw, 48px);
     line-height: 1.05;
-    color: $color-white;
+    color: $color-fg;
   }
 }
 
@@ -448,7 +448,7 @@ onUnmounted(onClose);
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 4px;
-  color: $color-blue-bright;
+  color: $color-accent-ink;
 }
 
 .gallery-kicker {
@@ -460,7 +460,7 @@ onUnmounted(onClose);
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 3px;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 }
 
 .kicker-mark {
@@ -468,14 +468,14 @@ onUnmounted(onClose);
   width: 22px;
   height: 10px;
   margin-right: 4px;
-  background: $color-blue-bright;
+  background: $color-accent-bright;
   transform: skewX(calc(-1 * var(--hero-slant)));
 }
 
 .heading-lead {
   max-width: 34em;
   margin-top: $spacing-sm;
-  color: $color-gray-light;
+  color: $color-fg-muted;
   font-size: 15px;
   line-height: 1.8;
 }
@@ -484,7 +484,7 @@ onUnmounted(onClose);
   grid-column: 9 / span 4;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  border-top: 3px solid $color-blue-bright;
+  border-top: 3px solid $color-accent-ink;
 }
 
 .spec-field {
@@ -492,14 +492,14 @@ onUnmounted(onClose);
 
   & + & {
     padding-left: 12px;
-    border-left: 1px solid $color-gray-dark;
+    border-left: 1px solid $color-line;
   }
 
   dt {
     font-family: $font-display;
     font-size: 10px;
     letter-spacing: 2px;
-    color: $color-gray-mid;
+    color: $color-fg-subtle;
   }
 
   dd {
@@ -508,7 +508,7 @@ onUnmounted(onClose);
     font-weight: 700;
     letter-spacing: 1px;
     font-variant-numeric: tabular-nums;
-    color: $color-white;
+    color: $color-fg;
   }
 }
 
@@ -517,8 +517,8 @@ onUnmounted(onClose);
   position: sticky;
   top: var(--site-nav-height, 84px);
   z-index: 4;
-  border-bottom: 1px solid $color-gray-dark;
-  background: rgba(10, 10, 10, 0.92);
+  border-bottom: 1px solid $color-line;
+  background: fade($color-bg, 0.92);
   backdrop-filter: blur(8px);
 }
 
@@ -529,16 +529,17 @@ onUnmounted(onClose);
   min-height: 56px;
 }
 
-// Segmented controls share one hairline frame; the pressed segment fills blue.
+// Segmented controls share one hairline frame; the pressed segment takes the
+// accent fill.
 %segment {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   height: 32px;
   padding: 0 14px;
-  border: 1px solid $color-gray-dark;
+  border: 1px solid $color-line;
   background: none;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
   font-family: $font-display;
   font-size: 12px;
   letter-spacing: 2px;
@@ -553,20 +554,20 @@ onUnmounted(onClose);
   }
 
   &:hover {
-    color: $color-white;
+    color: $color-fg;
   }
 
   &[aria-pressed="true"] {
     position: relative;
-    border-color: $color-blue-bright;
-    background: $color-primary-blue;
-    color: $color-white;
+    border-color: $color-accent-ink;
+    background: $color-accent;
+    color: $color-on-accent;
   }
 
   &:focus-visible {
     position: relative;
     z-index: 1;
-    outline: 2px solid $color-blue-bright;
+    outline: 2px solid $color-accent-ink;
     outline-offset: 2px;
   }
 }
@@ -592,10 +593,10 @@ onUnmounted(onClose);
   font-size: 11px;
   letter-spacing: 2px;
   font-variant-numeric: tabular-nums;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 
   strong {
-    color: $color-blue-bright;
+    color: $color-accent-ink;
   }
 }
 
@@ -619,11 +620,11 @@ onUnmounted(onClose);
 
 .gallery-empty {
   padding: 96px 0;
-  border: 1px dashed $color-gray-dark;
+  border: 1px dashed $color-line;
   text-align: center;
   font-family: $font-display;
   letter-spacing: 3px;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 }
 
 .gallery-grid {
@@ -698,14 +699,14 @@ onUnmounted(onClose);
     content: "";
     position: absolute;
     inset: -12px;
-    @include corner-brackets(16px, 2px, $color-blue-bright, 0px);
+    @include corner-brackets(16px, 2px, $color-accent-ink, 0px);
     opacity: 0;
     transition: opacity $transition-med;
     pointer-events: none;
   }
 
   &:focus-visible {
-    outline: 2px solid $color-blue-bright;
+    outline: 2px solid $color-accent-ink;
     outline-offset: 6px;
   }
 }
@@ -715,8 +716,8 @@ onUnmounted(onClose);
   display: block;
   aspect-ratio: 3 / 2;
   overflow: hidden;
-  background: $color-black-soft;
-  border: 1px solid $color-gray-dark;
+  background: $color-surface;
+  border: 1px solid $color-line;
 
   img {
     width: 100%;
@@ -736,12 +737,13 @@ onUnmounted(onClose);
   opacity: 0;
   transition: opacity $transition-fast;
   pointer-events: none;
+  @include dark-surface;
 
   &::before,
   &::after {
     content: "";
     position: absolute;
-    background: rgba(255, 255, 255, 0.35);
+    background: rgba($color-on-photo, 0.35);
   }
 
   &::before {
@@ -771,11 +773,11 @@ onUnmounted(onClose);
   width: var(--size);
   height: var(--size);
   margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
-  border: 2px solid $color-blue-bright;
+  border: 2px solid $color-accent-ink;
   background:
-    linear-gradient($color-blue-bright, $color-blue-bright) center / 2px 100% no-repeat,
-    linear-gradient($color-blue-bright, $color-blue-bright) center / 100% 2px no-repeat,
-    rgba(10, 10, 10, 0.35);
+    linear-gradient($color-accent-ink, $color-accent-ink) center / 2px 100% no-repeat,
+    linear-gradient($color-accent-ink, $color-accent-ink) center / 100% 2px no-repeat,
+    rgba($color-photo-scrim, 0.35);
   transform: translate3d(var(--cx, 50%), var(--cy, 50%), 0);
 
   &::after {
@@ -786,7 +788,13 @@ onUnmounted(onClose);
     width: 6px;
     height: 6px;
     margin: -3px 0 0 -3px;
+    // A lighter tint of the dark reticle blue; on the yellow light reticle the
+    // lighter mark is white.
     background: #6cb8ff;
+
+    @include light {
+      background: $color-on-photo;
+    }
   }
 }
 
@@ -796,18 +804,18 @@ onUnmounted(onClose);
   right: 0;
   z-index: 1;
   padding: 4px 10px;
-  background: rgba(10, 10, 10, 0.82);
-  border-bottom: 1px solid $color-blue-bright;
+  background: rgba($color-photo-scrim, 0.82);
+  border-bottom: 1px solid $color-accent-ink;
   font-family: $font-display;
   font-size: 11px;
   letter-spacing: 2px;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 
   b {
     margin: 0 10px 0 6px;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
-    color: $color-white;
+    color: $color-on-photo;
 
     &:last-child {
       margin-right: 0;
@@ -831,8 +839,8 @@ onUnmounted(onClose);
   top: 0;
   left: 0;
   padding: 4px 12px;
-  background: $color-primary-blue;
-  color: $color-white;
+  background: $color-accent;
+  color: $color-on-accent;
   font-family: $font-display;
   font-size: 11px;
   font-weight: 700;
@@ -849,19 +857,20 @@ onUnmounted(onClose);
   display: flex;
   justify-content: space-between;
   padding: 10px 14px;
-  background: rgba(10, 10, 10, 0.82);
-  border-top: 1px solid $color-blue-bright;
+  background: rgba($color-photo-scrim, 0.82);
+  border-top: 1px solid $color-accent-ink;
   font-family: $font-display;
   font-size: 11px;
   letter-spacing: 2px;
   font-variant-numeric: tabular-nums;
-  color: $color-gray-light;
+  color: $color-fg-muted;
   transform: translateY(100%);
   transition: transform $transition-med;
+  @include dark-surface;
 }
 
 .hud-action {
-  color: $color-blue-bright;
+  color: $color-accent-ink;
 }
 
 .frame-caption {
@@ -872,7 +881,7 @@ onUnmounted(onClose);
   gap: $spacing-sm;
   margin-top: 14px;
   padding-top: 12px;
-  border-top: 1px solid $color-gray-dark;
+  border-top: 1px solid $color-line;
 
   &::before {
     content: "";
@@ -881,7 +890,7 @@ onUnmounted(onClose);
     left: 0;
     width: 0;
     height: 3px;
-    background: $color-blue-bright;
+    background: $color-accent-ink;
     transition: width $transition-med;
   }
 }
@@ -892,7 +901,7 @@ onUnmounted(onClose);
   font-weight: 700;
   line-height: 1;
   font-variant-numeric: tabular-nums;
-  color: $color-blue-bright;
+  color: $color-accent-ink;
 }
 
 .frame-title {
@@ -906,7 +915,7 @@ onUnmounted(onClose);
 .frame-title-cn {
   font-size: 16px;
   font-weight: 700;
-  color: $color-white;
+  color: $color-fg;
 }
 
 .frame-title-en,
@@ -914,7 +923,7 @@ onUnmounted(onClose);
   font-family: $font-display;
   font-size: 11px;
   letter-spacing: 2px;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 }
 
 .frame-trigger:hover,
@@ -962,11 +971,11 @@ onUnmounted(onClose);
 .index-head {
   @extend %index-columns;
   padding-bottom: 10px;
-  border-bottom: 3px solid $color-blue-bright;
+  border-bottom: 3px solid $color-accent-ink;
   font-family: $font-display;
   font-size: 10px;
   letter-spacing: 2px;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 }
 
 .index-row {
@@ -975,13 +984,17 @@ onUnmounted(onClose);
   width: 100%;
   padding: 18px 0;
   border: none;
-  border-bottom: 1px solid $color-gray-dark;
+  border-bottom: 1px solid $color-line;
   background: none;
-  color: $color-gray-light;
+  color: $color-fg-muted;
   font: inherit;
   text-align: left;
   cursor: zoom-in;
   transition: color $transition-fast;
+
+  @include light {
+    isolation: isolate;
+  }
 
   &::before {
     content: "";
@@ -990,29 +1003,47 @@ onUnmounted(onClose);
     left: -$spacing-md;
     width: 12px;
     height: 3px;
-    background: $color-blue-bright;
+    background: $color-accent-ink;
     opacity: 0;
     transition: opacity $transition-fast;
+
+    // Light marks the previewed row with a yellow block behind its text
+    // instead of the thin bar; `isolation` on the row keeps it above the page.
+    @include light {
+      inset: 0 -12px;
+      z-index: -1;
+      width: auto;
+      height: auto;
+      background: $color-accent;
+    }
   }
 
   // Marks the row shown in `.index-preview`, so it exists only where the
   // preview does (hidden by the `tablet` block, ≤1024px).
   @media (min-width: 1025px) {
     &.is-previewed {
-      color: $color-white;
+      color: $color-fg;
 
       &::before {
         opacity: 1;
       }
 
       .index-no {
-        color: $color-blue-bright;
+        color: $color-accent-ink;
+      }
+
+      @include light {
+        color: $color-on-accent;
+
+        .index-no {
+          color: $color-on-accent;
+        }
       }
     }
   }
 
   &:focus-visible {
-    outline: 2px solid $color-blue-bright;
+    outline: 2px solid $color-accent-ink;
     outline-offset: 2px;
   }
 }
@@ -1027,7 +1058,7 @@ onUnmounted(onClose);
 }
 
 .index-no {
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
   transition: color $transition-fast;
 }
 
@@ -1041,13 +1072,13 @@ onUnmounted(onClose);
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 2px;
-    color: $color-gray-mid;
+    color: $color-fg-subtle;
   }
 }
 
 .index-category,
 .index-size {
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 }
 
 .index-size {
@@ -1070,7 +1101,7 @@ onUnmounted(onClose);
     font-family: $font-display;
     font-size: 11px;
     letter-spacing: 2px;
-    color: $color-gray-mid;
+    color: $color-fg-subtle;
   }
 }
 
@@ -1087,8 +1118,8 @@ onUnmounted(onClose);
   margin: 0;
   padding: $spacing-md;
   border: none;
-  background: rgba(10, 10, 10, 0.95);
-  color: $color-white;
+  background: rgba($color-photo-scrim, 0.95);
+  color: $color-on-photo;
   // Centering lives outside `[open]`: while closing, `allow-discrete` keeps
   // `display: flex` until the fade ends, but `[open]`-only rules drop at once.
   align-items: center;
@@ -1098,6 +1129,7 @@ onUnmounted(onClose);
     opacity $transition-med,
     display 0.3s allow-discrete,
     overlay 0.3s allow-discrete;
+  @include dark-surface;
 
   &[open] {
     display: flex;
@@ -1174,7 +1206,7 @@ onUnmounted(onClose);
     width: auto;
     height: auto;
     object-fit: contain;
-    border: 1px solid $color-gray-dark;
+    border: 1px solid $color-line;
   }
 }
 
@@ -1264,7 +1296,7 @@ onUnmounted(onClose);
   align-items: center;
   gap: $spacing-md;
   min-height: 60px;
-  border-bottom: 3px solid $color-blue-bright;
+  border-bottom: 3px solid $color-accent-ink;
 }
 
 .viewer-count {
@@ -1272,11 +1304,11 @@ onUnmounted(onClose);
   font-size: 12px;
   letter-spacing: 2px;
   font-variant-numeric: tabular-nums;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 
   strong {
     font-size: 18px;
-    color: $color-blue-bright;
+    color: $color-accent-ink;
   }
 }
 
@@ -1293,7 +1325,7 @@ onUnmounted(onClose);
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 2px;
-    color: $color-gray-mid;
+    color: $color-fg-subtle;
   }
 }
 
@@ -1306,9 +1338,9 @@ onUnmounted(onClose);
     place-items: center;
     width: 40px;
     height: 40px;
-    border: 1px solid $color-gray-dark;
+    border: 1px solid $color-line;
     background: none;
-    color: $color-gray-light;
+    color: $color-fg-muted;
     cursor: pointer;
     transition:
       color $transition-fast,
@@ -1316,12 +1348,12 @@ onUnmounted(onClose);
 
     &:hover,
     &:focus-visible {
-      border-color: $color-blue-bright;
-      color: $color-white;
+      border-color: $color-accent-ink;
+      color: $color-on-photo;
     }
 
     &:focus-visible {
-      outline: 2px solid $color-blue-bright;
+      outline: 2px solid $color-accent-ink;
       outline-offset: 2px;
     }
   }
@@ -1350,8 +1382,8 @@ onUnmounted(onClose);
     width: 96px;
     aspect-ratio: 3 / 2;
     padding: 0;
-    border: 1px solid $color-gray-dark;
-    background: $color-black-soft;
+    border: 1px solid $color-line;
+    background: $color-surface;
     cursor: pointer;
     opacity: 0.5;
     transition:
@@ -1364,11 +1396,11 @@ onUnmounted(onClose);
     }
 
     &[aria-current="true"] {
-      border-color: $color-blue-bright;
+      border-color: $color-accent-ink;
     }
 
     &:focus-visible {
-      outline: 2px solid $color-blue-bright;
+      outline: 2px solid $color-accent-ink;
       outline-offset: 2px;
     }
   }
@@ -1384,11 +1416,11 @@ onUnmounted(onClose);
     top: 0;
     left: 0;
     padding: 1px 5px;
-    background: rgba(10, 10, 10, 0.8);
+    background: rgba($color-photo-scrim, 0.8);
     font-family: $font-display;
     font-size: 10px;
     letter-spacing: 1px;
-    color: $color-gray-light;
+    color: $color-fg-muted;
   }
 }
 

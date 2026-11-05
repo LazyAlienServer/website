@@ -39,12 +39,14 @@ const year = new Date().getFullYear();
 </script>
 
 <style scoped lang="scss">
+// Dark in both themes: in light it closes the page like the Endfield footer,
+// with the top accent in yellow.
 .footer-section {
-  background: $color-primary-black;
-  border-top: 1px solid $color-gray-dark;
+  @include dark-surface;
+  background: $color-bg;
+  border-top: 1px solid $color-line;
   position: relative;
 
-  // blue top accent
   &::before {
     content: "";
     position: absolute;
@@ -52,7 +54,7 @@ const year = new Date().getFullYear();
     left: 0;
     width: 160px;
     height: 4px;
-    background: $color-primary-blue;
+    background: $color-accent-ink-deep;
   }
 }
 
@@ -80,7 +82,7 @@ const year = new Date().getFullYear();
     font-family: $font-display;
     font-weight: 700;
     font-size: 16px;
-    color: $color-white;
+    color: $color-fg;
     letter-spacing: 1px;
   }
 }
@@ -89,13 +91,13 @@ const year = new Date().getFullYear();
 .footer-contact {
   p {
     font-size: 14px;
-    color: $color-gray-light;
+    color: $color-fg-muted;
     line-height: 2;
     letter-spacing: 1px;
   }
 
   .contact-note {
-    color: $color-gray-mid;
+    color: $color-fg-subtle;
   }
 }
 
@@ -104,7 +106,7 @@ const year = new Date().getFullYear();
 }
 
 .footer-bar {
-  border-top: 1px solid $color-gray-dark;
+  border-top: 1px solid $color-line;
   padding: $spacing-sm $spacing-md;
   display: flex;
   justify-content: space-between;
@@ -113,7 +115,7 @@ const year = new Date().getFullYear();
   margin: 0 auto;
   font-size: 11px;
   letter-spacing: 2px;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
   text-transform: uppercase;
 }
 
@@ -130,7 +132,7 @@ const year = new Date().getFullYear();
     display: block;
     width: 100%;
     height: auto;
-    fill: $color-white;
+    fill: $color-on-accent;
   }
 
   text {
@@ -144,7 +146,7 @@ const year = new Date().getFullYear();
   position: fixed;
   inset: auto 0 0;
   padding: var(--wordmark-block) var(--wordmark-inline);
-  background: $color-primary-blue;
+  background: $color-accent;
   pointer-events: none;
 }
 

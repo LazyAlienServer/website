@@ -78,6 +78,9 @@ onUnmounted(() => {
   initial-value: 0;
 }
 
+// In light the bar is the panel gray (#f2f2f2) over the white page. Its
+// surfaces paint `$color-bg`, so the bar remaps that role rather than
+// overriding each surface: desktop keeps `.nav` itself transparent.
 .nav {
   --nav-inline: #{$spacing-lg};
   --seam-top: 44.8vw;
@@ -95,8 +98,12 @@ onUnmounted(() => {
   gap: $spacing-md;
   width: 40%;
   padding: $spacing-md var(--nav-inline);
-  background: $color-primary-black;
+  background: $color-bg;
   transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+
+  @include light {
+    --color-bg: var(--color-surface);
+  }
 
   // Gray underline follows the content insets: logo left to links right.
   &::before {
@@ -106,7 +113,7 @@ onUnmounted(() => {
     bottom: 0;
     left: var(--nav-inline);
     height: 1px;
-    background: $color-gray-dark;
+    background: $color-line;
     pointer-events: none;
   }
 
@@ -152,7 +159,7 @@ onUnmounted(() => {
       width: 100vw;
       height: auto;
       z-index: -2;
-      background: $color-blue-bright;
+      background: $color-accent-bright;
       clip-path: polygon(
         0 0,
         calc(var(--seam-top) + 6px + (100vw - var(--seam-top) - 6px) * var(--nav-blue-progress)) 0,
@@ -180,7 +187,7 @@ onUnmounted(() => {
     z-index: -1;
     display: block;
     width: 100vw;
-    background: $color-primary-black;
+    background: $color-bg;
     clip-path: polygon(
       0 0,
       calc(var(--seam-top) + (100vw - var(--seam-top)) * var(--nav-body-progress)) 0,
@@ -195,7 +202,7 @@ onUnmounted(() => {
     bottom: 0;
     left: var(--nav-inline);
     height: 1px;
-    background: $color-gray-dark;
+    background: $color-line;
     pointer-events: none;
   }
 }

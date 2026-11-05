@@ -42,7 +42,7 @@ import FooterSection from "@/components/FooterSection.vue";
     top: 0;
     bottom: 0;
     width: 1px;
-    background: rgba(255, 255, 255, 0.06);
+    background: fade($color-fg, 0.06);
     z-index: 1;
     pointer-events: none;
     display: none;

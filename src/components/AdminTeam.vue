@@ -178,22 +178,38 @@ const onAvatarError = (name: string): void => {
 </script>
 
 <style scoped lang="scss">
+// In light the section is a gray band between white ones, and the cards
+// turn white on it.
 .admin-section {
-  background-color: $color-primary-black;
+  background-color: $color-bg;
+
+  @include light {
+    background-color: $color-surface;
+  }
 }
 
 // ---------- Manifest header: headcount, role legend, per-operator roster strip ----------
-// role colors are shared by the legend swatches and the roster segments
+// role colors are shared by the legend swatches and the roster segments; both
+// are 4px lines, so they use ink roles
 .role-admin {
-  --role-color: #{$color-blue-bright};
+  --role-color: #{$color-accent-ink};
 }
 
 .role-tech {
-  --role-color: #{$color-primary-blue};
+  --role-color: #{$color-accent-ink-deep};
+
+  // both brand inks are black in light: step the lower roles down in tone
+  @include light {
+    --role-color: #{fade($color-fg, 0.55)};
+  }
 }
 
 .role-mod {
-  --role-color: rgba(255, 255, 255, 0.55);
+  --role-color: #{fade($color-fg, 0.55)};
+
+  @include light {
+    --role-color: #{fade($color-fg, 0.25)};
+  }
 }
 
 .admin-header {
@@ -212,13 +228,13 @@ const onAvatarError = (name: string): void => {
   font-family: $font-display;
   font-size: 12px;
   letter-spacing: 3px;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 
   &::before {
     content: "";
     width: 18px;
     height: 2px;
-    background: $color-blue-bright;
+    background: $color-accent-ink;
   }
 }
 
@@ -240,14 +256,14 @@ const onAvatarError = (name: string): void => {
   font-weight: 700;
   line-height: 0.85;
   font-variant-numeric: tabular-nums;
-  color: $color-white;
+  color: $color-fg;
 }
 
 .admin-count-label {
   font-family: $font-display;
   font-size: 11px;
   letter-spacing: 2px;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 }
 
 .admin-roles {
@@ -255,7 +271,7 @@ const onAvatarError = (name: string): void => {
   flex-direction: column;
   gap: 4px;
   padding-left: $spacing-md;
-  border-left: 1px solid $color-gray-dark;
+  border-left: 1px solid $color-line;
   list-style: none;
 }
 
@@ -266,7 +282,7 @@ const onAvatarError = (name: string): void => {
   font-family: $font-display;
   font-size: 11px;
   letter-spacing: 2px;
-  color: $color-gray-light;
+  color: $color-fg-muted;
 }
 
 .admin-role-swatch {
@@ -302,20 +318,24 @@ const onAvatarError = (name: string): void => {
   gap: 14px;
   padding: 18px 18px 34px;
   overflow: hidden;
-  background: $color-black-soft;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  color: $color-white;
+  background: $color-surface;
+  border: 1px solid fade($color-fg, 0.06);
+  color: $color-fg;
   transition:
     transform $transition-med,
     border-color $transition-med;
 
+  @include light {
+    background: $color-bg;
+  }
+
   // only linked operators get interactive affordances
   &:not(.no-link):hover {
     transform: translateY(-3px);
-    border-color: rgba(30, 144, 255, 0.35);
+    border-color: fade($color-accent-ink, 0.35);
 
     .op-link {
-      color: $color-blue-bright;
+      color: $color-accent-ink;
     }
   }
 
@@ -331,7 +351,7 @@ const onAvatarError = (name: string): void => {
   font-family: $font-display;
   font-size: 10px;
   letter-spacing: 1px;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 }
 
 .op-avatar,
@@ -353,7 +373,7 @@ const onAvatarError = (name: string): void => {
   font-family: $font-display;
   font-size: clamp(20px, 2vw, 28px);
   font-weight: 700;
-  color: $color-white;
+  color: $color-fg;
 }
 
 .op-info {
@@ -369,7 +389,7 @@ const onAvatarError = (name: string): void => {
   font-size: clamp(16px, 2.5vw, 20px);
   font-weight: 700;
   letter-spacing: 1px;
-  color: $color-white;
+  color: $color-fg;
   overflow-wrap: break-word;
 }
 
@@ -382,7 +402,7 @@ const onAvatarError = (name: string): void => {
   font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 }
 
 .status-dot {
@@ -392,12 +412,12 @@ const onAvatarError = (name: string): void => {
   border-radius: 50%;
 
   &.status-online {
-    background: $color-blue-bright;
-    box-shadow: 0 0 6px $color-blue-bright;
+    background: $color-accent-ink;
+    box-shadow: 0 0 6px $color-glow;
   }
 
   &.status-away {
-    background: $color-gray-mid;
+    background: $color-fg-subtle;
   }
 }
 
@@ -409,7 +429,7 @@ const onAvatarError = (name: string): void => {
   font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
   transition: color $transition-fast;
 }
 

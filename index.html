@@ -9,6 +9,20 @@
       content="Lazy Alien Server (LAS) — 以学生群体为主的技术交流向 Minecraft 服务器"
     />
     <title>LAS | Lazy Alien Server</title>
+    <script>
+      // Theme before first paint: stored choice, else the system preference.
+      // `src/composables/theme.ts` takes over after boot (same storage key).
+      (() => {
+        let theme = null;
+        try {
+          theme = localStorage.getItem("las-theme");
+        } catch {}
+        if (theme !== "light" && theme !== "dark") {
+          theme = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        }
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

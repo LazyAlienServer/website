@@ -68,7 +68,7 @@ const capabilities: Capability[] = [
 
 .infra-divider {
   width: 1px;
-  background: rgba(255, 255, 255, 0.18);
+  background: fade($color-fg, 0.18);
 }
 
 .infra-feature {
@@ -78,7 +78,13 @@ const capabilities: Capability[] = [
   gap: clamp(16px, 2vw, 24px);
 
   &:hover .infra-icon {
-    color: $color-white;
+    color: $color-fg;
+
+    // Ink and hover color are both black in light: mark hover with a fill.
+    @include light {
+      background: $color-accent;
+      color: $color-on-accent;
+    }
   }
 }
 
@@ -88,7 +94,7 @@ const capabilities: Capability[] = [
   width: clamp(44px, 4vw, 56px);
   height: clamp(44px, 4vw, 56px);
   place-items: center;
-  color: $color-blue-bright;
+  color: $color-accent-ink;
   transition: color $transition-fast;
 
   :deep(svg) {
@@ -105,7 +111,7 @@ const capabilities: Capability[] = [
 }
 
 .infra-title {
-  color: $color-white;
+  color: $color-fg;
   font-family: $font-display;
   font-size: clamp(15px, 1.35vw, 19px);
   font-weight: 700;
@@ -114,7 +120,7 @@ const capabilities: Capability[] = [
 }
 
 .infra-description {
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
   font-size: clamp(12px, 1vw, 14px);
   line-height: 1.7;
   overflow-wrap: anywhere;

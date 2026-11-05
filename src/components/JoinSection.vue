@@ -123,9 +123,14 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
   // subtle cold blue-black separation from the rest of the site
   background-color: #0c0f14;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    linear-gradient(fade($color-fg, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, fade($color-fg, 0.045) 1px, transparent 1px);
   background-size: 56px 56px;
+
+  // the blue-black tint is dark-only; light sits on the plain page white
+  @include light {
+    background-color: $color-bg;
+  }
 }
 
 .join-layout {
@@ -150,7 +155,7 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 3px;
-  color: $color-blue-bright;
+  color: $color-accent-ink;
 }
 
 // original section-header layout, scoped here after the global header styles were retired
@@ -170,13 +175,13 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
     flex: 1;
     height: 1px;
     margin-left: $spacing-sm;
-    background: linear-gradient(90deg, $color-gray-dark 0%, rgba(42, 42, 42, 0) 100%);
+    background: linear-gradient(90deg, $color-line 0%, fade($color-line, 0) 100%);
   }
 }
 
 .section-title {
   font-size: $font-size-h2;
-  color: $color-white;
+  color: $color-fg;
 }
 
 // PATH cards stack vertically — one per row
@@ -202,7 +207,7 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
     bottom: -12px;
     left: 0;
     height: 3px;
-    background: $color-blue-bright;
+    background: $color-accent-ink;
     transform: scaleX(0);
     transform-origin: left center;
     // quick launch with a long deceleration at the finish
@@ -214,7 +219,7 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
   }
 
   &:focus-visible {
-    outline: 2px solid $color-blue-bright;
+    outline: 2px solid $color-accent-ink;
     outline-offset: 6px;
   }
 }
@@ -236,7 +241,7 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
   font-size: $font-size-h4;
   font-weight: 400;
   letter-spacing: 3px;
-  color: $color-blue-bright;
+  color: $color-accent-ink;
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -266,12 +271,12 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 
 .path-title {
   font-size: $font-size-h4;
-  color: $color-white;
+  color: $color-fg;
 }
 
 .path-desc {
   font-size: $font-size-body;
-  color: $color-gray-light;
+  color: $color-fg-muted;
   line-height: 1.7;
 }
 
@@ -293,8 +298,16 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 }
 
 .btn-primary {
-  background: $color-primary-blue;
-  color: $color-white;
+  background: $color-accent;
+  color: $color-on-accent;
+
+  // brightening the yellow fill is invisible in light: mark hover with an underline
+  @include light {
+    &:hover {
+      text-decoration: underline 2px;
+      text-underline-offset: 4px;
+    }
+  }
 }
 
 // ---------- Full-height hatched divider at the hero seam's slant ----------
@@ -307,7 +320,7 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
   margin-bottom: calc(-1 * $section-padding-y);
   transform-origin: 0 100%;
   transform: skewX(calc(-1 * var(--hero-slant)));
-  @include hatch-strip(rgba(30, 144, 255, 0.55), 45deg, 2px, 8px);
+  @include hatch-strip(fade($color-accent-ink, 0.55), 45deg, 2px, 8px);
 }
 
 // ---------- Group zone (right) ----------
@@ -325,14 +338,19 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
   // negative right margin spans the shell's horizontal padding plus the
   // centered-shell margin, so the blue reaches the section's right edge
   margin-right: calc(-1 * ((100vw - min(1200px, 100vw)) / 2 + $spacing-md));
-  // uniform tint — gradient removed per request
+  // uniform tint — gradient removed per request; in light a solid yellow
+  // panel, so the controls on it turn black
   &::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(0, 102, 204, 0.1);
+    background: fade($color-accent-deep, 0.1);
     transform-origin: 0 100%;
     transform: skewX(calc(-1 * var(--hero-slant)));
+
+    @include light {
+      background: $color-accent;
+    }
   }
 }
 
@@ -361,7 +379,7 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 .group-status-text {
   font-size: 11px;
   letter-spacing: 3px;
-  color: $color-gray-light;
+  color: $color-fg-muted;
   text-transform: uppercase;
 }
 
@@ -370,15 +388,15 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
   font-size: clamp(38px, 6vw, 56px);
   font-weight: 700;
   letter-spacing: 5px;
-  color: $color-blue-bright;
+  color: $color-accent-ink;
   font-variant-numeric: tabular-nums;
-  text-shadow: 0 0 24px rgba(30, 144, 255, 0.35);
+  text-shadow: 0 0 24px fade($color-glow, 0.35);
 }
 
 .group-caption {
   font-size: 12px;
   letter-spacing: 3px;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 }
 
 .group-actions {
@@ -388,9 +406,15 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
   gap: $spacing-xs;
 }
 
-// Subtle join button hover: no scaling or rotating scan effect.
+// Subtle join button hover: no scaling or rotating scan effect. On the yellow
+// panel in light it is a black block.
 .join-btn {
   transition: filter $transition-fast;
+
+  @include light {
+    background: $color-fg;
+    color: $color-bg;
+  }
 }
 
 // Square copy control beside the join action.
@@ -400,9 +424,9 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
   width: 58px;
   height: 58px;
   padding: 0;
-  border: 1px solid $color-blue-bright;
-  background: rgba(0, 102, 204, 0.12);
-  color: $color-blue-bright;
+  border: 1px solid $color-accent-ink;
+  background: fade($color-accent-deep, 0.12);
+  color: $color-accent-ink;
   line-height: 1;
   overflow: hidden;
 
@@ -412,6 +436,15 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 
     .copy-icon {
       transform: translateX(3px);
+    }
+  }
+
+  // brightness does nothing to a black icon on the yellow panel: fill black
+  // in light
+  @include light {
+    &:hover {
+      background: $color-fg;
+      color: $color-bg;
     }
   }
 }

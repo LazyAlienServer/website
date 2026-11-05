@@ -390,7 +390,7 @@ onUnmounted(() => clearInterval(autoplayId));
 
 <style scoped lang="scss">
 .github-section {
-  background-color: $color-primary-black;
+  background-color: $color-bg;
 }
 
 .gh-shell {
@@ -407,7 +407,7 @@ onUnmounted(() => clearInterval(autoplayId));
 // ---------- Left brand rail ----------
 .gh-rail {
   align-self: stretch;
-  background: $color-primary-blue;
+  background: $color-accent;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -417,6 +417,11 @@ onUnmounted(() => clearInterval(autoplayId));
 .gh-rail-logo {
   width: 44px;
   flex-shrink: 0;
+
+  // The logo asset is white; it sits on the yellow rail in light.
+  @include light {
+    filter: brightness(0);
+  }
 }
 
 .gh-rail-labels {
@@ -436,7 +441,7 @@ onUnmounted(() => clearInterval(autoplayId));
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: $color-white;
+  color: $color-on-accent;
   line-height: 1;
 }
 
@@ -445,7 +450,7 @@ onUnmounted(() => clearInterval(autoplayId));
   position: relative;
   width: 18px;
   flex-shrink: 0;
-  color: rgba(255, 255, 255, 0.76);
+  color: fade($color-on-accent, 0.76);
 }
 
 .gh-rail-detail-desktop,
@@ -480,7 +485,7 @@ onUnmounted(() => clearInterval(autoplayId));
   font-family: $font-display;
   font-size: 9px;
   letter-spacing: 2px;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 }
 
 .github-title-en-row {
@@ -496,8 +501,8 @@ onUnmounted(() => clearInterval(autoplayId));
   background: transparent;
   background-image: repeating-linear-gradient(
     45deg,
-    rgba(255, 255, 255, 1) 0,
-    rgba(255, 255, 255, 1) 2px,
+    $color-fg 0,
+    $color-fg 2px,
     transparent 2px,
     transparent 7px
   );
@@ -509,13 +514,13 @@ onUnmounted(() => clearInterval(autoplayId));
   font-size: 20px;
   font-weight: 500;
   letter-spacing: 1px;
-  color: $color-white;
+  color: $color-fg;
 }
 
 .github-title-cn {
   margin-top: 2px;
   font-size: $font-size-h2;
-  color: $color-white;
+  color: $color-fg;
 }
 
 // ---------- Dynamic title row (desktop) ----------
@@ -530,22 +535,22 @@ onUnmounted(() => clearInterval(autoplayId));
   font-family: $font-display;
   font-size: 14px;
   letter-spacing: 2px;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
   text-transform: uppercase;
 }
 
 .feature-tag {
-  color: $color-blue-bright;
+  color: $color-accent-ink;
 }
 
 .feature-date {
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 }
 
 .feature-name {
   margin-top: $spacing-xs;
   font-size: $font-size-h3;
-  color: $color-white;
+  color: $color-fg;
   text-transform: none;
   display: -webkit-box;
   line-clamp: 2;
@@ -557,7 +562,7 @@ onUnmounted(() => clearInterval(autoplayId));
 .feature-rule {
   height: 1px;
   margin-top: $spacing-sm;
-  background: linear-gradient(90deg, $color-gray-dark 0%, rgba(42, 42, 42, 0) 100%);
+  background: linear-gradient(90deg, $color-line 0%, fade($color-line, 0) 100%);
 }
 
 .head-swap-enter-active,
@@ -586,7 +591,7 @@ onUnmounted(() => clearInterval(autoplayId));
   outline: none;
 
   &:focus-visible {
-    outline: 2px solid $color-blue-bright;
+    outline: 2px solid $color-accent-ink;
     outline-offset: 4px;
   }
 }
@@ -596,9 +601,9 @@ onUnmounted(() => clearInterval(autoplayId));
   flex-direction: column;
   width: 100%;
   padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  background: $color-black-soft;
-  color: $color-white;
+  border: 1px solid fade($color-fg, 0.06);
+  background: $color-surface;
+  color: $color-fg;
   font: inherit;
   text-align: left;
   overflow: hidden;
@@ -607,11 +612,11 @@ onUnmounted(() => clearInterval(autoplayId));
 
   &:hover,
   &:focus-visible {
-    border-color: rgba(30, 144, 255, 0.35);
+    border-color: fade($color-accent-ink, 0.35);
   }
 
   &:focus-visible {
-    outline: 2px solid $color-blue-bright;
+    outline: 2px solid $color-accent-ink;
     outline-offset: -2px;
   }
 }
@@ -680,14 +685,14 @@ onUnmounted(() => clearInterval(autoplayId));
   font-size: 160px;
   font-weight: 700;
   line-height: 1;
-  color: rgba(30, 144, 255, 0.1);
+  color: fade($color-accent-ink, 0.1);
   pointer-events: none;
   user-select: none;
 }
 
 .card-name {
   font-size: 28px;
-  color: $color-white;
+  color: $color-fg;
   text-transform: none;
   letter-spacing: 0.5px;
   overflow-wrap: break-word;
@@ -697,7 +702,7 @@ onUnmounted(() => clearInterval(autoplayId));
   flex: 1;
   margin-top: $spacing-sm;
   font-size: 15px;
-  color: $color-gray-light;
+  color: $color-fg-muted;
   line-height: 1.6;
   display: -webkit-box;
   line-clamp: 3;
@@ -718,11 +723,11 @@ onUnmounted(() => clearInterval(autoplayId));
   font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: $color-blue-bright;
+  color: $color-accent-ink;
 }
 
 .lang-none {
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 }
 
 .repo-stars {
@@ -732,13 +737,13 @@ onUnmounted(() => clearInterval(autoplayId));
   font-family: $font-display;
   font-size: 14px;
   font-weight: 700;
-  color: $color-blue-bright;
+  color: $color-accent-ink;
 }
 
 .repo-link {
   margin-left: auto;
   display: inline-flex;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 
   svg {
     transition:
@@ -751,7 +756,7 @@ onUnmounted(() => clearInterval(autoplayId));
   &:hover .repo-link svg,
   &:focus-visible .repo-link svg {
     transform: rotate(-45deg) translateX(4px);
-    color: $color-blue-bright;
+    color: $color-accent-ink;
   }
 }
 
@@ -776,9 +781,9 @@ onUnmounted(() => clearInterval(autoplayId));
   width: 46px;
   height: 46px;
   border-radius: 50%;
-  border: 1px solid $color-gray-dark;
+  border: 1px solid $color-line;
   background: transparent;
-  color: $color-white;
+  color: $color-fg;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -789,8 +794,8 @@ onUnmounted(() => clearInterval(autoplayId));
     transform $transition-fast;
 
   &:hover {
-    border-color: $color-blue-bright;
-    background: rgba(30, 144, 255, 0.12);
+    border-color: $color-accent-ink;
+    background: fade($color-accent-bright, 0.12);
   }
 
   &:active {
@@ -798,7 +803,7 @@ onUnmounted(() => clearInterval(autoplayId));
   }
 
   &:focus-visible {
-    outline: 2px solid $color-blue-bright;
+    outline: 2px solid $color-accent-ink;
     outline-offset: 2px;
   }
 }
@@ -810,10 +815,10 @@ onUnmounted(() => clearInterval(autoplayId));
   font-family: $font-display;
   font-size: 14px;
   letter-spacing: 2px;
-  color: $color-gray-light;
+  color: $color-fg-muted;
 
   .counter-divider {
-    color: $color-gray-mid;
+    color: $color-fg-subtle;
   }
 }
 
@@ -824,9 +829,9 @@ onUnmounted(() => clearInterval(autoplayId));
   gap: 24px;
   height: 46px;
   padding: 0 28px;
-  background: $color-black-soft;
-  border: 1px solid $color-gray-dark;
-  color: $color-white;
+  background: $color-surface;
+  border: 1px solid $color-line;
+  color: $color-fg;
   font-size: 15px;
   font-weight: 600;
   transition:
@@ -838,17 +843,17 @@ onUnmounted(() => clearInterval(autoplayId));
     margin-left: -12px;
     width: 4px;
     height: 18px;
-    background: $color-blue-bright;
+    background: $color-accent-ink;
   }
 
   &:hover,
   &:focus-visible {
-    border-color: $color-blue-bright;
-    background: rgba(30, 144, 255, 0.08);
+    border-color: $color-accent-ink;
+    background: fade($color-accent-bright, 0.08);
   }
 
   &:focus-visible {
-    outline: 2px solid $color-blue-bright;
+    outline: 2px solid $color-accent-ink;
     outline-offset: 2px;
   }
 }
@@ -858,14 +863,14 @@ onUnmounted(() => clearInterval(autoplayId));
   cursor: default;
 
   &:hover {
-    border-color: rgba(255, 255, 255, 0.06);
+    border-color: fade($color-fg, 0.06);
   }
 }
 
 .sk-block {
   display: block;
   height: 12px;
-  background: $color-gray-dark;
+  background: $color-line;
   animation: sk-pulse 1.4s ease-in-out infinite;
 }
 
@@ -934,27 +939,32 @@ onUnmounted(() => clearInterval(autoplayId));
 .error-state {
   padding: $spacing-lg;
   text-align: center;
-  background: $color-black-soft;
-  border: 1px solid rgba(255, 68, 68, 0.3);
+  background: $color-surface;
+  border: 1px solid fade($color-danger, 0.3);
 }
 
 .error-label {
   font-family: $font-display;
   font-size: $font-size-h4;
   letter-spacing: 3px;
-  color: #ff4444;
-  text-shadow: 0 0 12px rgba(255, 68, 68, 0.6);
+  color: $color-danger;
+  text-shadow: 0 0 12px fade($color-danger, 0.6);
+
+  // Glows are dark-only; a red halo on white just blurs the label.
+  @include light {
+    text-shadow: none;
+  }
 }
 
 .error-msg {
   margin: $spacing-sm 0 $spacing-md;
   font-size: $font-size-body;
-  color: $color-gray-light;
+  color: $color-fg-muted;
 }
 
 .retry-btn {
-  background: $color-blue-bright;
-  color: $color-white;
+  background: $color-accent-bright;
+  color: $color-on-accent;
   border: none;
   padding: 12px 36px;
   font-size: 14px;
@@ -1181,7 +1191,7 @@ onUnmounted(() => clearInterval(autoplayId));
     outline: none;
 
     &:focus-visible {
-      outline: 2px solid $color-blue-bright;
+      outline: 2px solid $color-accent-ink;
       outline-offset: 4px;
     }
   }
@@ -1202,9 +1212,9 @@ onUnmounted(() => clearInterval(autoplayId));
     display: block;
     width: 100%;
     min-width: 0;
-    background: $color-black-soft;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    color: $color-white;
+    background: $color-surface;
+    border: 1px solid fade($color-fg, 0.06);
+    color: $color-fg;
     overflow: hidden;
     transition: border-color $transition-med;
 
@@ -1212,11 +1222,11 @@ onUnmounted(() => clearInterval(autoplayId));
 
     &:hover,
     &:focus-visible {
-      border-color: rgba(30, 144, 255, 0.35);
+      border-color: fade($color-accent-ink, 0.35);
     }
 
     &:focus-visible {
-      outline: 2px solid $color-blue-bright;
+      outline: 2px solid $color-accent-ink;
       outline-offset: -2px;
     }
   }
@@ -1276,7 +1286,7 @@ onUnmounted(() => clearInterval(autoplayId));
     gap: 4px;
     padding: 0 2px $spacing-xs;
     background: transparent;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 1px solid fade($color-fg, 0.12);
   }
 
   .caption-meta {
@@ -1287,18 +1297,18 @@ onUnmounted(() => clearInterval(autoplayId));
     font-size: 12px;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: $color-gray-mid;
+    color: $color-fg-subtle;
   }
 
   .caption-tag {
-    color: $color-blue-bright;
+    color: $color-accent-ink;
   }
 
   .caption-name {
     font-family: $font-display;
     font-size: 18px;
     font-weight: 700;
-    color: $color-white;
+    color: $color-fg;
     overflow-wrap: break-word;
   }
 

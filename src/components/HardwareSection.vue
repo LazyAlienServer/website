@@ -222,8 +222,11 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang="scss">
+// Dark in both themes: in light it continues the timer's dark block, with
+// yellow as the brand ink and the open panel a yellow block.
 .hardware-section {
-  background-color: $color-primary-black;
+  @include dark-surface;
+  background-color: $color-bg;
 }
 
 // screen-reader-only text (full title inside the button)
@@ -263,19 +266,19 @@ onUnmounted(() => {
 .hw-header-title {
   font-size: $font-size-h2;
   line-height: 1.1;
-  color: $color-white;
+  color: $color-fg;
 
   @include desktop {
     font-size: clamp(32px, calc(2.86vw + 13.66px), 48px);
   }
 
-  // solid blue rule under the title, spanning the intro column
+  // solid accent rule under the title, spanning the intro column
   &::after {
     content: "";
     display: block;
     height: 6px;
     margin-top: 12px;
-    background: $color-primary-blue;
+    background: $color-accent;
   }
 }
 
@@ -283,7 +286,7 @@ onUnmounted(() => {
   margin-top: 12px;
   font-size: 14px;
   letter-spacing: 1px;
-  color: $color-gray-light;
+  color: $color-fg-muted;
 }
 
 .hardware-tags {
@@ -299,9 +302,9 @@ onUnmounted(() => {
   justify-content: center;
   min-height: 34px;
   padding: 7px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  background: $color-black-soft;
-  color: $color-gray-light;
+  border: 1px solid fade($color-fg, 0.28);
+  background: $color-surface;
+  color: $color-fg-muted;
   font-family: $font-display;
   font-size: clamp(10px, 0.9vw, 12px);
   font-weight: 700;
@@ -316,10 +319,17 @@ onUnmounted(() => {
     opacity 0.35s ease;
 
   &.active {
-    border-color: $color-white;
-    background: $color-white;
-    color: $color-primary-black;
+    border-color: $color-fg;
+    background: $color-fg;
+    color: $color-bg;
     opacity: 1;
+
+    // the highlighted tag is a selected state: yellow block, not inverted ink
+    @include light {
+      border-color: $color-accent;
+      background: $color-accent;
+      color: $color-on-accent;
+    }
   }
 }
 
@@ -334,20 +344,20 @@ onUnmounted(() => {
   line-height: 0.88;
   letter-spacing: -1px;
   white-space: nowrap;
-  color: $color-blue-bright;
+  color: $color-accent-ink;
   pointer-events: none;
   user-select: none;
 }
 
 // ── slanted accordion ───────────────────────────────────────
 // Flat color blocks and lines only. Each panel is a parallelogram on the hero
-// slant: a black block with a hairline frame when collapsed, a solid blue
-// block when expanded, with its part icon drawn in hairlines in the
-// bottom-right corner. Its index sits on a rule across the top; the expanded
-// face stacks one large figure, the title, and the description, every line
-// starting a fixed gap from the slanted left edge; a white line along the
-// bottom times the auto-rotation. Icon and progress line live inside
-// `.hw-skin`, so its clip-path cuts them to the slant.
+// slant: a background-colored block with a hairline frame when collapsed, a
+// solid accent block when expanded, with its part icon drawn in hairlines in
+// the bottom-right corner. Its index sits on a rule across the top; the
+// expanded face stacks one large figure, the title, and the description,
+// every line starting a fixed gap from the slanted left edge; an on-accent
+// line along the bottom times the auto-rotation. Icon and progress line live
+// inside `.hw-skin`, so its clip-path cuts them to the slant.
 .hw-accordion {
   position: relative;
   z-index: 1;
@@ -375,7 +385,7 @@ onUnmounted(() => {
   border: none;
   background: none;
   font: inherit;
-  color: $color-white;
+  color: $color-fg;
   text-align: left;
   cursor: pointer;
   overflow: hidden;
@@ -387,31 +397,34 @@ onUnmounted(() => {
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(255, 255, 255, 0.2);
+    background: fade($color-fg, 0.2);
     clip-path: polygon(var(--slant) 0, 100% 0, calc(100% - var(--slant)) 100%, 0 100%);
     transition: background-color $transition-med;
   }
 
   &:hover::before,
   &:focus-visible::before {
-    background: $color-white;
+    background: $color-fg;
   }
 
+  // everything on the expanded face sits on the accent fill
   &.active {
     flex-grow: 4;
+    color: $color-on-accent;
 
+    // the frame continues the skin's fill, so it is a fill, not a line
     &::before {
-      background: $color-primary-blue;
+      background: $color-accent;
     }
   }
 
   &.active:focus-visible::before {
-    background: $color-white;
+    background: $color-fg;
   }
 }
 
 // overlap each panel by one slant minus an 8px channel, so adjacent slanted
-// edges run parallel with a narrow black gap between them
+// edges run parallel with a narrow background gap between them
 .hw-panel + .hw-panel {
   margin-left: calc(8px - var(--slant));
 }
@@ -419,7 +432,7 @@ onUnmounted(() => {
 .hw-skin {
   position: absolute;
   inset: 0;
-  background-color: $color-primary-black;
+  background-color: $color-bg;
   clip-path: polygon(
     calc(var(--slant) + 1px) 1px,
     calc(100% - 1px) 1px,
@@ -429,7 +442,7 @@ onUnmounted(() => {
   transition: background-color $transition-med;
 
   .hw-panel.active & {
-    background-color: $color-primary-blue;
+    background-color: $color-accent;
   }
 }
 
@@ -441,7 +454,7 @@ onUnmounted(() => {
   bottom: -40px;
   width: clamp(240px, 24vw, 320px);
   aspect-ratio: 1;
-  color: $color-white;
+  color: $color-fg;
   opacity: 0.1;
   transition: opacity $transition-med;
 
@@ -462,6 +475,7 @@ onUnmounted(() => {
   }
 
   .hw-panel.active & {
+    color: $color-on-accent;
     opacity: 0.3;
   }
 }
@@ -474,7 +488,7 @@ onUnmounted(() => {
   bottom: 0;
   left: 0;
   height: 2px;
-  background: $color-white;
+  background: $color-on-accent;
   transform-origin: 0 50%;
   animation: hw-progress var(--hw-cycle) linear both;
 }
@@ -512,7 +526,7 @@ onUnmounted(() => {
   font-size: 14px;
   letter-spacing: 2px;
   font-variant-numeric: tabular-nums;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
   transition: color $transition-med;
 
   &::after {
@@ -524,9 +538,12 @@ onUnmounted(() => {
   }
 
   .hw-panel:hover &,
-  .hw-panel:focus-visible &,
+  .hw-panel:focus-visible & {
+    color: $color-fg;
+  }
+
   .hw-panel.active & {
-    color: $color-white;
+    color: $color-on-accent;
   }
 }
 
@@ -537,21 +554,27 @@ onUnmounted(() => {
   transform: rotate(180deg);
   font-size: clamp(28px, 3vw, 40px);
   letter-spacing: 4px;
-  color: $color-gray-light;
+  color: $color-fg-muted;
   transition:
     opacity $transition-med 0.3s,
     color $transition-med;
 
   .hw-panel:hover &,
   .hw-panel:focus-visible & {
-    color: $color-white;
+    color: $color-fg;
   }
 
+  // hidden on desktop; on mobile it stays in the open panel's head row,
+  // where light needs it black on yellow (dark keeps the muted gray)
   .hw-panel.active & {
     opacity: 0;
     transition:
       opacity 0.15s ease-out,
       color $transition-med;
+
+    @include light {
+      color: $color-on-accent;
+    }
   }
 }
 
@@ -626,7 +649,7 @@ onUnmounted(() => {
   margin-top: 12px;
   font-size: clamp(13px, 1.1vw, 15px);
   line-height: 1.7;
-  color: rgba(255, 255, 255, 0.88);
+  color: fade($color-on-accent, 0.88);
   overflow-wrap: break-word;
 }
 

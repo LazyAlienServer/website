@@ -267,9 +267,14 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang="scss">
+// The whole section sits on the photo slides, so it is a dark surface in both
+// themes: on-photo white, the dark neutrals, and the bright accent as brand
+// ink (black ink would vanish on the scrim; yellow reads fine on it).
 .timer-section {
+  @include dark-surface;
   position: relative;
-  background: $color-primary-black;
+  background: $color-photo-scrim;
+  color: $color-on-photo;
   overflow: hidden;
 }
 
@@ -304,11 +309,11 @@ onUnmounted(() => {
   background:
     linear-gradient(
       180deg,
-      rgba(10, 10, 10, 0.78) 0%,
-      rgba(10, 10, 10, 0.62) 50%,
-      rgba(10, 10, 10, 0.85) 100%
+      rgba($color-photo-scrim, 0.78) 0%,
+      rgba($color-photo-scrim, 0.62) 50%,
+      rgba($color-photo-scrim, 0.85) 100%
     ),
-    linear-gradient(90deg, rgba(0, 102, 204, 0.16) 0%, rgba(0, 102, 204, 0) 60%);
+    linear-gradient(90deg, fade($color-accent-deep, 0.16) 0%, transparent 60%);
 }
 
 // ---------- UTC+8 clock ----------
@@ -320,7 +325,7 @@ onUnmounted(() => {
   top: 50%;
   width: 560px;
   height: 560px;
-  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border: 1px dashed rgba($color-on-photo, 0.18);
   border-radius: 50%;
   transform: translateY(-50%);
 
@@ -328,7 +333,7 @@ onUnmounted(() => {
     content: "";
     position: absolute;
     inset: 56px;
-    border: 1px solid rgba(30, 144, 255, 0.16);
+    border: 1px solid fade($color-accent-bright, 0.16);
     border-radius: 50%;
   }
 }
@@ -339,13 +344,13 @@ onUnmounted(() => {
   top: 0;
   width: 1px;
   height: 10px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba($color-on-photo, 0.2);
   transform-origin: 50% 280px; // ring radius
 
   &.hour {
     width: 2px;
     height: 18px;
-    background: rgba(30, 144, 255, 0.55);
+    background: fade($color-accent-bright, 0.55);
   }
 }
 
@@ -360,20 +365,20 @@ onUnmounted(() => {
 .hand-hour {
   width: 6px;
   height: 140px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba($color-on-photo, 0.9);
 }
 
 .hand-minute {
   width: 4px;
   height: 205px;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba($color-on-photo, 0.7);
 }
 
 .hand-second {
   width: 2px;
   height: 248px;
-  background: $color-blue-bright;
-  box-shadow: 0 0 12px rgba(30, 144, 255, 0.6);
+  background: $color-accent-bright;
+  box-shadow: 0 0 12px fade($color-glow, 0.6);
 }
 
 .clock-hub {
@@ -384,8 +389,8 @@ onUnmounted(() => {
   height: 12px;
   margin: -6px 0 0 -6px;
   border-radius: 50%;
-  background: $color-blue-bright;
-  box-shadow: 0 0 12px rgba(30, 144, 255, 0.8);
+  background: $color-accent-bright;
+  box-shadow: 0 0 12px fade($color-glow, 0.8);
 }
 
 .section-shell {
@@ -406,7 +411,7 @@ onUnmounted(() => {
     right: 40px;
     bottom: 12px;
     height: 6px;
-    @include hatch-strip(rgba(255, 255, 255, 0.25));
+    @include hatch-strip(rgba($color-on-photo, 0.25));
     opacity: 0.6;
     pointer-events: none;
   }
@@ -422,7 +427,7 @@ onUnmounted(() => {
   font-family: $font-display;
   font-size: 12px;
   letter-spacing: 3px;
-  color: $color-gray-light;
+  color: $color-fg-muted;
 }
 
 // title left, timeline fills the remaining width; stacks below at tablet widths
@@ -465,12 +470,12 @@ onUnmounted(() => {
   position: relative;
   flex: 1;
   padding-top: 12px;
-  border-top: 2px solid $color-blue-bright;
+  border-top: 2px solid $color-accent-bright;
   font-family: $font-display;
   font-size: 11px;
   line-height: 16px;
   letter-spacing: 2px;
-  color: $color-gray-light;
+  color: $color-fg-muted;
 
   &::before {
     content: "";
@@ -479,16 +484,16 @@ onUnmounted(() => {
     left: 0;
     width: 1px;
     height: 10px;
-    background: rgba(255, 255, 255, 0.6);
+    background: rgba($color-on-photo, 0.6);
   }
 
   &.is-origin {
-    color: $color-white;
+    color: $color-on-photo;
 
     &::before {
       left: -5px;
       width: 10px;
-      background: $color-blue-bright;
+      background: $color-accent-bright;
       transform: rotate(45deg);
     }
   }
@@ -496,14 +501,14 @@ onUnmounted(() => {
   &.is-now {
     flex: none;
     border-top-color: transparent;
-    color: $color-blue-bright;
+    color: $color-accent-bright;
     font-weight: 700;
 
     &::before {
       top: -7px;
       width: 10px;
       height: 12px;
-      background: $color-blue-bright;
+      background: $color-accent-bright;
       clip-path: polygon(0 0, 100% 50%, 0 100%);
     }
   }
@@ -522,7 +527,7 @@ onUnmounted(() => {
   width: 12px;
   height: clamp(84px, 12vw, 144px);
   flex: 0 0 auto;
-  color: $color-gray-light;
+  color: $color-fg-muted;
   opacity: 0.65;
   overflow: visible;
   user-select: none;
@@ -549,7 +554,7 @@ onUnmounted(() => {
   align-items: center;
   gap: $spacing-xs;
   padding: $spacing-md 0;
-  border-left: 1px solid rgba(255, 255, 255, 0.18);
+  border-left: 1px solid rgba($color-on-photo, 0.18);
 
   &:first-child {
     border-left: none;
@@ -561,14 +566,14 @@ onUnmounted(() => {
   font-size: clamp(44px, 6vw, 72px);
   font-weight: 700;
   line-height: 1;
-  color: $color-blue-bright;
+  color: $color-accent-bright;
   font-variant-numeric: tabular-nums;
-  text-shadow: 0 0 24px rgba(30, 144, 255, 0.35);
+  text-shadow: 0 0 24px fade($color-glow, 0.35);
 }
 
 .timer-label {
   font-size: $font-size-body;
-  color: $color-gray-light;
+  color: $color-fg-muted;
   letter-spacing: 4px;
 }
 
@@ -583,7 +588,7 @@ onUnmounted(() => {
 .signal-text {
   font-size: 11px;
   letter-spacing: 3px;
-  color: $color-gray-light;
+  color: $color-fg-muted;
 }
 
 // ---------- Carousel control strip ----------
@@ -611,9 +616,9 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(17, 17, 20, 0.78);
-  border: 1px solid $color-gray-dark;
-  color: $color-white;
+  background: rgba(17, 17, 20, 0.78); // dark chip over the photo in both themes
+  border: 1px solid $color-line;
+  color: $color-on-photo;
   clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
   transition:
     color $transition-fast,
@@ -621,8 +626,8 @@ onUnmounted(() => {
     transform $transition-fast;
 
   &:hover {
-    color: $color-blue-bright;
-    border-color: $color-primary-blue;
+    color: $color-accent-bright;
+    border-color: $color-accent;
     transform: translateY(-2px);
   }
 
@@ -649,17 +654,17 @@ onUnmounted(() => {
 .idx-current {
   font-size: 22px;
   font-weight: 700;
-  color: $color-blue-bright;
+  color: $color-accent-bright;
   font-variant-numeric: tabular-nums;
 }
 
 .idx-sep {
-  color: $color-gray-light;
+  color: $color-fg-muted;
 }
 
 .idx-total {
   font-size: 14px;
-  color: $color-gray-light;
+  color: $color-fg-muted;
 }
 
 .idx-bars {
@@ -672,18 +677,18 @@ onUnmounted(() => {
   height: 4px;
   padding: 0;
   border: none;
-  background: $color-gray-dark;
+  background: $color-line;
   transition:
     background $transition-fast,
     width $transition-med;
 
   &.active {
     width: 44px;
-    background: $color-blue-bright;
+    background: $color-accent-bright;
   }
 
   &:not(.active):hover {
-    background: $color-gray-mid;
+    background: $color-fg-subtle;
   }
 }
 
@@ -692,7 +697,7 @@ onUnmounted(() => {
   text-align: center;
   font-size: 12px;
   letter-spacing: 3px;
-  color: $color-gray-light;
+  color: $color-fg-muted;
   text-transform: uppercase;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
 }
@@ -767,7 +772,7 @@ onUnmounted(() => {
 
   .timer-cell:nth-child(1),
   .timer-cell:nth-child(2) {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    border-bottom: 1px solid rgba($color-on-photo, 0.18);
     padding-bottom: $spacing-md;
   }
 }

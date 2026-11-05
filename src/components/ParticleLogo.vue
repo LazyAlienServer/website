@@ -14,7 +14,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, shallowRef, useTemplateRef } from "vue";
+import { onMounted, onUnmounted, shallowRef, useTemplateRef, watch } from "vue";
+import { theme } from "@/composables/theme";
 
 // Samples both images into a sparse dot grid and morphs one particle swarm
 // between them: `src` at rest, `hoverSrc` while hovered. The pointer gently
@@ -39,7 +40,9 @@ const SPRING_MAX = 0.0032;
 const DAMPING = 0.9146;
 const COLOR_EASE = 0.016;
 const BRIGHTNESS_MIN = 0.7;
-// sampled colors are mixed this far toward white so dots read clearly on black
+// sampled colors are mixed this far toward white so dots read clearly on
+// black; the light theme first flips their lightness (see `tone`) and mixes
+// them this far toward black instead
 const LIGHTEN = 0.3;
 const REPEL_RADIUS = 40;
 // kept low: against these soft springs a stronger push opens a large hole (~25px now)
@@ -66,6 +69,10 @@ let vel: Float32Array = new Float32Array(0);
 let color: Float32Array = new Float32Array(0);
 let spring: Float32Array = new Float32Array(0);
 let brightness: Float32Array = new Float32Array(0);
+// sampled colors as read from the images, and the same records toned for the
+// current theme (the targets the swarm eases toward)
+let restRaw: Float32Array = new Float32Array(0);
+let hoverRaw: Float32Array = new Float32Array(0);
 let restTargets: Float32Array = new Float32Array(0);
 let hoverTargets: Float32Array = new Float32Array(0);
 // free-floating dots: x, y, vx, vy, alpha
@@ -78,6 +85,7 @@ let pointerY = 0;
 let visible = false;
 let motionSafe = true;
 let disposed = false;
+let light = theme.value === "light";
 let rafId = 0;
 let resizeObserver: ResizeObserver | undefined;
 let intersectionObserver: IntersectionObserver | undefined;
@@ -154,13 +162,7 @@ const samplePoints = (img: HTMLImageElement, width: number, height: number): Flo
     for (let x = 2; x < width; x += PITCH) {
       const i = (y * width + x) * 4;
       if (data[i + 3] >= ALPHA_MIN) {
-        points.push(
-          x,
-          y,
-          data[i] + (255 - data[i]) * LIGHTEN,
-          data[i + 1] + (255 - data[i + 1]) * LIGHTEN,
-          data[i + 2] + (255 - data[i + 2]) * LIGHTEN,
-        );
+        points.push(x, y, data[i], data[i + 1], data[i + 2]);
       }
     }
   }
@@ -189,6 +191,31 @@ const expand = (points: Float32Array, size: number): Float32Array => {
   return out;
 };
 
+// Theme color for each record. Light flips HSL lightness by shifting every
+// channel by the same amount (255 - max - min), which keeps hue and chroma:
+// the white logo turns black and pale blues turn navy, so it reads on white.
+const tone = (raw: Float32Array): Float32Array => {
+  const out = raw.slice();
+  for (let t = 0; t < out.length; t += STRIDE) {
+    const r = out[t + 2];
+    const g = out[t + 3];
+    const b = out[t + 4];
+    const shift = light ? 255 - Math.max(r, g, b) - Math.min(r, g, b) : 0;
+    for (let k = 0; k < 3; k++) {
+      const c = out[t + 2 + k] + shift;
+      out[t + 2 + k] = light ? c * (1 - LIGHTEN) : c + (255 - c) * LIGHTEN;
+    }
+  }
+  return out;
+};
+
+const paintColors = (): void => {
+  const target = hovering ? hoverTargets : restTargets;
+  for (let i = 0; i < count; i++) {
+    color.set(target.subarray(i * STRIDE + 2, i * STRIDE + 5), i * 3);
+  }
+};
+
 const build = (scatter: boolean): boolean => {
   const el = frame.value;
   const cv = canvas.value;
@@ -214,8 +241,10 @@ const build = (scatter: boolean): boolean => {
   if (rest.length === 0 || hover.length === 0) return false;
 
   count = Math.max(rest.length, hover.length) / STRIDE;
-  restTargets = expand(rest, count);
-  hoverTargets = expand(hover, count);
+  restRaw = expand(rest, count);
+  hoverRaw = expand(hover, count);
+  restTargets = tone(restRaw);
+  hoverTargets = tone(hoverRaw);
   pos = new Float32Array(count * 2);
   vel = new Float32Array(count * 2);
   color = new Float32Array(count * 3);
@@ -332,6 +361,7 @@ const draw = (): void => {
   if (!ctx || !buffer) return;
   const { data, width, height } = buffer;
   const size = Math.max(1, Math.round(DOT * dpr));
+  const ambientInk = light ? 1 : 255;
   data.fill(0);
 
   for (let i = 0; i < AMBIENT_COUNT; i++) {
@@ -343,9 +373,9 @@ const draw = (): void => {
       size,
       ambient[a],
       ambient[a + 1],
-      255,
-      255,
-      255,
+      ambientInk,
+      ambientInk,
+      ambientInk,
       ambient[a + 4] * 255,
     );
   }
@@ -435,6 +465,17 @@ onMounted(async () => {
   intersectionObserver.observe(frame.value);
 });
 
+// Visible and moving: the swarm eases to the new colors like it does on
+// hover. Otherwise there is no frame to ease in, so they switch at once.
+watch(theme, (value) => {
+  light = value === "light";
+  restTargets = tone(restRaw);
+  hoverTargets = tone(hoverRaw);
+  if (!visible || !motionSafe) paintColors();
+  if (!motionSafe) draw();
+  schedule();
+});
+
 onUnmounted(() => {
   disposed = true;
   cancelAnimationFrame(rafId);
@@ -457,5 +498,10 @@ onUnmounted(() => {
 
 .particle-fallback {
   object-fit: contain;
+
+  // the fallback is the white logo file
+  @include light {
+    filter: brightness(0);
+  }
 }
 </style>

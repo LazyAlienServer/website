@@ -77,14 +77,14 @@ onUnmounted(() => {
   min-height: 640px;
   width: 100%;
   position: relative;
-  background: $color-primary-black;
+  background: $color-bg;
 }
 
 // ---------- LEFT PANEL ----------
 .hero-panel {
   width: 40%;
   height: 100%;
-  background: $color-primary-black;
+  background: $color-bg;
   display: flex;
   flex-direction: column;
   padding: $spacing-lg $spacing-lg * 1.2 $spacing-lg $spacing-lg;
@@ -100,7 +100,7 @@ onUnmounted(() => {
   justify-content: center;
 }
 
-// Identity kicker: slanted blue mark + two-tone mission line (status lives in the footer)
+// Identity kicker: slanted brand mark + two-tone mission line (status lives in the footer)
 .hero-kicker {
   display: flex;
   align-items: center;
@@ -110,7 +110,7 @@ onUnmounted(() => {
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 3px;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
 }
 
 .kicker-mark {
@@ -118,29 +118,29 @@ onUnmounted(() => {
   width: 22px;
   height: 10px;
   margin-right: 4px;
-  background: $color-blue-bright;
+  background: $color-accent-bright;
   transform: skewX(calc(-1 * var(--hero-slant)));
 }
 
 .kicker-lead {
-  color: $color-white;
+  color: $color-fg;
 }
 
 h1 {
   font-size: clamp(44px, 4.6vw, 68px);
   line-height: 1.02;
-  color: $color-white;
+  color: $color-fg;
   letter-spacing: -1px;
   margin-bottom: $spacing-xs;
 
   .accent {
-    color: $color-blue-bright;
+    color: $color-accent-ink;
   }
 }
 
 .sub-cn {
   font-size: $font-size-h4;
-  color: $color-gray-light;
+  color: $color-fg-muted;
   font-weight: 400;
   margin-top: 18px;
   letter-spacing: 6px;
@@ -149,7 +149,7 @@ h1 {
 .rule {
   width: 64px;
   height: 6px;
-  background: $color-white;
+  background: $color-fg;
   margin: 30px 0;
 }
 
@@ -186,22 +186,22 @@ h1 {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  color: $color-white;
+  color: $color-on-accent;
 
   &::before {
     content: "";
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: $color-primary-blue;
+    background: $color-accent;
     transform-origin: 0 100%;
     transform: skewX(calc(-1 * var(--hero-slant)));
   }
 }
 
 .btn-ghost {
-  border: 2px solid $color-white;
-  color: $color-white;
+  border: 2px solid $color-fg;
+  color: $color-fg;
 }
 
 .panel-footer {
@@ -209,9 +209,9 @@ h1 {
   justify-content: space-between;
   align-items: center;
   gap: $spacing-sm;
-  border-top: 1px solid $color-gray-dark;
+  border-top: 1px solid $color-line;
   padding-top: 20px;
-  color: $color-gray-mid;
+  color: $color-fg-subtle;
   font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -240,14 +240,14 @@ h1 {
   width: calc(8% + 6px);
   z-index: 4;
   clip-path: polygon(calc(100% - 6px) 0, 100% 0, 6px 100%, 0 100%);
-  background: $color-blue-bright;
+  background: $color-accent-bright;
 }
 
 .seam-glow {
   width: calc(8% + 14px);
   z-index: 3;
   clip-path: polygon(calc(100% - 14px) 0, 100% 0, 14px 100%, 0 100%);
-  background: rgba(30, 144, 255, 0.3);
+  background: fade($color-accent-bright, 0.3);
 }
 
 // ---------- RIGHT VISUAL ----------
@@ -257,7 +257,7 @@ h1 {
   position: relative;
   overflow: hidden;
   clip-path: polygon(8% 0, 100% 0, 100% 100%, 0 100%);
-  background: $color-primary-black;
+  background: $color-photo-scrim;
 }
 
 .hero-img {
@@ -273,8 +273,8 @@ h1 {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(255deg, rgba(0, 102, 204, 0.45) 0%, rgba(10, 10, 10, 0) 55%),
-    linear-gradient(0deg, rgba(10, 10, 10, 0.55) 0%, rgba(10, 10, 10, 0) 40%);
+    linear-gradient(255deg, fade($color-accent-deep, 0.45) 0%, rgba($color-photo-scrim, 0) 55%),
+    linear-gradient(0deg, rgba($color-photo-scrim, 0.55) 0%, rgba($color-photo-scrim, 0) 40%);
   pointer-events: none;
 }
 
@@ -289,7 +289,7 @@ h1 {
   line-height: 0.8;
   letter-spacing: -4px;
   color: transparent;
-  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.4);
+  -webkit-text-stroke: 2px rgba($color-on-photo, 0.4);
   user-select: none;
   pointer-events: none;
 }
@@ -300,11 +300,11 @@ h1 {
   top: $spacing-lg;
   z-index: 4;
   text-align: right;
-  color: $color-white;
+  color: $color-on-photo;
   font-size: 12px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  border-right: 3px solid $color-blue-bright;
+  border-right: 3px solid $color-accent-bright;
   padding-right: 12px;
   line-height: 1.7;
   opacity: 0.9;
