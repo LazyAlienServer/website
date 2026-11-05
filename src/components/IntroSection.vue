@@ -12,21 +12,17 @@
         </div>
         <div class="intro-content">
           <header class="intro-header">
-            <div class="intro-tab">
-              <span class="intro-tab-id">LAS</span>
-              <span class="intro-tab-label">PROFILE // 档案</span>
-            </div>
             <h2 class="intro-title">关于我们</h2>
-            <dl class="intro-record">
-              <div class="intro-field">
+            <dl class="intro-badges">
+              <div class="intro-badge">
                 <dt>NAME</dt>
                 <dd>Lazy Alien Server</dd>
               </div>
-              <div class="intro-field">
+              <div class="intro-badge">
                 <dt>FOCUS</dt>
                 <dd>技术交流</dd>
               </div>
-              <div class="intro-field">
+              <div class="intro-badge">
                 <dt>MEMBERS</dt>
                 <dd>学生群体</dd>
               </div>
@@ -96,87 +92,51 @@ import ParticleLogo from "./ParticleLogo.vue";
   }
 }
 
-// ---------- Profile header: folder tab + record fields ----------
+// ---------- Header: title + shield badges ----------
 .intro-header {
-  margin-bottom: $spacing-lg;
-}
-
-// tab shares the hairline's color so it reads as one folder edge
-.intro-tab {
-  display: flex;
-  align-items: flex-end;
   margin-bottom: $spacing-md;
-
-  &::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background: $color-line;
-  }
 }
 
-.intro-tab-id,
-.intro-tab-label {
-  font-family: $font-display;
-  font-size: 12px;
-  letter-spacing: 3px;
-  line-height: 1;
-  padding: 8px 12px 7px;
-}
-
-.intro-tab-id {
-  background: $color-accent;
-  color: $color-on-accent;
-  font-weight: 700;
-}
-
-// Slanted right edge at the hero slant (leaning `/`): a gray layer skewed
-// from its top-right corner, clipped by the label so the left edge stays
-// square. Skew scales with the label's own height.
-.intro-tab-label {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  padding-right: 28px;
-  color: $color-fg-muted;
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: $color-line;
-    transform-origin: 100% 0;
-    transform: skewX(calc(-1 * var(--hero-slant)));
-  }
-}
-
-.intro-record {
+.intro-badges {
   display: flex;
   flex-wrap: wrap;
-  row-gap: 12px;
-  margin-top: $spacing-md;
+  gap: 6px;
+  margin-top: 12px;
 }
 
-.intro-field {
-  padding: 2px 24px 2px 12px;
-  border-left: 1px solid $color-line;
+// Flat-square shield, about 20px tall like shields.io: a neutral key segment
+// and an accent value segment of equal height. Light inverts the key to a
+// black block, so it reads like the label/value tags on the Endfield site
+// (black key, yellow value).
+.intro-badge {
+  display: flex;
 
-  &:first-child {
-    border-left: 3px solid $color-fg;
+  dt,
+  dd {
+    display: flex;
+    align-items: center;
+    padding: 3px 8px;
+    font-size: 12px;
+    line-height: 1.2;
+    white-space: nowrap;
   }
 
   dt {
+    background: $color-line;
+    color: $color-fg-muted;
     font-family: $font-display;
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: $color-fg-subtle;
+    letter-spacing: 1px;
+
+    @include light {
+      background: $color-fg;
+      color: $color-bg;
+    }
   }
 
   dd {
-    font-size: 14px;
-    letter-spacing: 1px;
-    color: $color-fg;
+    background: $color-accent;
+    color: $color-on-accent;
+    letter-spacing: 0.5px;
   }
 }
 
@@ -238,14 +198,13 @@ import ParticleLogo from "./ParticleLogo.vue";
   }
 }
 
-// tablet and mobile: single text column without the particle emblem or profile tab
+// tablet and mobile: single text column without the particle emblem
 @include tablet {
   .intro-grid {
     grid-template-columns: 1fr;
   }
 
-  .intro-icon,
-  .intro-tab {
+  .intro-icon {
     display: none;
   }
 }
