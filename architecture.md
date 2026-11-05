@@ -35,7 +35,7 @@ The Vite alias `@` resolves to `src/`. SCSS receives `src/styles/variables.scss`
 
 `src/views/HomePage.vue` is a composition surface. It owns ordering, not the implementation of each section:
 
-1. `HeroSection.vue` — fixed navigation, hero visual, scroll-driven seam/parallax.
+1. `HeroSection.vue` — fixed navigation, hero visual, scroll-driven seam/parallax. The hero shot follows the theme (`HERO_SHOTS`: gothic hall `/hero.webp` in dark, FTL pearl cannon `/ftl-ender-pearl.webp` in light).
 2. `IntroSection.vue` — LAS introduction, particle emblem (`ParticleLogo.vue`), and decorative technology rail.
 3. `LiveTimer.vue` — founding-date uptime counter, UTC+8 analog clock, image carousel, and parallax.
 4. `HardwareSection.vue` — hardware spec sheet; composes `InfrastructureFeatures.vue`.

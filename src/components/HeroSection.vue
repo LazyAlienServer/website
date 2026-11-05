@@ -23,12 +23,7 @@
     </div>
 
     <div class="hero-visual">
-      <img
-        ref="heroImage"
-        class="hero-img"
-        src="/hero.webp"
-        alt="LAS survival build — gothic hall"
-      />
+      <img ref="heroImage" class="hero-img" :src="heroShot.src" :alt="heroShot.alt" />
       <div class="seam-glow"></div>
       <div class="seam"></div>
       <div class="meta-tag">MINECRAFT TECH SERVER<br />EST. 2022.08.29</div>
@@ -38,7 +33,16 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
+import { theme } from "@/composables/theme";
+
+// Each theme has its own hero shot. `theme` is already set from `data-theme`
+// (applied before first paint in index.html), so only one image is requested.
+const HERO_SHOTS = {
+  dark: { src: "/hero.webp", alt: "LAS survival build — gothic hall" },
+  light: { src: "/ftl-ender-pearl.webp", alt: "LAS redstone build — FTL pearl cannon" },
+};
+const heroShot = computed(() => HERO_SHOTS[theme.value]);
 
 const heroImage = ref<HTMLImageElement | null>(null);
 let scrollFrameId = 0;
@@ -251,12 +255,19 @@ h1 {
   background: $color-photo-scrim;
 }
 
+// Dark dims the shot and covers it with a brand wash from the right and a
+// bottom scrim; light shows the shot undimmed with only the wash (yellow),
+// fully transparent from the middle to the left edge.
 .hero-img {
   width: 100%;
   height: 110%; // headroom for parallax drift
   object-fit: cover;
   filter: saturate(0.7) brightness(0.72) contrast(1.05);
   will-change: transform;
+
+  @include light {
+    filter: none;
+  }
 }
 
 .hero-visual::after {
@@ -267,6 +278,10 @@ h1 {
     linear-gradient(255deg, fade($color-accent-deep, 0.45) 0%, rgba($color-photo-scrim, 0) 55%),
     linear-gradient(0deg, rgba($color-photo-scrim, 0.55) 0%, rgba($color-photo-scrim, 0) 40%);
   pointer-events: none;
+
+  @include light {
+    background: linear-gradient(255deg, fade($color-accent-deep, 0.45) 0%, transparent 55%);
+  }
 }
 
 .watermark {
