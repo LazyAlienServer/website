@@ -91,11 +91,6 @@
             <path d="M6 2H18V94H6" />
           </svg>
         </div>
-
-        <div class="signal-row">
-          <span class="signal-indicator"></span>
-          <span class="signal-text">SIGNAL LOCK // LIVE FEED</span>
-        </div>
       </div>
 
       <!-- Carousel control strip: indicator left, caption center, buttons right -->
@@ -514,13 +509,16 @@ onUnmounted(() => {
   }
 }
 
-// SVG brackets flank the timer row
+// SVG brackets flank the timer row. The bottom margin keeps the space the
+// removed status line took (its 24px top margin plus one 11px line at the
+// body's 1.6 line height), so the row's distance to the hatch strip holds.
 .timer-row {
   display: flex;
   align-items: center;
   gap: $spacing-sm;
   position: relative;
   z-index: 1;
+  margin-bottom: calc(#{$spacing-md} + 11px * 1.6);
 }
 
 .timer-bracket {
@@ -575,20 +573,6 @@ onUnmounted(() => {
   font-size: $font-size-body;
   color: $color-fg-muted;
   letter-spacing: 4px;
-}
-
-.signal-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: $spacing-xs;
-  margin-top: $spacing-md;
-}
-
-.signal-text {
-  font-size: 11px;
-  letter-spacing: 3px;
-  color: $color-fg-muted;
 }
 
 // ---------- Carousel control strip ----------

@@ -17,10 +17,7 @@
       </div>
 
       <div class="panel-footer">
-        <div class="signal">
-          <span class="signal-indicator"></span>
-          SERVER STATUS: ONLINE
-        </div>
+        <span>矢志不渝，历久弥新。</span>
         <span>LZALIEN.ORG — V2.0</span>
       </div>
     </div>
@@ -100,7 +97,7 @@ onUnmounted(() => {
   justify-content: center;
 }
 
-// Identity kicker: slanted brand mark + two-tone mission line (status lives in the footer)
+// Identity kicker: slanted brand mark + two-tone mission line (the slogan lives in the footer)
 .hero-kicker {
   display: flex;
   align-items: center;
@@ -215,12 +212,6 @@ h1 {
   font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
-}
-
-.signal {
-  display: flex;
-  align-items: center;
-  gap: $spacing-xs;
 }
 
 // ---------- SEAM ----------
