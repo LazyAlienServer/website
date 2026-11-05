@@ -3,9 +3,12 @@
     <div class="hero-panel">
       <div class="panel-body">
         <p class="hero-kicker">
-          <span class="kicker-mark" aria-hidden="true"></span>
-          <span class="kicker-lead">STUDENT-LED</span>
-          TECH EXCHANGE
+          <span class="kicker-block" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M5 5 19 19M19 7v12H7" />
+            </svg>
+          </span>
+          WE ARE
         </p>
         <h1>LAZY ALIEN<br /><span class="accent">SERVER</span></h1>
         <p class="sub-cn">与 LAS 的成员们，携手并进</p>
@@ -101,30 +104,47 @@ onUnmounted(() => {
   justify-content: center;
 }
 
-// Identity kicker: slanted brand mark + two-tone mission line (the slogan lives in the footer)
+// Section-title kicker after the Endfield site's headings: a solid block
+// with a ↘ arrow at its right end, pointing into the wordmark, and "WE ARE"
+// set beside it. Dark: blue block, white arrow and text; light: gray block,
+// black arrow and text. Sizes are in em of the kicker's font size, so the
+// block stays a little taller than the cap height at every width.
 .hero-kicker {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 28px;
+  gap: 0.3em;
+  margin-bottom: $spacing-md;
   font-family: $font-display;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  color: $color-fg-subtle;
-}
-
-.kicker-mark {
-  flex: none;
-  width: 22px;
-  height: 10px;
-  margin-right: 4px;
-  background: $color-accent-bright;
-  transform: skewX(calc(-1 * var(--hero-slant)));
-}
-
-.kicker-lead {
+  font-size: clamp(24px, 2.2vw, 34px);
+  // Roboto Condensed 400 is part of the font request in index.html
+  font-weight: 400;
+  line-height: 1;
   color: $color-fg;
+}
+
+.kicker-block {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: flex-end;
+  width: 3em;
+  height: 0.9em;
+  padding-right: 0.1em;
+  background: $color-accent;
+  color: $color-on-accent;
+
+  @include light {
+    background: $color-line;
+  }
+
+  svg {
+    width: 0.62em;
+    height: 0.62em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3;
+    stroke-linecap: square;
+  }
 }
 
 h1 {
