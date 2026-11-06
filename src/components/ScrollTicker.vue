@@ -66,6 +66,10 @@ onUnmounted(() => {
 // the Endfield site's section bands.
 .ticker {
   --ticker-size: 56px;
+  // The outline text fills its glyphs with the band color, so the fill hides
+  // the inner half of the stroke and the font's internal contour seams. It
+  // must therefore track the band's own background in each theme.
+  --ticker-bg: #{$color-bg};
 
   display: flex;
   align-items: center;
@@ -77,6 +81,7 @@ onUnmounted(() => {
   user-select: none;
 
   @include light {
+    --ticker-bg: #{$color-accent};
     background: $color-accent;
     border-color: $color-accent;
   }
@@ -106,8 +111,9 @@ onUnmounted(() => {
 }
 
 .ticker-outline {
-  color: transparent;
-  -webkit-text-stroke: 1px fade($color-fg, 0.45);
+  color: var(--ticker-bg);
+  -webkit-text-stroke: 2px fade($color-fg, 0.45);
+  paint-order: stroke fill;
 }
 
 // Slanted brand plate at the shared hero slant (global.scss).
