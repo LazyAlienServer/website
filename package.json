@@ -5,10 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vp dev",
-    "build": "vp build",
+    "build": "vp build && node scripts/build-output.mjs",
     "build:pages": "BASE_PATH=/website/ vp build",
+    "build:preview": "CLOUDFLARE_PREVIEW_BUILD=true pnpm run build",
     "lint": "vp lint --fix .",
     "format": "prettier --write .",
+    "deploy": "pnpm run build && cf deploy --prebuilt --mode production",
+    "deploy:preview": "pnpm run build:preview && cf previews deploy --prebuilt --mode production",
     "prepare": "vp config"
   },
   "dependencies": {
@@ -18,12 +21,15 @@
     "three": "^0.185.1"
   },
   "devDependencies": {
+    "@cloudflare/build-output-utils": "0.9.7",
+    "@cloudflare/config": "0.29.1",
     "@playwright/test": "^1.62.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@types/three": "^0.185.4",
     "@vitejs/plugin-react": "^6.0.5",
+    "cf": "1.0.0-beta.27",
     "framer-motion": "^13.0.0",
     "globals": "^17.9.0",
     "lucide-react": "^1.28.0",

@@ -1,3 +1,10 @@
+# Deployment
+
+- The site is served by Cloudflare Workers Static Assets. `cloudflare.config.ts` defines the Worker and `lzalien.org`; deploy with `cf`, never Wrangler.
+- `main` is the Workers Builds production branch. `beta-2`, `beta-3`, and other branches deploy through Workers Previews.
+- `pnpm run build` writes `dist/`, then `scripts/build-output.mjs` writes the `.cloudflare/output/v0/` tree consumed by `cf deploy --prebuilt`.
+- Manual deploys: `pnpm run deploy` for production, `pnpm run deploy:preview` for a preview.
+
 <!--VITE PLUS START-->
 
 # Using Vite+, the Unified Toolchain for the Web
