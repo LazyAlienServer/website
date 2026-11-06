@@ -8,7 +8,7 @@
               <path d="M5 5 19 19M19 7v12H7" />
             </svg>
           </span>
-          WE ARE
+          We are
         </p>
         <h1>LAZY ALIEN<br /><span class="accent">SERVER</span></h1>
         <p class="sub-cn">与 LAS 的成员们，携手并进</p>
@@ -20,8 +20,11 @@
       </div>
 
       <div class="panel-footer">
-        <span>矢志不渝，历久弥新。</span>
-        <span>LZALIEN.ORG — V2.0</span>
+        <span class="panel-footer-motto">矢志不渝，历久弥新。</span>
+        <span class="panel-footer-meta">
+          <span>lzalien.org</span>
+          <span>v2.0</span>
+        </span>
       </div>
     </div>
 
@@ -29,7 +32,10 @@
       <img ref="heroImage" class="hero-img" :src="heroShot.src" :alt="heroShot.alt" />
       <div class="seam-glow"></div>
       <div class="seam"></div>
-      <div class="meta-tag">MINECRAFT TECH SERVER<br />EST. 2022.08.29</div>
+      <div class="meta-tag">
+        <span>Minecraft Tech Server</span>
+        <span>Est. 2022.08.29</span>
+      </div>
       <div class="watermark">LAS</div>
     </div>
   </section>
@@ -42,8 +48,8 @@ import { theme } from "@/composables/theme";
 // Each theme has its own hero shot. `theme` is already set from `data-theme`
 // (applied before first paint in index.html), so only one image is requested.
 const HERO_SHOTS = {
-  dark: { src: "/hero.webp", alt: "LAS survival build — gothic hall" },
-  light: { src: "/ftl-ender-pearl.webp", alt: "LAS redstone build — FTL pearl cannon" },
+  dark: { src: "/hero.webp", alt: "LAS survival build, gothic hall" },
+  light: { src: "/ftl-ender-pearl.webp", alt: "LAS redstone build, FTL pearl cannon" },
 };
 const heroShot = computed(() => HERO_SHOTS[theme.value]);
 
@@ -105,7 +111,7 @@ onUnmounted(() => {
 }
 
 // Section-title kicker after the Endfield site's headings: a solid block
-// with a ↘ arrow at its right end, pointing into the wordmark, and "WE ARE"
+// with a ↘ arrow at its right end, pointing into the wordmark, and "We are"
 // set beside it. Dark: blue block, white arrow and text; light: gray block,
 // black arrow and text. Sizes are in em of the kicker's font size, so the
 // block stays a little taller than the cap height at every width.
@@ -116,8 +122,7 @@ onUnmounted(() => {
   margin-bottom: $spacing-md;
   font-family: $font-display;
   font-size: clamp(24px, 2.2vw, 34px);
-  // Roboto Condensed 400 is part of the font request in index.html
-  font-weight: 400;
+  font-weight: $font-weight-medium;
   line-height: 1;
   color: $color-fg;
 }
@@ -151,7 +156,6 @@ h1 {
   font-size: clamp(44px, 4.6vw, 68px);
   line-height: 1.02;
   color: $color-fg;
-  letter-spacing: -1px;
   margin-bottom: $spacing-xs;
 
   .accent {
@@ -160,43 +164,50 @@ h1 {
 }
 
 .sub-cn {
-  font-size: $font-size-h4;
+  margin-top: 20px;
+  font-size: $font-size-lead;
+  line-height: 1.7;
+  font-weight: $font-weight-regular;
   color: $color-fg-muted;
-  font-weight: 400;
-  margin-top: 18px;
-  letter-spacing: 6px;
 }
 
 .rule {
   width: 64px;
   height: 6px;
+  margin: 28px 0 32px;
   background: $color-fg;
-  margin: 30px 0;
 }
 
 .cta-row {
   display: flex;
-  gap: 18px;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
+// Both buttons share one height, one type size, and one vertical rhythm. The
+// primary's fill is a skewed layer; the secondary's outline is an inset
+// shadow so a hairline never changes the box's size.
 .btn {
-  display: inline-block;
-  padding: 16px 38px;
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 54px;
+  padding: 0 32px;
+  font-size: 15px;
+  font-weight: $font-weight-medium;
+  line-height: 1;
   transition:
-    transform $transition-fast,
-    filter $transition-fast;
-
-  &:hover {
-    transform: scale(1.05);
-    filter: brightness(1.2);
-  }
+    filter $transition-fast,
+    box-shadow $transition-fast,
+    color $transition-fast;
 
   &:active {
-    transform: scale(0.98);
+    translate: 0 1px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent-ink;
+    outline-offset: 3px;
   }
 }
 
@@ -207,6 +218,8 @@ h1 {
   position: relative;
   isolation: isolate;
   overflow: hidden;
+  // Extra inset on the skewed side keeps the label optically centered.
+  padding-left: 36px;
   color: $color-on-accent;
 
   &::before {
@@ -218,24 +231,53 @@ h1 {
     transform-origin: 0 100%;
     transform: skewX(calc(-1 * var(--hero-slant)));
   }
+
+  &:hover {
+    filter: brightness(1.12);
+  }
 }
 
 .btn-ghost {
-  border: 2px solid $color-fg;
   color: $color-fg;
+  box-shadow: inset 0 0 0 1px fade($color-fg, 0.32);
+
+  &:hover {
+    box-shadow: inset 0 0 0 1px $color-fg;
+  }
 }
 
 .panel-footer {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
   gap: $spacing-sm;
   border-top: 1px solid $color-line;
-  padding-top: 20px;
+  padding-top: 16px;
+  font-size: 12px;
   color: $color-fg-subtle;
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+}
+
+.panel-footer-motto {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  &::before {
+    content: "";
+    flex: none;
+    width: 6px;
+    height: 6px;
+    background: $color-accent-ink;
+  }
+}
+
+.panel-footer-meta {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 14px;
+  font-family: $font-display;
+  font-weight: $font-weight-medium;
+  font-variant-numeric: tabular-nums;
 }
 
 // ---------- SEAM ----------
@@ -304,36 +346,51 @@ h1 {
   }
 }
 
+// Cropped by the visual's bottom edge and right-aligned with the meta tag,
+// so it reads as part of the frame rather than a floating word.
 .watermark {
   position: absolute;
   right: $spacing-lg;
-  bottom: 40px;
+  bottom: -0.08em;
   z-index: 4;
   font-family: $font-display;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   font-size: clamp(96px, 12vw, 180px);
   line-height: 0.8;
-  letter-spacing: -4px;
   color: transparent;
-  -webkit-text-stroke: 2px rgba($color-on-photo, 0.4);
+  -webkit-text-stroke: 1.5px rgba($color-on-photo, 0.28);
   user-select: none;
   pointer-events: none;
 }
 
+// A right-aligned label plate: a short accent rule above two quiet lines.
+// The text shadow keeps white type legible on the undimmed light hero shot.
 .meta-tag {
   position: absolute;
   right: $spacing-lg;
   top: $spacing-lg;
   z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  font-family: $font-display;
+  font-size: 11px;
+  font-weight: $font-weight-medium;
+  line-height: 1.6;
   text-align: right;
   color: $color-on-photo;
-  font-size: 12px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  border-right: 3px solid $color-accent-bright;
-  padding-right: 12px;
-  line-height: 1.7;
-  opacity: 0.9;
+  opacity: 0.92;
+  text-shadow: 0 1px 12px rgba($color-photo-scrim, 0.5);
+
+  &::before {
+    content: "";
+    width: 32px;
+    height: 6px;
+    margin-bottom: 10px;
+    background: $color-accent-bright;
+    box-shadow: 0 0 10px rgba($color-photo-scrim, 0.35);
+  }
 }
 
 // ---------- RESPONSIVE ----------
@@ -378,7 +435,6 @@ h1 {
 @include mobile {
   .sub-cn {
     font-size: 18px;
-    letter-spacing: 3px;
   }
 
   .panel-footer {

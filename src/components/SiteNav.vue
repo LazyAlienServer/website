@@ -13,8 +13,8 @@
       <button
         type="button"
         class="theme-toggle"
-        aria-label="浅色模式"
-        title="浅色模式"
+        aria-label="切换主题"
+        :title="toggleLabel"
         :aria-pressed="theme === 'light'"
         @click="toggleTheme"
       >
@@ -28,11 +28,13 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { useRoute } from "vue-router";
 import logoUrl from "@/assets/logo.svg";
 import { theme, toggleTheme } from "@/composables/theme";
 
 const route = useRoute();
+const toggleLabel = computed(() => (theme.value === "light" ? "切换至深色模式" : "切换至浅色模式"));
 </script>
 
 <style scoped lang="scss">
@@ -58,10 +60,9 @@ const route = useRoute();
 
   span {
     font-family: $font-display;
-    font-weight: 700;
+    font-weight: $font-weight-bold;
     font-size: 18px;
     color: $color-fg;
-    letter-spacing: 1px;
   }
 }
 
@@ -78,41 +79,59 @@ const route = useRoute();
   gap: 28px;
 
   a {
-    color: $color-fg-subtle;
+    position: relative;
+    padding-bottom: 6px;
     font-size: 14px;
-    letter-spacing: 2px;
+    font-weight: $font-weight-medium;
+    color: $color-fg-subtle;
     transition: color $transition-fast;
 
-    &:hover {
-      color: $color-accent-ink;
+    // The underline is drawn below the text instead of as a border, so the
+    // active link never sits a few pixels above its neighbours.
+    &::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      background: $color-accent-ink;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform $transition-fast;
     }
 
+    &:hover,
     &.active {
       color: $color-fg;
-      border-bottom: 2px solid $color-accent-ink;
-      padding-bottom: 4px;
+    }
+
+    &:hover::after,
+    &.active::after {
+      transform: scaleX(1);
     }
   }
 }
 
-// Half-filled disc; it flips sides when light is on (`aria-pressed`).
+// Half-filled disc; it flips sides when light is on (`aria-pressed`). No
+// frame: the icon alone sits on the nav like the links, with a hover plate.
 .theme-toggle {
   display: grid;
   place-items: center;
   flex: none;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   padding: 0;
-  border: 1px solid $color-line;
+  border: 0;
   background: transparent;
   color: $color-fg-subtle;
   transition:
     color $transition-fast,
-    border-color $transition-fast;
+    background-color $transition-fast;
 
   svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
   }
 
   circle {
@@ -126,8 +145,8 @@ const route = useRoute();
   }
 
   &:hover {
-    color: $color-accent-ink;
-    border-color: $color-accent-ink;
+    color: $color-fg;
+    background: fade($color-fg, 0.08);
   }
 
   &:focus-visible {
