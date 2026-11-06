@@ -11,7 +11,8 @@
     "preview": "vp preview",
     "deploy": "pnpm run build && cf deploy --prebuilt --mode production",
     "deploy:preview": "pnpm run build:preview && cf previews deploy --prebuilt --mode production",
-    "prepare": "vp config"
+    "prepare": "vp config",
+    "doctor": "npx react-doctor@latest"
   },
   "dependencies": {
     "motion": "^14.9.0",
@@ -30,11 +31,5 @@
     "vite": "catalog:",
     "vite-plus": "catalog:"
   },
-  "devEngines": {
-    "packageManager": {
-      "name": "pnpm",
-      "version": "12.16.1",
-      "onFail": "download"
-    }
-  }
+  "packageManager": "pnpm@12.16.1"
 }

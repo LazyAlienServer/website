@@ -39,6 +39,8 @@ The uptime layout has no card: it sits on the photo (dimmed further by `.shade`)
 - Uptime segment (`UPTIME` in `scroll.ts`): the card lifts up out of the viewport while the photo dims; the uptime layout paints above the card, so it stays hidden until the card has cleared (`UPTIME.show`), then builds: the grid rule grows across and the double rule draws down and up, clock ring draws from 12 (its dash is dropped once complete, so no seam shows), ticks appear clockwise, hands sweep from 12 to the time; days, then h/m/s rise; the timeline line grows, its marks fade in, and the current-year bar grows; the slogan rises last. Digits roll on each second. The seconds hand ticks once a second (a 150 ms snap to the next mark, `TICK_MS` in `Clock.tsx`) and the minute hand jumps once a minute. Under reduced motion the card fades out as the layout fades in, the clock is drawn in full with the seconds hand stepping without the snap, and reveals are opacity only.
 - Keep interactive controls keyboard-accessible with visible focus.
 
+Typography rule: use only the four weight tokens (`$font-weight-regular`, `-medium`, `-bold`, `-black`) and never introduce another weight. The “all caps + small type + wide letter-spacing” label pattern is prohibited: small labels use normal case and no tracking. Uppercase is reserved for brand wordmarks and oversized display type. Em dashes and centered dots are not used in interface copy; separate labels with layout (gaps, rules, or separate lines) instead.
+
 ## Important Rules
 
 - Do not perform browser-based verification or use browser tooling unless the user explicitly asks for it.
@@ -50,6 +52,7 @@ The uptime layout has no card: it sits on the photo (dimmed further by `.shade`)
 - `main` is the Workers Builds production branch. `beta-3` and other branches deploy through Workers Previews.
 - `pnpm run build` writes `dist/`, then `scripts/build-output.mjs` writes the `.cloudflare/output/v0/` tree consumed by `cf deploy --prebuilt`.
 - Manual deploys: `pnpm run deploy` for production, `pnpm run deploy:preview` for a preview.
+
 ## Working Notes
 
 - Only HOME has a page. RULES, ALBUM, MAP, MORE and the JOIN US / MORE flags are placeholder links (`<a>` without `href`); give them an `href` in `src/home/content.ts` or `Rail.tsx` once their pages exist. v2 targets for later: join QQ group `https://qm.qq.com/q/32DhVd36iI`, rules and gallery content in the handoff doc.
