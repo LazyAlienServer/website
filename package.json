@@ -1,14 +1,15 @@
 {
   "name": "las-website",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
-    "build": "vite build",
-    "build:pages": "BASE_PATH=/website/ vite build",
-    "lint": "oxlint --fix .",
-    "format": "prettier --write ."
+    "dev": "vp dev",
+    "build": "vp build",
+    "build:pages": "BASE_PATH=/website/ vp build",
+    "lint": "vp lint --fix .",
+    "format": "prettier --write .",
+    "prepare": "vp config"
   },
   "dependencies": {
     "postprocessing": "^6.39.4",
@@ -26,7 +27,6 @@
     "framer-motion": "^13.0.0",
     "globals": "^17.9.0",
     "lucide-react": "^1.28.0",
-    "oxlint": "^1.77.0",
     "playwright": "^1.62.1",
     "pnpm": "^11.20.0",
     "prettier": "^3.9.6",
@@ -35,9 +35,11 @@
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
     "typescript-eslint": "^8.66.0",
-    "vite": "npm:rolldown-vite@7.1.12"
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
   },
   "overrides": {
     "vite": "npm:rolldown-vite@7.1.12"
-  }
+  },
+  "packageManager": "pnpm@12.16.1"
 }
