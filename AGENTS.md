@@ -21,6 +21,8 @@ Themes: dark (default) and light, switched in the navbar (default follows the sy
 
 Tilt rule: every slanted mark, edge, or panel uses the hero split-line angle, never a hand-picked degree. The angle is the shared `--hero-slant` (with `--hero-slant-tan`) defined in `src/styles/global.scss`. It is computed from the hero image's clipped left edge, so it follows the viewport. Apply it as `transform: skewX(calc(-1 * var(--hero-slant)))` so slants lean like `/`. For a slanted edge on one side only, skew a background pseudo-element and clip it with `overflow: hidden` rather than hard-coding a pixel offset in `clip-path`. Out of scope: 45° corner chamfers (`clipped-panel`), diagonal hatch patterns, rotations (clock hands, arrows, vertical labels), and the hero seam itself.
 
+Typography rule: use only the four weight tokens (`$font-weight-regular`, `-medium`, `-bold`, `-black`) and never introduce another weight. The “all caps + small type + wide letter-spacing” label pattern is prohibited: small labels use normal case and no tracking. Uppercase is reserved for brand wordmarks and oversized display type. Em dashes and centered dots are not used in interface copy; separate labels with layout (gaps, rules, or separate lines) instead.
+
 ## Important Rules
 
 - Do not perform browser-based verification or use browser tooling unless the user explicitly asks for it.
