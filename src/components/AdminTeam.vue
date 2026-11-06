@@ -3,13 +3,13 @@
     <div class="section-shell">
       <header class="admin-header" v-reveal>
         <div class="admin-heading">
-          <p class="admin-kicker"><span class="admin-plate">CREW MANIFEST</span></p>
+          <p class="admin-kicker"><span class="admin-plate">Crew manifest</span></p>
           <h2 class="admin-title">管理团队</h2>
         </div>
         <div class="admin-manifest">
           <p class="admin-count">
             <span class="admin-count-num">{{ pad(operators.length) }}</span>
-            <span class="admin-count-label">OPERATORS</span>
+            <span class="admin-count-label">Operators</span>
           </p>
           <ul class="admin-roles">
             <li
@@ -63,14 +63,12 @@
             <span class="op-name">{{ op.name }}</span>
             <span class="op-subtitle">
               <span class="status-dot" :class="`status-${op.status}`" aria-hidden="true"></span>
-              {{ op.title }} · {{ roleLabel(op.role) }}
+              <span>{{ op.title }}</span>
+              <span class="op-role">{{ roleLabel(op.role) }}</span>
             </span>
           </span>
 
-          <span class="op-link" :class="{ disabled: !op.bilibiliUrl }">
-            <template v-if="op.bilibiliUrl">BILIBILI →</template>
-            <template v-else>—</template>
-          </span>
+          <span v-if="op.bilibiliUrl" class="op-link">Bilibili →</span>
         </component>
       </div>
     </div>
@@ -151,16 +149,25 @@ const operators: Operator[] = [
     status: "online",
     role: "mod",
   },
+  {
+    name: "4rcadia",
+    title: "精神支持",
+    bilibiliUrl: "https://space.bilibili.com/499244418",
+    avatarUrl: "https://avatars.githubusercontent.com/u/97033226",
+    status: "away",
+    role: "mod",
+  },
 ];
 
 const roleLabels: Record<string, string> = {
-  core: "CORE",
-  tech: "TECH",
-  admin: "ADMIN",
-  mod: "MOD",
+  core: "Core",
+  tech: "Tech",
+  admin: "Admin",
+  mod: "Mod",
 };
 
-const roleLabel = (role: OperatorRole): string => roleLabels[role] ?? role.toUpperCase();
+const roleLabel = (role: OperatorRole): string =>
+  roleLabels[role] ?? role.charAt(0).toUpperCase() + role.slice(1);
 
 const pad = (value: number): string => String(value).padStart(2, "0");
 
@@ -243,9 +250,8 @@ const onAvatarError = (name: string): void => {
   color: $color-on-accent;
   font-family: $font-display;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   line-height: 1;
-  letter-spacing: 3px;
 }
 
 .admin-manifest {
@@ -263,7 +269,7 @@ const onAvatarError = (name: string): void => {
 .admin-count-num {
   font-family: $font-display;
   font-size: 56px;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   line-height: 0.85;
   font-variant-numeric: tabular-nums;
   color: $color-fg;
@@ -272,7 +278,6 @@ const onAvatarError = (name: string): void => {
 .admin-count-label {
   font-family: $font-display;
   font-size: 11px;
-  letter-spacing: 2px;
   color: $color-fg-subtle;
 }
 
@@ -291,7 +296,6 @@ const onAvatarError = (name: string): void => {
   gap: 8px;
   font-family: $font-display;
   font-size: 11px;
-  letter-spacing: 2px;
   color: $color-fg-muted;
 }
 
@@ -360,7 +364,6 @@ const onAvatarError = (name: string): void => {
   right: 14px;
   font-family: $font-display;
   font-size: 10px;
-  letter-spacing: 1px;
   color: $color-fg-subtle;
 }
 
@@ -382,7 +385,7 @@ const onAvatarError = (name: string): void => {
   justify-content: center;
   font-family: $font-display;
   font-size: clamp(20px, 2vw, 28px);
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $color-fg;
 }
 
@@ -397,8 +400,7 @@ const onAvatarError = (name: string): void => {
 .op-name {
   font-family: $font-display;
   font-size: clamp(16px, 2.5vw, 20px);
-  font-weight: 700;
-  letter-spacing: 1px;
+  font-weight: $font-weight-bold;
   color: $color-fg;
   overflow-wrap: break-word;
 }
@@ -410,9 +412,13 @@ const onAvatarError = (name: string): void => {
   gap: 6px;
   font-family: $font-display;
   font-size: 11px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
   color: $color-fg-subtle;
+}
+
+.op-role {
+  padding-left: 7px;
+  border-left: 1px solid $color-line;
+  color: $color-fg-muted;
 }
 
 .status-dot {
@@ -437,8 +443,6 @@ const onAvatarError = (name: string): void => {
   bottom: 12px;
   font-family: $font-display;
   font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
   color: $color-fg-subtle;
   transition: color $transition-fast;
 }

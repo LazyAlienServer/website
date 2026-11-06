@@ -50,7 +50,7 @@
               <li v-for="year in timelineYears" :key="year" class="timeline-node is-year">
                 <time :datetime="String(year)">{{ year }}</time>
               </li>
-              <li class="timeline-node is-now">NOW</li>
+              <li class="timeline-node is-now">Now</li>
             </ol>
           </div>
         </header>
@@ -194,9 +194,9 @@ const pad = (n: number) => String(n).padStart(2, "0");
 
 // ---------- Background carousel ----------
 const slides = [
-  { src: "/floatingcity.webp", name: "FLOATING CITY // 浮空城" },
-  { src: "/ftl-ender-pearl.webp", name: "FTL PEARL CANNON // FTL 珍珠炮" },
-  { src: "/hero.webp", name: "GOTHIC HALL // 哥特殿堂" },
+  { src: "/floatingcity.webp", name: "Floating city // 浮空城" },
+  { src: "/ftl-ender-pearl.webp", name: "FTL pearl cannon // FTL 珍珠炮" },
+  { src: "/hero.webp", name: "Gothic hall // 哥特殿堂" },
 ];
 
 const current = ref(0);
@@ -421,7 +421,6 @@ onUnmounted(() => {
   margin-bottom: $spacing-sm;
   font-family: $font-display;
   font-size: 12px;
-  letter-spacing: 3px;
   color: $color-fg-muted;
 }
 
@@ -469,7 +468,6 @@ onUnmounted(() => {
   font-family: $font-display;
   font-size: 11px;
   line-height: 16px;
-  letter-spacing: 2px;
   color: $color-fg-muted;
 
   &::before {
@@ -497,7 +495,7 @@ onUnmounted(() => {
     flex: none;
     border-top-color: transparent;
     color: $color-accent-bright;
-    font-weight: 700;
+    font-weight: $font-weight-bold;
 
     &::before {
       top: -7px;
@@ -562,7 +560,7 @@ onUnmounted(() => {
 .timer-value {
   font-family: $font-display;
   font-size: clamp(44px, 6vw, 72px);
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   line-height: 1;
   color: $color-accent-bright;
   font-variant-numeric: tabular-nums;
@@ -572,7 +570,6 @@ onUnmounted(() => {
 .timer-label {
   font-size: $font-size-body;
   color: $color-fg-muted;
-  letter-spacing: 4px;
 }
 
 // ---------- Carousel control strip ----------
@@ -632,12 +629,11 @@ onUnmounted(() => {
   align-items: baseline;
   gap: 6px;
   font-family: $font-display;
-  letter-spacing: 2px;
 }
 
 .idx-current {
   font-size: 22px;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $color-accent-bright;
   font-variant-numeric: tabular-nums;
 }
@@ -680,9 +676,7 @@ onUnmounted(() => {
   justify-self: center;
   text-align: center;
   font-size: 12px;
-  letter-spacing: 3px;
   color: $color-fg-muted;
-  text-transform: uppercase;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
 }
 

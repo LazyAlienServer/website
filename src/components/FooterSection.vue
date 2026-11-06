@@ -17,8 +17,11 @@
       </div>
     </div>
     <div class="footer-bar">
-      <span>© {{ year }} LAZY ALIEN SERVER</span>
-      <span>EST. 2022.08.29 — V2.0</span>
+      <span>© {{ year }} Lazy Alien Server</span>
+      <span class="footer-meta">
+        <span>Est. 2022.08.29</span>
+        <span>v2.0</span>
+      </span>
     </div>
     <div class="footer-wordmark">
       <div class="footer-wordmark-panel">
@@ -80,10 +83,9 @@ const year = new Date().getFullYear();
 
   span {
     font-family: $font-display;
-    font-weight: 700;
+    font-weight: $font-weight-bold;
     font-size: 16px;
     color: $color-fg;
-    letter-spacing: 1px;
   }
 }
 
@@ -93,7 +95,6 @@ const year = new Date().getFullYear();
     font-size: 14px;
     color: $color-fg-muted;
     line-height: 2;
-    letter-spacing: 1px;
   }
 
   .contact-note {
@@ -114,9 +115,14 @@ const year = new Date().getFullYear();
   max-width: $content-max-width;
   margin: 0 auto;
   font-size: 11px;
-  letter-spacing: 2px;
   color: $color-fg-subtle;
-  text-transform: uppercase;
+}
+
+.footer-meta {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 14px;
+  font-variant-numeric: tabular-nums;
 }
 
 .footer-wordmark {
@@ -138,7 +144,7 @@ const year = new Date().getFullYear();
   text {
     font-family: "Noto Sans SC", sans-serif;
     font-size: 150px;
-    font-weight: 900;
+    font-weight: $font-weight-black;
   }
 }
 

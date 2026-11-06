@@ -96,9 +96,8 @@ onUnmounted(() => {
   padding-right: calc(var(--ticker-size) * 0.45);
   font-family: $font-display;
   font-size: var(--ticker-size);
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   line-height: 1;
-  letter-spacing: 0.04em;
   white-space: nowrap;
 }
 

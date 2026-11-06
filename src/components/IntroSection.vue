@@ -15,15 +15,15 @@
             <h2 class="intro-title">关于我们</h2>
             <dl class="intro-badges">
               <div class="intro-badge">
-                <dt>NAME</dt>
+                <dt>Name</dt>
                 <dd>Lazy Alien Server</dd>
               </div>
               <div class="intro-badge">
-                <dt>FOCUS</dt>
+                <dt>Focus</dt>
                 <dd>技术交流</dd>
               </div>
               <div class="intro-badge">
-                <dt>MEMBERS</dt>
+                <dt>Members</dt>
                 <dd>学生群体</dd>
               </div>
             </dl>
@@ -43,8 +43,8 @@
       <div class="intro-deco" aria-hidden="true">
         <span class="plus-marker deco-plus-top">+</span>
         <span class="deco-rail"></span>
-        <span class="deco-text">SYS.STATUS // ONLINE</span>
-        <span class="deco-text">MODE // SURVIVAL</span>
+        <span class="deco-text">sys.status // online</span>
+        <span class="deco-text">mode // survival</span>
         <div class="deco-hatch"></div>
         <span class="plus-marker deco-plus-bottom">+</span>
       </div>
@@ -126,7 +126,6 @@ import ParticleLogo from "./ParticleLogo.vue";
     background: $color-line;
     color: $color-fg-muted;
     font-family: $font-display;
-    letter-spacing: 1px;
 
     @include light {
       background: $color-fg;
@@ -137,7 +136,6 @@ import ParticleLogo from "./ParticleLogo.vue";
   dd {
     background: $color-accent;
     color: $color-on-accent;
-    letter-spacing: 0.5px;
   }
 }
 
@@ -168,9 +166,7 @@ import ParticleLogo from "./ParticleLogo.vue";
   .deco-text {
     writing-mode: vertical-rl;
     font-size: 11px;
-    letter-spacing: 3px;
     color: $color-fg-subtle;
-    text-transform: uppercase;
   }
 
   .deco-hatch {

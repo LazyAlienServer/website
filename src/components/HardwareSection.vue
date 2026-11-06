@@ -76,15 +76,15 @@ interface HardwareSpec {
 const hardware: HardwareSpec[] = [
   {
     short: "CPU",
-    title: "CPU — i9-13900K",
+    title: "i9-13900K",
     description:
       "Intel 酷睿 i9-13900K，24 核 32 线程（8 个性能核 + 16 个能效核），主频可达 5.8–6.0GHz，配备 36MB 智能缓存。高主频让单线程的游戏逻辑运算稳定流畅，多核心则承担区块加载、备份等后台任务，为服务器提供充沛算力。",
     icon: icons.cpu,
-    metric: { value: "5.8", unit: "GHZ" },
+    metric: { value: "5.8", unit: "GHz" },
   },
   {
     short: "RAM",
-    title: "RAM — DDR5 5600MHz 内存",
+    title: "DDR5 5600MHz 内存",
     description:
       "两条 48GB 幻锋戟 DDR5-5600MHz 内存组成双通道，总容量 96GB。高频带宽加快数据交换，大容量可同时常驻更多已加载区块、实体与后台服务，保障多人在线时依然流畅运行。",
     icon: icons.ram,
@@ -92,7 +92,7 @@ const hardware: HardwareSpec[] = [
   },
   {
     short: "RAID",
-    title: "Storage — 2TB × 4 RAID 10",
+    title: "4 × 2TB NVMe",
     description:
       "4 块 2TB M.2 NVMe SSD 组成 RAID 10 存储阵列，可用容量 4TB。条带化提升并发读写速度，镜像冗余让任意一块硬盘故障时数据仍完整可用，兼顾速度、容量与数据安全。",
     icon: icons.storage,
@@ -100,7 +100,7 @@ const hardware: HardwareSpec[] = [
   },
 ];
 
-const hardwareTags = ["99% UPTIME", "13900K", "96GB DDR5", "4TB RAID 10", "BGP & CN2", "DEV TEAM"];
+const hardwareTags = ["99% uptime", "13900K", "96GB DDR5", "4TB RAID 10", "BGP & CN2", "Dev team"];
 
 const pad = (n: number): string => String(n).padStart(2, "0");
 </script>
@@ -157,7 +157,6 @@ const pad = (n: number): string => String(n).padStart(2, "0");
 .hw-subtitle {
   margin-top: 12px;
   font-size: 14px;
-  letter-spacing: 1px;
   color: $color-fg-muted;
 }
 
@@ -190,13 +189,11 @@ const pad = (n: number): string => String(n).padStart(2, "0");
   background: $color-line;
   color: $color-fg-muted;
   font-family: $font-display;
-  letter-spacing: 1px;
 }
 
 .hw-tag-value {
   background: $color-accent;
   color: $color-on-accent;
-  letter-spacing: 0.5px;
 }
 
 // ---------- Parts: three columns, each headed by a 2px rule ----------
@@ -225,14 +222,12 @@ const pad = (n: number): string => String(n).padStart(2, "0");
   background: $color-accent;
   color: $color-on-accent;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   line-height: 1;
-  letter-spacing: 3px;
 }
 
 .hw-spec-index {
   font-size: 12px;
-  letter-spacing: 2px;
   color: $color-fg-subtle;
 }
 
@@ -265,18 +260,16 @@ const pad = (n: number): string => String(n).padStart(2, "0");
   border-bottom: 1px solid $color-line;
   font-family: $font-display;
   font-size: clamp(60px, 7.6vw, 108px);
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   line-height: 0.8;
-  letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
   color: $color-fg;
 }
 
 .hw-unit {
   font-size: clamp(14px, 1.4vw, 20px);
-  font-weight: 500;
+  font-weight: $font-weight-medium;
   line-height: 1;
-  letter-spacing: 2px;
   color: $color-fg-subtle;
 }
 
@@ -284,10 +277,8 @@ const pad = (n: number): string => String(n).padStart(2, "0");
   margin-top: $spacing-md;
   font-family: $font-display;
   font-size: clamp(16px, 1.5vw, 20px);
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   line-height: 1.3;
-  letter-spacing: 1px;
-  text-transform: uppercase;
   color: $color-fg;
   overflow-wrap: break-word;
 }

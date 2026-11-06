@@ -4,7 +4,7 @@
       <div class="enlist-side" v-reveal>
         <div class="section-header">
           <div class="index-row">
-            <span class="index-join">JOIN US</span>
+            <span class="index-join">Join us</span>
           </div>
           <h2 class="section-title">加入我们</h2>
         </div>
@@ -16,7 +16,7 @@
           >
             <div class="path-head">
               <h3 class="path-title">审核制</h3>
-              <span class="path-index">PATH 01</span>
+              <span class="path-index">Path 01</span>
             </div>
             <p class="path-desc">
               通过素养审核（一审）与技术审核（二审），考察综合素质与红石、后勤或建筑能力。
@@ -28,7 +28,7 @@
           >
             <div class="path-head">
               <h3 class="path-title">邀请制</h3>
-              <span class="path-index">PATH 02</span>
+              <span class="path-index">Path 02</span>
             </div>
             <p class="path-desc">
               由成员担保邀请，通过面试及技术审核；被邀请人违规时邀请人承担连带责任。
@@ -44,10 +44,10 @@
         <div class="group-inner">
           <div class="group-status">
             <span class="signal-indicator"></span>
-            <span class="group-status-text">CHANNEL OPEN // RECRUITING</span>
+            <span class="group-status-text">Channel open // recruiting</span>
           </div>
           <p class="group-number">835047145</p>
-          <p class="group-caption">服外交流群 // QQ GROUP</p>
+          <p class="group-caption">服外交流群 // QQ group</p>
           <div class="group-actions">
             <a
               class="btn btn-primary join-btn"
@@ -153,8 +153,7 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 .index-join {
   font-family: $font-display;
   font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 3px;
+  font-weight: $font-weight-bold;
   color: $color-accent-ink;
 }
 
@@ -239,10 +238,8 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
   flex-shrink: 0;
   font-family: $font-display;
   font-size: $font-size-h4;
-  font-weight: 400;
-  letter-spacing: 3px;
+  font-weight: $font-weight-regular;
   color: $color-accent-ink;
-  text-transform: uppercase;
   white-space: nowrap;
 }
 
@@ -284,8 +281,7 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
   display: inline-block;
   padding: 16px 44px;
   font-size: 16px;
-  font-weight: 600;
-  letter-spacing: 2px;
+  font-weight: $font-weight-medium;
   transition: filter $transition-fast;
 
   &:hover {
@@ -378,16 +374,13 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 
 .group-status-text {
   font-size: 11px;
-  letter-spacing: 3px;
   color: $color-fg-muted;
-  text-transform: uppercase;
 }
 
 .group-number {
   font-family: $font-display;
   font-size: clamp(38px, 6vw, 56px);
-  font-weight: 700;
-  letter-spacing: 5px;
+  font-weight: $font-weight-bold;
   color: $color-accent-ink;
   font-variant-numeric: tabular-nums;
   text-shadow: 0 0 24px fade($color-glow, 0.35);
@@ -395,7 +388,6 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 
 .group-caption {
   font-size: 12px;
-  letter-spacing: 3px;
   color: $color-fg-subtle;
 }
 
@@ -472,7 +464,6 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
   }
 
   .group-status-text {
-    letter-spacing: clamp(1px, 0.2vw, 3px);
   }
 
   .group-actions {
@@ -534,7 +525,6 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
   }
 
   .group-status-text {
-    letter-spacing: 3px;
   }
 
   .group-actions .join-btn {

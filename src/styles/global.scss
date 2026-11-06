@@ -104,13 +104,15 @@ body {
   background: $color-accent;
 }
 
-// Typography scale
+// Typography scale. Headings are the only text allowed to be uppercase at
+// will; labels and metadata stay in normal case with no tracking (see
+// `variables.scss`).
 h1,
 h2,
 h3,
 h4 {
   font-family: $font-display;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   line-height: 1.15;
   text-transform: uppercase;
 }

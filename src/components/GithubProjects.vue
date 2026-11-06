@@ -5,19 +5,19 @@
       <div class="gh-rail" aria-hidden="true">
         <img class="gh-rail-logo" :src="logoUrl" alt="" />
         <div class="gh-rail-labels">
-          <span class="gh-rail-text">GITHUB</span>
+          <span class="gh-rail-text">GitHub</span>
           <span class="gh-rail-detail">
-            <span class="gh-rail-detail-desktop">GITHUB.COM/<br />LAZYALIENSERVER</span>
-            <span class="gh-rail-detail-mobile">LAZYALIENSERVER</span>
+            <span class="gh-rail-detail-desktop">github.com/<br />LazyAlienServer</span>
+            <span class="gh-rail-detail-mobile">LazyAlienServer</span>
           </span>
         </div>
       </div>
       <div class="gh-content">
         <div class="github-title" v-reveal>
-          <p class="github-title-kicker">LAZY ALIEN SERVER</p>
+          <p class="github-title-kicker">Lazy Alien Server</p>
           <div class="github-title-en-row">
             <span class="github-title-mark" aria-hidden="true"></span>
-            <span class="github-title-en">OPEN SOURCE</span>
+            <span class="github-title-en">Open source</span>
           </div>
           <h2 class="github-title-cn">开源项目</h2>
         </div>
@@ -47,9 +47,9 @@
 
         <!-- Error state -->
         <div v-else-if="error || repos.length === 0" class="error-state" v-reveal>
-          <p class="error-label">REPOSITORY INDEX OFFLINE</p>
+          <p class="error-label">Repository index offline</p>
           <p class="error-msg">{{ error ?? "No public repositories found." }}</p>
-          <button class="retry-btn" @click="loadRepos">RETRY UPLINK</button>
+          <button class="retry-btn" @click="loadRepos">Retry uplink</button>
         </div>
 
         <template v-else>
@@ -58,7 +58,7 @@
             <Transition name="head-swap" mode="out-in">
               <div :key="active.name" class="feature-head-inner">
                 <p class="feature-meta">
-                  <span class="feature-tag">// {{ active.language ?? "MISC" }}</span>
+                  <span class="feature-tag">// {{ active.language ?? "misc" }}</span>
                   <time class="feature-date">{{ formatDate(active.pushed_at) }}</time>
                 </p>
                 <h3 class="feature-name">{{ active.name }}</h3>
@@ -101,7 +101,6 @@
                 <p class="card-desc">{{ repo.description || "No description provided." }}</p>
                 <div class="card-meta">
                   <span v-if="repo.language" class="lang-text">{{ repo.language }}</span>
-                  <span v-else class="lang-none">—</span>
                   <span class="repo-stars">
                     <svg
                       viewBox="0 0 24 24"
@@ -154,7 +153,7 @@
             >
               <div class="card-caption">
                 <span class="caption-meta">
-                  <span class="caption-tag">// {{ repo.language ?? "MISC" }}</span>
+                  <span class="caption-tag">// {{ repo.language ?? "misc" }}</span>
                   <time>{{ formatDate(repo.pushed_at) }}</time>
                 </span>
                 <span class="caption-name">{{ repo.name }}</span>
@@ -175,7 +174,6 @@
                   <p class="card-desc">{{ repo.description || "No description provided." }}</p>
                   <div class="card-meta">
                     <span v-if="repo.language" class="lang-text">{{ repo.language }}</span>
-                    <span v-else class="lang-none">—</span>
                     <span class="repo-stars">
                       <svg
                         viewBox="0 0 24 24"
@@ -438,9 +436,7 @@ onUnmounted(() => clearInterval(autoplayId));
   writing-mode: vertical-rl;
   font-family: $font-display;
   font-size: 24px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  font-weight: $font-weight-bold;
   color: $color-on-accent;
   line-height: 1;
 }
@@ -461,7 +457,6 @@ onUnmounted(() => clearInterval(autoplayId));
   display: block;
   font-family: $font-display;
   line-height: 1.1;
-  letter-spacing: 0.8px;
   white-space: nowrap;
   transform: rotate(90deg);
   transform-origin: top left;
@@ -469,7 +464,7 @@ onUnmounted(() => clearInterval(autoplayId));
 
 .gh-rail-detail-desktop {
   font-size: 8px;
-  font-weight: 400;
+  font-weight: $font-weight-regular;
 }
 
 .gh-rail-detail-mobile {
@@ -484,7 +479,6 @@ onUnmounted(() => clearInterval(autoplayId));
 .github-title-kicker {
   font-family: $font-display;
   font-size: 9px;
-  letter-spacing: 2px;
   color: $color-fg-subtle;
 }
 
@@ -512,8 +506,7 @@ onUnmounted(() => clearInterval(autoplayId));
 .github-title-en {
   font-family: $font-display;
   font-size: 20px;
-  font-weight: 500;
-  letter-spacing: 1px;
+  font-weight: $font-weight-medium;
   color: $color-fg;
 }
 
@@ -534,9 +527,7 @@ onUnmounted(() => clearInterval(autoplayId));
   gap: $spacing-sm;
   font-family: $font-display;
   font-size: 14px;
-  letter-spacing: 2px;
   color: $color-fg-subtle;
-  text-transform: uppercase;
 }
 
 .feature-tag {
@@ -683,7 +674,7 @@ onUnmounted(() => clearInterval(autoplayId));
   bottom: -24px;
   font-family: $font-display;
   font-size: 160px;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   line-height: 1;
   color: fade($color-accent-ink, 0.1);
   pointer-events: none;
@@ -694,7 +685,6 @@ onUnmounted(() => clearInterval(autoplayId));
   font-size: 28px;
   color: $color-fg;
   text-transform: none;
-  letter-spacing: 0.5px;
   overflow-wrap: break-word;
 }
 
@@ -721,13 +711,7 @@ onUnmounted(() => clearInterval(autoplayId));
 .lang-text {
   font-family: $font-display;
   font-size: 11px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
   color: $color-accent-ink;
-}
-
-.lang-none {
-  color: $color-fg-subtle;
 }
 
 .repo-stars {
@@ -736,7 +720,7 @@ onUnmounted(() => clearInterval(autoplayId));
   gap: 6px;
   font-family: $font-display;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $color-accent-ink;
 }
 
@@ -814,7 +798,6 @@ onUnmounted(() => clearInterval(autoplayId));
   gap: 8px;
   font-family: $font-display;
   font-size: 14px;
-  letter-spacing: 2px;
   color: $color-fg-muted;
 
   .counter-divider {
@@ -833,7 +816,7 @@ onUnmounted(() => clearInterval(autoplayId));
   border: 1px solid $color-line;
   color: $color-fg;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: $font-weight-medium;
   transition:
     border-color $transition-fast,
     background $transition-fast;
@@ -946,7 +929,6 @@ onUnmounted(() => clearInterval(autoplayId));
 .error-label {
   font-family: $font-display;
   font-size: $font-size-h4;
-  letter-spacing: 3px;
   color: $color-danger;
   text-shadow: 0 0 12px fade($color-danger, 0.6);
 
@@ -968,9 +950,7 @@ onUnmounted(() => clearInterval(autoplayId));
   border: none;
   padding: 12px 36px;
   font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  font-weight: $font-weight-medium;
   clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
   transition:
     transform $transition-fast,
@@ -1152,7 +1132,6 @@ onUnmounted(() => clearInterval(autoplayId));
 
   .gh-rail-text {
     font-size: 15px;
-    letter-spacing: 0;
   }
 
   .gh-rail-labels {
@@ -1171,8 +1150,7 @@ onUnmounted(() => clearInterval(autoplayId));
   .gh-rail-detail-mobile {
     display: block;
     font-size: 5px;
-    font-weight: 300;
-    letter-spacing: 0.5px;
+    font-weight: $font-weight-regular;
   }
 
   // Stacked bulletin list — current + next, each with its own caption
@@ -1295,8 +1273,6 @@ onUnmounted(() => clearInterval(autoplayId));
     gap: $spacing-sm;
     font-family: $font-display;
     font-size: 12px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
     color: $color-fg-subtle;
   }
 
@@ -1307,7 +1283,7 @@ onUnmounted(() => clearInterval(autoplayId));
   .caption-name {
     font-family: $font-display;
     font-size: 18px;
-    font-weight: 700;
+    font-weight: $font-weight-bold;
     color: $color-fg;
     overflow-wrap: break-word;
   }

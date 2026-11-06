@@ -89,7 +89,7 @@ const capabilities: Capability[] = [
   color: $color-fg;
   font-family: $font-display;
   font-size: clamp(15px, 1.35vw, 18px);
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   line-height: 1.35;
   overflow-wrap: anywhere;
 }

@@ -5,24 +5,24 @@
         <div class="heading-main">
           <p class="gallery-kicker">
             <span class="kicker-mark" aria-hidden="true"></span>
-            LAS // VISUAL ARCHIVE
+            LAS // Visual archive
           </p>
-          <h1>画廊<span class="heading-en">GALLERY</span></h1>
+          <h1>画廊<span class="heading-en">Gallery</span></h1>
           <p class="heading-lead">
             服务器中的建筑、机械与红石工程，记录 Lazy Alien Server 成员共同建造的世界。
           </p>
         </div>
         <dl class="gallery-spec">
           <div class="spec-field">
-            <dt>FRAMES</dt>
+            <dt>Frames</dt>
             <dd>{{ pad(galleryItems.length) }}</dd>
           </div>
           <div class="spec-field">
-            <dt>CATEGORIES</dt>
+            <dt>Categories</dt>
             <dd>{{ pad(galleryCategories.length) }}</dd>
           </div>
           <div class="spec-field">
-            <dt>SINCE</dt>
+            <dt>Since</dt>
             <dd><time datetime="2022-08-29">2022.08.29</time></dd>
           </div>
         </dl>
@@ -46,7 +46,7 @@
         </div>
 
         <p class="toolbar-status" aria-live="polite">
-          SHOWING <strong>{{ pad(visible.length) }}</strong> / {{ pad(galleryItems.length) }}
+          Showing <strong>{{ pad(visible.length) }}</strong> / {{ pad(galleryItems.length) }}
         </p>
 
         <div class="view-toggle" role="group" aria-label="显示方式">
@@ -59,7 +59,7 @@
             <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
               <path d="M1 1h6v6H1zM9 1h6v6H9zM1 9h6v6H1zM9 9h6v6H9z" />
             </svg>
-            <span class="view-label">GRID</span>
+            <span class="view-label">Grid</span>
           </button>
           <button
             type="button"
@@ -70,7 +70,7 @@
             <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
               <path d="M1 2h14v2H1zM1 7h14v2H1zM1 12h14v2H1z" />
             </svg>
-            <span class="view-label">INDEX</span>
+            <span class="view-label">Index</span>
           </button>
         </div>
       </div>
@@ -80,7 +80,7 @@
       <!-- Keyed by view + filter so both toggles fade the old layout out
            and re-mount the new one, which replays the staggered entry. -->
       <Transition name="swap" mode="out-in">
-        <p v-if="!visible.length" key="empty" class="gallery-empty">该类别暂无作品 // NO FRAMES</p>
+        <p v-if="!visible.length" key="empty" class="gallery-empty">该类别暂无作品 // No frames</p>
 
         <ol
           v-else-if="view === 'grid'"
@@ -119,8 +119,8 @@
                 </span>
                 <span class="frame-plate" aria-hidden="true">{{ entry.number }}</span>
                 <span class="frame-hud" aria-hidden="true">
-                  <span>{{ entry.item.width }} × {{ entry.item.height }} PX</span>
-                  <span class="hud-action">查看 / VIEW</span>
+                  <span>{{ entry.item.width }} × {{ entry.item.height }} px</span>
+                  <span class="hud-action">查看 / View</span>
                 </span>
               </span>
               <span class="frame-caption">
@@ -140,7 +140,7 @@
         <div v-else :key="`index-${filter}`" class="gallery-index">
           <div class="index-table">
             <p class="index-head" aria-hidden="true">
-              <span>NO.</span><span>标题 / TITLE</span><span>类别</span><span>尺寸 / PX</span>
+              <span>NO.</span><span>标题 / Title</span><span>类别</span><span>尺寸 / px</span>
             </p>
             <ol aria-label="画廊索引">
               <li v-for="(entry, index) in visible" :key="entry.item.id" :style="{ '--i': index }">
@@ -220,7 +220,7 @@
             {{ activeEntry.item.title }}
             <span>
               {{ activeEntry.item.titleEn }} // {{ activeEntry.category.labelEn }} //
-              {{ activeEntry.item.width }} × {{ activeEntry.item.height }} PX
+              {{ activeEntry.item.width }} × {{ activeEntry.item.height }} px
             </span>
           </span>
           <span class="viewer-controls">
@@ -446,8 +446,7 @@ onUnmounted(onClose);
 .heading-en {
   font-family: $font-display;
   font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 4px;
+  font-weight: $font-weight-bold;
   color: $color-accent-ink;
 }
 
@@ -458,8 +457,7 @@ onUnmounted(onClose);
   margin-bottom: 20px;
   font-family: $font-display;
   font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 3px;
+  font-weight: $font-weight-bold;
   color: $color-fg-subtle;
 }
 
@@ -498,15 +496,13 @@ onUnmounted(onClose);
   dt {
     font-family: $font-display;
     font-size: 10px;
-    letter-spacing: 2px;
     color: $color-fg-subtle;
   }
 
   dd {
     font-family: $font-display;
     font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 1px;
+    font-weight: $font-weight-bold;
     font-variant-numeric: tabular-nums;
     color: $color-fg;
   }
@@ -542,7 +538,6 @@ onUnmounted(onClose);
   color: $color-fg-subtle;
   font-family: $font-display;
   font-size: 12px;
-  letter-spacing: 2px;
   cursor: pointer;
   transition:
     color $transition-fast,
@@ -582,7 +577,6 @@ onUnmounted(onClose);
 
 .filter-count {
   font-size: 10px;
-  letter-spacing: 1px;
   font-variant-numeric: tabular-nums;
   opacity: 0.6;
 }
@@ -591,7 +585,6 @@ onUnmounted(onClose);
   margin-left: auto;
   font-family: $font-display;
   font-size: 11px;
-  letter-spacing: 2px;
   font-variant-numeric: tabular-nums;
   color: $color-fg-subtle;
 
@@ -623,7 +616,6 @@ onUnmounted(onClose);
   border: 1px dashed $color-line;
   text-align: center;
   font-family: $font-display;
-  letter-spacing: 3px;
   color: $color-fg-subtle;
 }
 
@@ -808,12 +800,11 @@ onUnmounted(onClose);
   border-bottom: 1px solid $color-accent-ink;
   font-family: $font-display;
   font-size: 11px;
-  letter-spacing: 2px;
   color: $color-fg-subtle;
 
   b {
     margin: 0 10px 0 6px;
-    font-weight: 700;
+    font-weight: $font-weight-bold;
     font-variant-numeric: tabular-nums;
     color: $color-on-photo;
 
@@ -843,8 +834,7 @@ onUnmounted(onClose);
   color: $color-on-accent;
   font-family: $font-display;
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 2px;
+  font-weight: $font-weight-bold;
   font-variant-numeric: tabular-nums;
 }
 
@@ -861,7 +851,6 @@ onUnmounted(onClose);
   border-top: 1px solid $color-accent-ink;
   font-family: $font-display;
   font-size: 11px;
-  letter-spacing: 2px;
   font-variant-numeric: tabular-nums;
   color: $color-fg-muted;
   transform: translateY(100%);
@@ -898,7 +887,7 @@ onUnmounted(onClose);
 .frame-index {
   font-family: $font-display;
   font-size: 18px;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   line-height: 1;
   font-variant-numeric: tabular-nums;
   color: $color-accent-ink;
@@ -914,7 +903,7 @@ onUnmounted(onClose);
 
 .frame-title-cn {
   font-size: 16px;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $color-fg;
 }
 
@@ -922,7 +911,6 @@ onUnmounted(onClose);
 .frame-category {
   font-family: $font-display;
   font-size: 11px;
-  letter-spacing: 2px;
   color: $color-fg-subtle;
 }
 
@@ -974,7 +962,6 @@ onUnmounted(onClose);
   border-bottom: 3px solid $color-accent-ink;
   font-family: $font-display;
   font-size: 10px;
-  letter-spacing: 2px;
   color: $color-fg-subtle;
 }
 
@@ -1053,7 +1040,6 @@ onUnmounted(onClose);
 .index-size {
   font-family: $font-display;
   font-size: 13px;
-  letter-spacing: 1px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1064,14 +1050,13 @@ onUnmounted(onClose);
 
 .index-title {
   font-size: 16px;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
 
   span {
     margin-left: 12px;
     font-family: $font-display;
     font-size: 11px;
-    font-weight: 400;
-    letter-spacing: 2px;
+    font-weight: $font-weight-regular;
     color: $color-fg-subtle;
   }
 }
@@ -1100,7 +1085,6 @@ onUnmounted(onClose);
     margin-top: 10px;
     font-family: $font-display;
     font-size: 11px;
-    letter-spacing: 2px;
     color: $color-fg-subtle;
   }
 }
@@ -1302,7 +1286,6 @@ onUnmounted(onClose);
 .viewer-count {
   font-family: $font-display;
   font-size: 12px;
-  letter-spacing: 2px;
   font-variant-numeric: tabular-nums;
   color: $color-fg-subtle;
 
@@ -1317,14 +1300,13 @@ onUnmounted(onClose);
   white-space: nowrap;
   text-overflow: ellipsis;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
 
   span {
     margin-left: 12px;
     font-family: $font-display;
     font-size: 11px;
-    font-weight: 400;
-    letter-spacing: 2px;
+    font-weight: $font-weight-regular;
     color: $color-fg-subtle;
   }
 }
@@ -1419,7 +1401,6 @@ onUnmounted(onClose);
     background: rgba($color-photo-scrim, 0.8);
     font-family: $font-display;
     font-size: 10px;
-    letter-spacing: 1px;
     color: $color-fg-muted;
   }
 }

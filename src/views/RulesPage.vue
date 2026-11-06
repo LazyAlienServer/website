@@ -4,20 +4,20 @@
       <div class="rules-heading-inner">
         <p class="rules-kicker">
           <span class="kicker-mark" aria-hidden="true"></span>
-          LAS // COMMUNITY PROTOCOL
+          LAS // Community protocol
         </p>
         <h1>Lazy Alien Server<br /><span class="accent">规章制度</span></h1>
         <dl class="rules-spec">
           <div class="spec-field">
-            <dt>REVISION</dt>
+            <dt>Revision</dt>
             <dd><time datetime="2023-08-15">2023.08.15</time></dd>
           </div>
           <div class="spec-field">
-            <dt>CHAPTERS</dt>
+            <dt>Chapters</dt>
             <dd>{{ pad(outline.length) }}</dd>
           </div>
           <div class="spec-field">
-            <dt>ARTICLES</dt>
+            <dt>Articles</dt>
             <dd>{{ pad(articleCount) }}</dd>
           </div>
         </dl>
@@ -46,7 +46,7 @@
         </section>
 
         <footer class="rules-signoff">
-          <span class="signoff-label">END OF DOCUMENT</span>
+          <span class="signoff-label">End of document</span>
           <div>
             <p>
               <a
@@ -254,8 +254,7 @@ onUnmounted(() => {
   margin-bottom: 24px;
   font-family: $font-display;
   font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 3px;
+  font-weight: $font-weight-bold;
   color: $color-fg-subtle;
 }
 
@@ -286,15 +285,13 @@ onUnmounted(() => {
   dt {
     font-family: $font-display;
     font-size: 10px;
-    letter-spacing: 2px;
     color: $color-fg-subtle;
   }
 
   dd {
     font-family: $font-display;
     font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 1px;
+    font-weight: $font-weight-bold;
     font-variant-numeric: tabular-nums;
     color: $color-fg;
   }
@@ -354,7 +351,7 @@ onUnmounted(() => {
 .chapter-index {
   font-family: $font-display;
   font-size: 64px;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   line-height: 0.8;
   font-variant-numeric: tabular-nums;
   color: transparent;
@@ -365,7 +362,6 @@ onUnmounted(() => {
   margin-bottom: 6px;
   font-family: $font-display;
   font-size: 12px;
-  letter-spacing: 2px;
   color: $color-fg-subtle;
 }
 
@@ -383,7 +379,6 @@ onUnmounted(() => {
   h3 {
     padding-top: 3px;
     font-size: 14px;
-    letter-spacing: 2px;
     color: $color-fg-subtle;
   }
 }
@@ -482,7 +477,6 @@ onUnmounted(() => {
   gap: 12px;
   font-family: $font-display;
   font-size: 11px;
-  letter-spacing: 3px;
   color: $color-fg-subtle;
 
   &::before {
@@ -496,7 +490,6 @@ onUnmounted(() => {
 .signoff-date {
   font-family: $font-display;
   font-size: 13px;
-  letter-spacing: 2px;
   color: $color-fg-subtle;
 }
 
@@ -576,7 +569,6 @@ onUnmounted(() => {
   border: 1px solid $color-line;
   font-family: $font-display;
   font-size: 10px;
-  letter-spacing: 1px;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
   color: $color-fg-subtle;

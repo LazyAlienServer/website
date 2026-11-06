@@ -68,6 +68,16 @@ $dark-neutrals: (
 }
 
 // Typography
+// Four weights only, site-wide: body, UI, display, and the closing wordmark.
+// `index.html` requests exactly these. Never introduce another weight.
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-bold: 700;
+$font-weight-black: 900;
+
+// Uppercase is reserved for brand wordmarks and oversized display type.
+// Small labels stay in normal case and are never letter-spaced: the
+// "ALL CAPS + small type + wide tracking" pattern is not part of this design.
 $font-primary: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 $font-display: "Roboto Condensed", "Inter", sans-serif;
 
@@ -75,6 +85,7 @@ $font-size-h1: 64px;
 $font-size-h2: 48px;
 $font-size-h3: 36px;
 $font-size-h4: 24px;
+$font-size-lead: 20px;
 $font-size-body: 16px;
 $font-size-body-lg: 18px;
 
