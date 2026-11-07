@@ -141,7 +141,7 @@ Operator data is local and typed. Avatar URLs point to the LAS website source di
 
 ### `JoinSection.vue`
 
-The two rules buttons route to `/rules` with query values `path=01` or `path=02` and a chapter hash. The QQ group number is `835047145`. Copying uses `navigator.clipboard` first and a temporary textarea fallback second; timer cleanup belongs in `onBeforeUnmount`.
+The section is one two-row grid: the heading on top, then the path list beside the group plate, with the hatched divider and the group panel spanning both rows. The two rules links are rows of a ruled list (index, title, arrow, description) that route to `/rules` with query values `path=01` or `path=02` and a chapter hash. The group plate (label under a scribed rule, the QQ group number `835047145`, and a row of the full-width join link plus a square copy button) shares the list's row, so its top rule continues the list's first rule and its controls sit on the list's last rule. Copying uses `navigator.clipboard` first and a temporary textarea fallback second; timer cleanup belongs in `onBeforeUnmount`.
 
 ### `FooterSection.vue`
 
@@ -159,9 +159,9 @@ Both routes render the same footer, including the closing blue wordmark. A norma
 - Industrial mixins: `clipped-panel`, `corner-brackets`, and `hatch-strip`.
 - Hero slant: `src/styles/global.scss` defines `--hero-slant` and `--hero-slant-tan` on `:root`, the viewport-dependent angle of the hero image's clipped left edge (`atan2(4.8vw, max(100vh, 640px))`), with fixed 1920×1080 fallbacks. Every slant uses it (the AGENTS.md tilt rule): kicker marks (rules, gallery), the hero primary button (skewed `::before` clipped by `overflow: hidden`), ticker marks, and the join divider and group tint.
 
-Section headings are intentionally bespoke and owned by each section component (hero “We are” kicker with a ↘ arrow block, intro title with flat-square key/value shield badges, timer founding timeline, hardware title with the same shields beside it, GitHub title, admin “Crew manifest” nameplate with a scribed rule plus roster manifest, join index row). The hero carries no section index. There is no shared section-header component or global header class; derive header data from the section's own constants (`hardware`, `operators`, `establishedDate`).
+Section headings are intentionally bespoke and owned by each section component (hero “We are” kicker with a ↘ arrow block, intro title with flat-square key/value shield badges, timer founding timeline, hardware title with the same shields beside it, GitHub title, admin “Crew manifest” nameplate with a scribed rule plus roster manifest, join title level with a “JOIN US” display mark on the group panel, over the ruled path list). The hero carries no section index. There is no shared section-header component or global header class; derive header data from the section's own constants (`hardware`, `operators`, `establishedDate`, `paths`).
 
-`src/styles/global.scss` owns resets, body defaults, typography scale, utility panels, blueprint grids, signal animation, section shells, reveal transitions, and the global reduced-motion rules. Prefer existing tokens/mixins over local duplicate values.
+`src/styles/global.scss` owns resets, body defaults, typography scale, utility panels, blueprint grids, section shells, reveal transitions, and the global reduced-motion rules. Prefer existing tokens/mixins over local duplicate values.
 
 `src/directives/reveal.ts` owns the `v-reveal` contract. It adds `.reveal`, observes the element once with `IntersectionObserver`, then adds `.revealed`. The global reduced-motion rule makes revealed content immediately visible without transition.
 

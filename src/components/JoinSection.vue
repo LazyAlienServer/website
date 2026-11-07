@@ -1,85 +1,62 @@
 <template>
   <section id="join" class="join-section">
     <div class="section-shell join-layout">
-      <div class="enlist-side" v-reveal>
-        <div class="section-header">
-          <div class="index-row">
-            <span class="index-join">Join us</span>
-          </div>
-          <h2 class="section-title">加入我们</h2>
-        </div>
+      <h2 class="join-head join-title" v-reveal>加入我们</h2>
 
-        <div class="paths-grid">
+      <ol class="paths" v-reveal>
+        <li v-for="item in paths" :key="item.index">
           <router-link
-            class="path-card"
-            :to="{ path: '/rules', query: { path: '01' }, hash: '#06' }"
+            class="path"
+            :to="{ path: '/rules', query: { path: item.index }, hash: '#06' }"
           >
-            <div class="path-head">
-              <h3 class="path-title">审核制</h3>
-              <span class="path-index">Path 01</span>
-            </div>
-            <p class="path-desc">
-              通过素养审核（一审）与技术审核（二审），考察综合素质与红石、后勤或建筑能力。
-            </p>
+            <span class="path-index">{{ item.index }}</span>
+            <h3 class="path-title">{{ item.title }}</h3>
+            <span class="path-arrow" aria-hidden="true">→</span>
+            <p class="path-desc">{{ item.description }}</p>
           </router-link>
-          <router-link
-            class="path-card"
-            :to="{ path: '/rules', query: { path: '02' }, hash: '#06' }"
-          >
-            <div class="path-head">
-              <h3 class="path-title">邀请制</h3>
-              <span class="path-index">Path 02</span>
-            </div>
-            <p class="path-desc">
-              由成员担保邀请，通过面试及技术审核；被邀请人违规时邀请人承担连带责任。
-            </p>
-          </router-link>
-        </div>
-      </div>
+        </li>
+      </ol>
 
       <!-- full-height hatched divider, slanted at the hero seam's angle -->
       <div class="zone-divider" aria-hidden="true"></div>
+      <div class="group-panel" aria-hidden="true"></div>
+      <!-- display mark on the panel, level with the section title -->
+      <p class="group-mark" aria-hidden="true">JOIN US</p>
 
-      <div class="group-zone" v-reveal>
-        <div class="group-inner">
-          <div class="group-status">
-            <span class="signal-indicator"></span>
-            <span class="group-status-text">Channel open // recruiting</span>
-          </div>
-          <p class="group-number">835047145</p>
-          <p class="group-caption">服外交流群 // QQ group</p>
-          <div class="group-actions">
-            <a
-              class="btn btn-primary join-btn"
-              href="https://qm.qq.com/q/32DhVd36iI"
-              target="_blank"
-              rel="noopener"
-              >加入 QQ 群</a
+      <div class="group-inner" v-reveal>
+        <p class="group-label">服外交流群</p>
+        <p class="group-number">835047145</p>
+        <div class="group-actions">
+          <a
+            class="btn btn-primary join-btn"
+            href="https://qm.qq.com/q/32DhVd36iI"
+            target="_blank"
+            rel="noopener"
+            >加入 QQ 群</a
+          >
+          <button
+            class="btn copy-btn"
+            :class="{ 'is-copied': copied }"
+            type="button"
+            :aria-label="copied ? '已复制群号' : '复制群号'"
+            :title="copied ? '已复制群号' : '复制群号'"
+            @click="copyGroupNumber"
+          >
+            <svg
+              class="copy-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="square"
+              stroke-linejoin="miter"
+              aria-hidden="true"
             >
-            <button
-              class="btn copy-btn"
-              :class="{ 'is-copied': copied }"
-              type="button"
-              :aria-label="copied ? '已复制群号' : '复制群号'"
-              :title="copied ? '已复制群号' : '复制群号'"
-              @click="copyGroupNumber"
-            >
-              <svg
-                class="copy-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="square"
-                stroke-linejoin="miter"
-                aria-hidden="true"
-              >
-                <path v-if="!copied" d="M9 9h10v10H9z" />
-                <path v-if="!copied" d="M5 15H4V5h10v1" />
-                <path v-else d="m5 12 4 4L19 6" />
-              </svg>
-            </button>
-          </div>
+              <path v-if="!copied" d="M9 9h10v10H9z" />
+              <path v-if="!copied" d="M5 15H4V5h10v1" />
+              <path v-else d="m5 12 4 4L19 6" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
@@ -88,6 +65,20 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, shallowRef } from "vue";
+
+// `index` doubles as the rules page `path` query value.
+const paths = [
+  {
+    index: "01",
+    title: "审核制",
+    description: "通过素养审核（一审）与技术审核（二审），考察综合素质与红石、后勤或建筑能力。",
+  },
+  {
+    index: "02",
+    title: "邀请制",
+    description: "由成员担保邀请，通过面试及技术审核；被邀请人违规时邀请人承担连带责任。",
+  },
+] as const;
 
 const GROUP_NUMBER = "835047145";
 const copied = shallowRef(false);
@@ -133,77 +124,62 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
   }
 }
 
+// Two shared rows: the heading, then the path list beside the group plate, so
+// the plate's top rule continues the list's first rule across the divider and
+// its controls sit on the list's last rule. The divider and the group panel
+// span both rows; the auto column is as wide as the plate.
 .join-layout {
-  display: flex;
-  align-items: stretch;
-  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 48px auto;
+  grid-template-rows: auto auto;
 }
 
-// ---------- Enlist side (left) ----------
-// flexes to fill everything the auto-sized group zone and the 48px band
-// leave behind
-.enlist-side {
-  flex: 1 1 0;
-  min-width: 0;
+.join-head,
+.paths {
+  grid-column: 1;
   // breathing room before the hatched divider
-  padding-right: 12px;
+  margin-right: 12px;
 }
 
-// blue JOIN US index label — keeps the control-panel row language
-.index-join {
-  font-family: $font-display;
-  font-size: 14px;
-  font-weight: $font-weight-bold;
-  color: $color-accent-ink;
-}
-
-// original section-header layout, scoped here after the global header styles were retired
-.section-header {
+// ---------- Heading ----------
+.join-head {
+  grid-row: 1;
   margin-bottom: $spacing-lg;
 }
 
-.index-row {
-  display: flex;
-  align-items: center;
-  gap: $spacing-sm;
-  margin-bottom: $spacing-sm;
-
-  // fading hairline filling the row — control-panel framing
-  &::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    margin-left: $spacing-sm;
-    background: linear-gradient(90deg, $color-line 0%, fade($color-line, 0) 100%);
-  }
-}
-
-.section-title {
+.join-title {
   font-size: $font-size-h2;
   color: $color-fg;
 }
 
-// PATH cards stack vertically — one per row
-.paths-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $spacing-md;
-  margin-bottom: $spacing-md;
+// ---------- Path list: a ruled table, one row per route ----------
+.paths {
+  grid-row: 2;
+  border-bottom: 1px solid $color-line;
+  list-style: none;
 }
 
-.path-card {
+.path {
   position: relative;
-  display: block;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "index title arrow"
+    ". desc .";
+  gap: $spacing-xs $spacing-md;
+  padding-block: $spacing-md;
+  border-top: 1px solid $color-line;
   color: inherit;
   text-decoration: none;
-  cursor: pointer;
 
-  // PATH hover uses directional index and underline motion, not card lift
+  // hover: an ink bar grows over the row's bottom rule (z-index lifts it above
+  // the next row's top rule)
   &::after {
     content: "";
     position: absolute;
+    z-index: 1;
     right: 0;
-    bottom: -12px;
+    bottom: -1px;
     left: 0;
     height: 3px;
     background: $color-accent-ink;
@@ -219,59 +195,46 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 
   &:focus-visible {
     outline: 2px solid $color-accent-ink;
-    outline-offset: 6px;
+    outline-offset: 4px;
   }
 }
 
-// title and index share one row: title left, blue index right
-.path-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: $spacing-md;
-  margin-bottom: $spacing-sm;
+.path-index,
+.path-arrow {
+  font-family: $font-display;
+  font-size: $font-size-h4;
+  line-height: 1.15;
 }
 
 .path-index {
-  display: inline-flex;
-  align-items: center;
-  flex-shrink: 0;
-  font-family: $font-display;
-  font-size: $font-size-h4;
+  grid-area: index;
   font-weight: $font-weight-regular;
+  font-variant-numeric: tabular-nums;
   color: $color-accent-ink;
-  white-space: nowrap;
-}
-
-// The arrow expands from the right edge toward the index text, shifting the
-// PATH label left as it appears.
-.path-index::after {
-  content: "→";
-  display: inline-block;
-  width: 0;
-  margin-left: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition:
-    width 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-    margin-left 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.path-card:hover .path-index::after {
-  width: 1.1em;
-  margin-left: $spacing-xs;
-  opacity: 1;
-  transform: translateX(0);
 }
 
 .path-title {
+  grid-area: title;
   font-size: $font-size-h4;
   color: $color-fg;
 }
 
+.path-arrow {
+  grid-area: arrow;
+  color: $color-fg-subtle;
+  transition:
+    color $transition-fast,
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.path:hover .path-arrow,
+.path:focus-visible .path-arrow {
+  color: $color-accent-ink;
+  transform: translateX(4px);
+}
+
 .path-desc {
+  grid-area: desc;
   font-size: $font-size-body;
   color: $color-fg-muted;
   line-height: 1.7;
@@ -279,8 +242,9 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 
 .btn {
   display: inline-block;
-  padding: 16px 44px;
+  padding: 12px 28px;
   font-size: 16px;
+  line-height: 24px;
   font-weight: $font-weight-medium;
   transition: filter $transition-fast;
 
@@ -308,34 +272,30 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 
 // ---------- Full-height hatched divider at the hero seam's slant ----------
 .zone-divider {
-  // Flow item: enlist fills the space before it; the auto-sized group zone
-  // starts immediately after it. Negative block margins extend it through
-  // the shell padding to the section's top and bottom edges.
-  flex: 0 0 48px;
-  margin-top: calc(-1 * $section-padding-y);
-  margin-bottom: calc(-1 * $section-padding-y);
+  grid-column: 2;
+  grid-row: 1 / -1;
+  // negative block margins extend it through the shell padding to the
+  // section's top and bottom edges
+  margin-block: calc(-1 * $section-padding-y);
   transform-origin: 0 100%;
   transform: skewX(calc(-1 * var(--hero-slant)));
   @include hatch-strip(fade($color-accent-ink, 0.55), 45deg, 2px, 8px);
 }
 
-// ---------- Group zone (right) ----------
-.group-zone {
+// ---------- Group panel and plate (right) ----------
+// Negative margins carry the panel through the shell padding to the section's
+// top, bottom, and right edges. The tint is a skewed pseudo-element clipped by
+// the panel, so only the left edge slants: uniform blue in dark, solid yellow
+// in light, where the controls on it turn black.
+.group-panel {
+  grid-column: 3;
+  grid-row: 1 / -1;
   position: relative;
-  // Content determines the group width; enlist consumes the remainder.
-  flex: 0 0 auto;
-  display: flex;
   overflow: hidden;
-  // The divider now occupies its own 48px flow slot, so the blue cut starts
-  // directly at the divider's right edge.
-  margin-top: calc(-1 * $section-padding-y);
-  margin-bottom: calc(-1 * $section-padding-y);
-  margin-left: 0;
-  // negative right margin spans the shell's horizontal padding plus the
-  // centered-shell margin, so the blue reaches the section's right edge
+  margin-block: calc(-1 * $section-padding-y);
+  // spans the shell's horizontal padding plus the centered-shell margin
   margin-right: calc(-1 * ((100vw - min(1200px, 100vw)) / 2 + $spacing-md));
-  // uniform tint — gradient removed per request; in light a solid yellow
-  // panel, so the controls on it turn black
+
   &::before {
     content: "";
     position: absolute;
@@ -350,58 +310,67 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
   }
 }
 
-.group-inner {
+// Set like the page headings (display face, bold) at the title's size and line
+// box, so the two read as one line across the divider; right-aligned to the
+// plate's edge.
+.group-mark {
+  grid-column: 3;
+  grid-row: 1;
   position: relative;
-  flex: 1;
+  padding-left: $spacing-lg * 1.3;
+  font-family: $font-display;
+  font-size: $font-size-h2;
+  font-weight: $font-weight-bold;
+  line-height: 1.15;
+  text-align: right;
+  color: $color-accent-ink;
+}
+
+// Data plate in the list's row: label under a scribed rule (right-aligned
+// under the mark), the number, and the controls pushed down onto the list's
+// last rule. Rows stretch to the widest one (the number), so the plate ends
+// flush at the shell's content edge.
+.group-inner {
+  grid-column: 3;
+  grid-row: 2;
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  justify-content: center;
-  gap: $spacing-md;
-  text-align: right;
-  padding: $spacing-lg;
+  // clears the slanted left edge, which leans further right higher up
   padding-left: $spacing-lg * 1.3;
-  // offset the zone extension and the inner right padding so content ends
-  // exactly at the shell's content edge
-  margin-right: calc((100vw - min(1200px, 100vw)) / 2 + $spacing-md - $spacing-lg);
 }
 
-.group-status {
-  display: flex;
-  align-items: center;
-  gap: $spacing-xs;
-}
-
-.group-status-text {
-  font-size: 11px;
+.group-label {
+  padding-top: $spacing-md;
+  border-top: 1px solid $color-accent-ink;
+  font-size: 14px;
+  line-height: 1;
+  text-align: right;
   color: $color-fg-muted;
 }
 
 .group-number {
+  margin-top: $spacing-sm;
+  margin-bottom: $spacing-md;
   font-family: $font-display;
   font-size: clamp(38px, 6vw, 56px);
   font-weight: $font-weight-bold;
+  line-height: 1;
   color: $color-accent-ink;
   font-variant-numeric: tabular-nums;
-  text-shadow: 0 0 24px fade($color-glow, 0.35);
-}
-
-.group-caption {
-  font-size: 12px;
-  color: $color-fg-subtle;
 }
 
 .group-actions {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
   gap: $spacing-xs;
+  margin-top: auto;
 }
 
-// Subtle join button hover: no scaling or rotating scan effect. On the yellow
-// panel in light it is a black block.
+// Fills the row beside the copy square. On the yellow panel in light it is a
+// black block.
 .join-btn {
-  transition: filter $transition-fast;
+  flex: 1;
+  text-align: center;
 
   @include light {
     background: $color-fg;
@@ -409,12 +378,12 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
   }
 }
 
-// Square copy control beside the join action.
+// Square copy control beside the join action, as tall as the join button.
 .copy-btn {
   display: inline-grid;
   place-items: center;
-  width: 58px;
-  height: 58px;
+  width: 48px;
+  height: 48px;
   padding: 0;
   border: 1px solid $color-accent-ink;
   background: fade($color-accent-deep, 0.12);
@@ -442,107 +411,80 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 }
 
 .copy-icon {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   transition: transform $transition-fast;
 }
 
 // ---------- Responsive ----------
 @include tablet {
-  .zone-divider {
-    // Tablet shells use 72px vertical padding, not the desktop 120px.
+  // tablet shells use 72px vertical padding, not the desktop 120px
+  .zone-divider,
+  .group-panel {
     margin-block: calc(-1 * $spacing-lg * 1.5);
   }
 
-  .group-zone {
-    margin-block: calc(-1 * $spacing-lg * 1.5);
-  }
-
+  .group-mark,
   .group-inner {
     // tablet: base left padding minus 12px
     padding-left: calc($spacing-lg - 12px);
-  }
-
-  .group-status-text {
-  }
-
-  .group-actions {
-    gap: clamp(6px, 1vw, 8px);
-  }
-
-  .group-actions .join-btn {
-    padding: clamp(12px, calc(12px + (100vw - 640px) * 0.0104167), 16px)
-      clamp(28px, calc(28px + (100vw - 640px) * 0.0416667), 44px);
-    font-size: clamp(14px, calc(14px + (100vw - 640px) * 0.0052083), 16px);
-  }
-
-  .group-actions .copy-btn {
-    width: clamp(50px, calc(50px + (100vw - 640px) * 0.0208333), 58px);
-    height: clamp(50px, calc(50px + (100vw - 640px) * 0.0208333), 58px);
   }
 }
 
 @include mobile {
   .join-layout {
-    flex-direction: column;
-    margin-bottom: -24px;
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .enlist-side {
-    flex: none;
-    width: 100%;
+  .join-head,
+  .paths {
+    margin-right: 0;
   }
 
   .zone-divider {
     display: none;
   }
 
-  .group-zone {
-    flex: none;
-    // extend the background across both shell side paddings on mobile
-    margin-top: 0;
+  // the panel becomes a full-bleed band from below the list to the section's
+  // bottom edge, holding the mark and then the plate
+  .group-panel,
+  .group-mark,
+  .group-inner {
+    grid-column: 1;
+  }
+
+  .group-panel {
+    grid-row: 3 / 5;
+    margin-top: $spacing-lg;
     margin-right: calc(-1 * $spacing-sm);
-    margin-bottom: 0;
+    margin-bottom: calc(-1 * $spacing-lg);
     margin-left: calc(-1 * $spacing-sm);
-    // let the blue layer's bottom stretch past the zone box
-    overflow: visible;
 
     &::before {
-      // background-only extension: top stays anchored to the zone, bottom
-      // runs through the shell's bottom padding to the section's edge —
-      // no layout margin involved
-      top: 0;
-      bottom: calc(-1 * $spacing-lg * 1.5);
       transform: none;
     }
   }
 
+  .group-mark {
+    grid-row: 3;
+    margin-top: $spacing-lg;
+    padding: $spacing-lg 0 0;
+  }
+
   .group-inner {
-    padding: $spacing-lg $spacing-sm;
-    // mobile: base left padding minus 12px
-    padding-left: calc($spacing-sm - 12px);
-    margin-right: 0;
-  }
-
-  .group-status-text {
-  }
-
-  .group-actions .join-btn {
-    padding: 16px 44px;
-    font-size: 16px;
-  }
-
-  .group-actions .copy-btn {
-    width: 58px;
-    height: 58px;
-  }
-
-  .group-actions .copy-btn {
-    order: -1;
+    grid-row: 4;
+    padding: $spacing-md 0 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .path::after,
+  .path-arrow {
+    transition: none;
+  }
+
+  .path:hover .path-arrow,
+  .path:focus-visible .path-arrow,
   .copy-btn:hover .copy-icon {
     transform: none;
   }

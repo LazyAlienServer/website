@@ -163,27 +163,6 @@ button {
   background-size: 56px 56px;
 }
 
-// Blinking signal indicator (a dot: black ink in light, never yellow)
-.signal-indicator {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: $color-accent-ink;
-  box-shadow: 0 0 10px $color-glow;
-  animation: signal-blink 1.4s ease-in-out infinite;
-}
-
-@keyframes signal-blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.2;
-  }
-}
-
 // Section shell — consistent max-width and vertical rhythm
 .section-shell {
   max-width: $content-max-width;
@@ -390,9 +369,5 @@ html[data-nav-move="down"] {
     opacity: 1;
     transform: none;
     transition: none;
-  }
-
-  .signal-indicator {
-    animation: none;
   }
 }
