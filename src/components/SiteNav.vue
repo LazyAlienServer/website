@@ -80,7 +80,9 @@ const toggleLabel = computed(() => (theme.value === "light" ? "切换至深色�
 
   a {
     position: relative;
-    padding-bottom: 6px;
+    // symmetric so the text, not text plus underline gap, sits on the row's
+    // center line with the logo and the theme toggle
+    padding-block: 6px;
     font-size: $font-size-small;
     font-weight: $font-weight-medium;
     color: $color-fg-subtle;
