@@ -21,15 +21,16 @@
           class="hw-spec"
           :aria-labelledby="`hw-spec-${i}`"
         >
-          <div class="hw-spec-head" aria-hidden="true">
-            <span class="hw-plate">{{ item.short }}</span>
-            <span class="hw-spec-index">HW-{{ pad(i + 1) }}</span>
+          <div class="hw-figure" aria-hidden="true">
+            <p class="hw-metric">
+              {{ item.metric.value }}<span class="hw-unit">{{ item.metric.unit }}</span>
+            </p>
             <span class="hw-icon" v-html="item.icon"></span>
           </div>
-          <p class="hw-metric" aria-hidden="true">
-            {{ item.metric.value }}<span class="hw-unit">{{ item.metric.unit }}</span>
-          </p>
-          <h3 :id="`hw-spec-${i}`" class="hw-name">{{ item.title }}</h3>
+          <h3 :id="`hw-spec-${i}`" class="hw-name">
+            <span class="hw-plate">{{ item.short }}</span
+            >{{ item.title }}
+          </h3>
           <p class="hw-desc">{{ item.description }}</p>
         </article>
       </div>
@@ -111,9 +112,9 @@ const pad = (n: number): string => String(n).padStart(2, "0");
 // the CPU part, the shield tags start on column 5 with the RAM part, the part
 // columns span 4, and `InfrastructureFeatures.vue` repeats the 3-column split
 // with the same gutter, so every flush-left edge lines up down the sheet.
-// Rules carry the hierarchy instead of boxes: a 2px rule heads each part,
-// hairlines head each feature. One accent: the part plates, the tag values,
-// and the hazard tape.
+// Rules carry the hierarchy instead of boxes: a hairline under each part's
+// figure row, vertical hairlines between the features. One accent: the part
+// plates and drawings, the tag values, and the hazard tape.
 //
 // Dark in both themes: in light it continues the timer's dark block, with
 // yellow as the accent (black text on the plates and tag values).
@@ -160,10 +161,12 @@ const pad = (n: number): string => String(n).padStart(2, "0");
   color: $color-fg-muted;
 }
 
+// right-aligned to the sheet's right edge
 .hw-tags {
   grid-column: 5 / -1;
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 6px;
   list-style: none;
 }
@@ -196,7 +199,7 @@ const pad = (n: number): string => String(n).padStart(2, "0");
   color: $color-on-accent;
 }
 
-// ---------- Parts: three columns, each headed by a 2px rule ----------
+// ---------- Parts: three columns, each led by its figure ----------
 .hw-specs {
   row-gap: $spacing-lg;
   margin-top: $spacing-lg * 1.5;
@@ -205,38 +208,27 @@ const pad = (n: number): string => String(n).padStart(2, "0");
 .hw-spec {
   grid-column: span 4;
   min-width: 0;
-  padding-top: $spacing-sm;
-  border-top: 2px solid $color-fg;
 }
 
-.hw-spec-head {
+// Figure row over a hairline: the number at the left, the part drawing at
+// the right, both as tall as the figures (the icon is sized in `em` of the
+// metric's font size).
+.hw-figure {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  font-family: $font-display;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $spacing-sm;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $color-line;
+  font-size: clamp(60px, 7.6vw, 108px);
 }
 
-// nameplate: same build as the admin `CREW MANIFEST` plate
-.hw-plate {
-  padding: 6px 12px;
-  background: $color-accent;
-  color: $color-on-accent;
-  font-size: $font-size-label;
-  font-weight: $font-weight-bold;
-  line-height: 1;
-}
-
-.hw-spec-index {
-  font-size: $font-size-label;
-  color: $color-fg-subtle;
-}
-
-// hairline part drawing at the column's right edge
+// hairline part drawing in brand ink, its strokes kept thin at any size
 .hw-icon {
-  width: 36px;
-  height: 36px;
-  margin-left: auto;
-  color: $color-fg-subtle;
+  flex: none;
+  width: 0.8em;
+  height: 0.8em;
+  color: $color-accent-ink;
 
   :deep(svg) {
     display: block;
@@ -255,11 +247,8 @@ const pad = (n: number): string => String(n).padStart(2, "0");
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  margin-top: $spacing-lg;
-  padding-bottom: $spacing-md;
-  border-bottom: 1px solid $color-line;
   font-family: $font-display;
-  font-size: clamp(60px, 7.6vw, 108px);
+  font-size: 1em;
   font-weight: $font-weight-bold;
   line-height: 0.8;
   font-variant-numeric: tabular-nums;
@@ -273,7 +262,11 @@ const pad = (n: number): string => String(n).padStart(2, "0");
   color: $color-fg-subtle;
 }
 
+// part name led by its nameplate
 .hw-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   margin-top: $spacing-md;
   font-family: $font-display;
   font-size: clamp(16px, 1.5vw, 20px);
@@ -281,6 +274,17 @@ const pad = (n: number): string => String(n).padStart(2, "0");
   line-height: 1.3;
   color: $color-fg;
   overflow-wrap: break-word;
+}
+
+// nameplate: same build as the admin `CREW MANIFEST` plate
+.hw-plate {
+  flex: none;
+  padding: 6px 12px;
+  background: $color-accent;
+  color: $color-on-accent;
+  font-size: $font-size-label;
+  font-weight: $font-weight-bold;
+  line-height: 1;
 }
 
 .hw-desc {
@@ -295,14 +299,8 @@ const pad = (n: number): string => String(n).padStart(2, "0");
 .hw-tape {
   display: block;
   height: 8px;
-  margin-top: $spacing-xl;
+  margin-top: $spacing-lg;
   @include hatch-strip($color-accent-ink, 45deg, 2px, 8px);
-}
-
-@include tablet {
-  .hw-tape {
-    margin-top: $spacing-lg * 1.5;
-  }
 }
 
 @include mobile {
@@ -316,6 +314,7 @@ const pad = (n: number): string => String(n).padStart(2, "0");
   }
 
   .hw-tags {
+    justify-content: flex-start;
     margin-top: $spacing-md;
   }
 
@@ -323,12 +322,11 @@ const pad = (n: number): string => String(n).padStart(2, "0");
     grid-column: 1 / -1;
   }
 
-  .hw-metric {
+  .hw-figure {
     font-size: 76px;
   }
 
-  .hw-specs,
-  .hw-tape {
+  .hw-specs {
     margin-top: $spacing-lg;
   }
 }

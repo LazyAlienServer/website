@@ -35,8 +35,7 @@ const capabilities: Capability[] = [
   },
   {
     title: "自研插件模组，持续迭代",
-    description:
-      "运维工具、服务器插件和模组自主开发；按服务器需求持续迭代，兼顾功能扩展、性能控制与版本兼容。",
+    description: "运维工具、服务器插件和模组自主开发，持续迭代，兼顾功能扩展、性能控制与版本兼容。",
     icon: icons.plugin,
   },
 ];
@@ -54,8 +53,9 @@ const capabilities: Capability[] = [
 
 <style scoped lang="scss">
 // The 3-column split and gutter of `HardwareSection.vue`'s 12-column sheet
-// (`--hw-gap`, inherited), so each feature starts on a part column's edge.
-// Each one is headed by a hairline, like the sheet's ledger cells.
+// (`--hw-gap`, inherited). Features after the first are split by a vertical
+// hairline on the part column's left edge and inset from it by one gutter,
+// so the rule has the same clearance on both sides.
 .infra-features {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -63,19 +63,35 @@ const capabilities: Capability[] = [
   margin-top: $spacing-lg;
 }
 
+// icon in its own column at the left, title and description beside it
 .infra-feature {
-  display: flex;
+  position: relative;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  column-gap: $spacing-sm;
+  row-gap: 8px;
   min-width: 0;
-  flex-direction: column;
-  gap: 8px;
-  padding-top: $spacing-sm;
-  border-top: 1px solid $color-line;
+
+  & + & {
+    padding-left: var(--hw-gap, 24px);
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 1px;
+      background: $color-line;
+    }
+  }
 }
 
 .infra-icon {
+  grid-row: 1 / -1;
   width: 28px;
   height: 28px;
-  margin-bottom: 8px;
   color: $color-accent-ink;
 
   :deep(svg) {
@@ -86,6 +102,7 @@ const capabilities: Capability[] = [
 }
 
 .infra-title {
+  grid-column: 2;
   color: $color-fg;
   font-family: $font-display;
   font-size: clamp(15px, 1.35vw, 18px);
@@ -95,6 +112,7 @@ const capabilities: Capability[] = [
 }
 
 .infra-description {
+  grid-column: 2;
   color: $color-fg-subtle;
   font-size: $font-size-small;
   line-height: 1.7;
@@ -104,6 +122,15 @@ const capabilities: Capability[] = [
 @include mobile {
   .infra-features {
     grid-template-columns: 1fr;
+  }
+
+  // stacked: no side neighbours to split
+  .infra-feature + .infra-feature {
+    padding-left: 0;
+
+    &::before {
+      display: none;
+    }
   }
 }
 </style>
