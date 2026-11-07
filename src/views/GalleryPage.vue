@@ -445,7 +445,7 @@ onUnmounted(onClose);
 
 .heading-en {
   font-family: $font-display;
-  font-size: 14px;
+  font-size: $font-size-small;
   font-weight: $font-weight-bold;
   color: $color-accent-ink;
 }
@@ -456,7 +456,7 @@ onUnmounted(onClose);
   gap: 10px;
   margin-bottom: 20px;
   font-family: $font-display;
-  font-size: 13px;
+  font-size: $font-size-small;
   font-weight: $font-weight-bold;
   color: $color-fg-subtle;
 }
@@ -474,7 +474,7 @@ onUnmounted(onClose);
   max-width: 34em;
   margin-top: $spacing-sm;
   color: $color-fg-muted;
-  font-size: 15px;
+  font-size: $font-size-body;
   line-height: 1.8;
 }
 
@@ -495,7 +495,7 @@ onUnmounted(onClose);
 
   dt {
     font-family: $font-display;
-    font-size: 10px;
+    font-size: $font-size-label;
     color: $color-fg-subtle;
   }
 
@@ -537,7 +537,7 @@ onUnmounted(onClose);
   background: none;
   color: $color-fg-subtle;
   font-family: $font-display;
-  font-size: 12px;
+  font-size: $font-size-label;
   cursor: pointer;
   transition:
     color $transition-fast,
@@ -576,7 +576,7 @@ onUnmounted(onClose);
 }
 
 .filter-count {
-  font-size: 10px;
+  font-size: $font-size-label;
   font-variant-numeric: tabular-nums;
   opacity: 0.6;
 }
@@ -584,7 +584,7 @@ onUnmounted(onClose);
 .toolbar-status {
   margin-left: auto;
   font-family: $font-display;
-  font-size: 11px;
+  font-size: $font-size-label;
   font-variant-numeric: tabular-nums;
   color: $color-fg-subtle;
 
@@ -799,7 +799,7 @@ onUnmounted(onClose);
   background: rgba($color-photo-scrim, 0.82);
   border-bottom: 1px solid $color-accent-ink;
   font-family: $font-display;
-  font-size: 11px;
+  font-size: $font-size-label;
   color: $color-fg-subtle;
 
   b {
@@ -833,7 +833,7 @@ onUnmounted(onClose);
   background: $color-accent;
   color: $color-on-accent;
   font-family: $font-display;
-  font-size: 11px;
+  font-size: $font-size-label;
   font-weight: $font-weight-bold;
   font-variant-numeric: tabular-nums;
 }
@@ -850,7 +850,7 @@ onUnmounted(onClose);
   background: rgba($color-photo-scrim, 0.82);
   border-top: 1px solid $color-accent-ink;
   font-family: $font-display;
-  font-size: 11px;
+  font-size: $font-size-label;
   font-variant-numeric: tabular-nums;
   color: $color-fg-muted;
   transform: translateY(100%);
@@ -910,7 +910,7 @@ onUnmounted(onClose);
 .frame-title-en,
 .frame-category {
   font-family: $font-display;
-  font-size: 11px;
+  font-size: $font-size-label;
   color: $color-fg-subtle;
 }
 
@@ -961,7 +961,7 @@ onUnmounted(onClose);
   padding-bottom: 10px;
   border-bottom: 3px solid $color-accent-ink;
   font-family: $font-display;
-  font-size: 10px;
+  font-size: $font-size-label;
   color: $color-fg-subtle;
 }
 
@@ -1039,7 +1039,7 @@ onUnmounted(onClose);
 .index-category,
 .index-size {
   font-family: $font-display;
-  font-size: 13px;
+  font-size: $font-size-small;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1055,7 +1055,7 @@ onUnmounted(onClose);
   span {
     margin-left: 12px;
     font-family: $font-display;
-    font-size: 11px;
+    font-size: $font-size-label;
     font-weight: $font-weight-regular;
     color: $color-fg-subtle;
   }
@@ -1084,7 +1084,7 @@ onUnmounted(onClose);
     justify-content: space-between;
     margin-top: 10px;
     font-family: $font-display;
-    font-size: 11px;
+    font-size: $font-size-label;
     color: $color-fg-subtle;
   }
 }
@@ -1285,7 +1285,7 @@ onUnmounted(onClose);
 
 .viewer-count {
   font-family: $font-display;
-  font-size: 12px;
+  font-size: $font-size-label;
   font-variant-numeric: tabular-nums;
   color: $color-fg-subtle;
 
@@ -1299,13 +1299,13 @@ onUnmounted(onClose);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font-size: 15px;
+  font-size: $font-size-body;
   font-weight: $font-weight-bold;
 
   span {
     margin-left: 12px;
     font-family: $font-display;
-    font-size: 11px;
+    font-size: $font-size-label;
     font-weight: $font-weight-regular;
     color: $color-fg-subtle;
   }
@@ -1400,7 +1400,7 @@ onUnmounted(onClose);
     padding: 1px 5px;
     background: rgba($color-photo-scrim, 0.8);
     font-family: $font-display;
-    font-size: 10px;
+    font-size: $font-size-label;
     color: $color-fg-muted;
   }
 }

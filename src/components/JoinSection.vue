@@ -243,7 +243,7 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 .btn {
   display: inline-block;
   padding: 12px 28px;
-  font-size: 16px;
+  font-size: $font-size-body;
   line-height: 24px;
   font-weight: $font-weight-medium;
   transition: filter $transition-fast;
@@ -343,7 +343,7 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 .group-label {
   padding-top: $spacing-md;
   border-top: 1px solid $color-accent-ink;
-  font-size: 14px;
+  font-size: $font-size-small;
   line-height: 1;
   text-align: right;
   color: $color-fg-muted;

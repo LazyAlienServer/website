@@ -193,7 +193,7 @@ h1 {
   justify-content: center;
   height: 54px;
   padding: 0 32px;
-  font-size: 15px;
+  font-size: $font-size-body;
   font-weight: $font-weight-medium;
   line-height: 1;
   transition:
@@ -253,7 +253,7 @@ h1 {
   gap: $spacing-sm;
   border-top: 1px solid $color-line;
   padding-top: 16px;
-  font-size: 12px;
+  font-size: $font-size-label;
   color: $color-fg-subtle;
 }
 
@@ -375,7 +375,7 @@ h1 {
   align-items: flex-end;
   gap: 2px;
   font-family: $font-display;
-  font-size: 11px;
+  font-size: $font-size-label;
   font-weight: $font-weight-medium;
   line-height: 1.6;
   text-align: right;

@@ -420,7 +420,7 @@ onUnmounted(() => {
 .timer-kicker {
   margin-bottom: $spacing-sm;
   font-family: $font-display;
-  font-size: 12px;
+  font-size: $font-size-label;
   color: $color-fg-muted;
 }
 
@@ -466,7 +466,7 @@ onUnmounted(() => {
   padding-top: 12px;
   border-top: 2px solid $color-accent-bright;
   font-family: $font-display;
-  font-size: 11px;
+  font-size: $font-size-label;
   line-height: 16px;
   color: $color-fg-muted;
 
@@ -643,7 +643,7 @@ onUnmounted(() => {
 }
 
 .idx-total {
-  font-size: 14px;
+  font-size: $font-size-small;
   color: $color-fg-muted;
 }
 
@@ -675,7 +675,7 @@ onUnmounted(() => {
 .slide-caption {
   justify-self: center;
   text-align: center;
-  font-size: 12px;
+  font-size: $font-size-label;
   color: $color-fg-muted;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
 }

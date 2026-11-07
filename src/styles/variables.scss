@@ -88,6 +88,14 @@ $font-size-h4: 24px;
 $font-size-lead: 20px;
 $font-size-body: 16px;
 $font-size-body-lg: 18px;
+// Text below body size uses exactly these two steps. Small: secondary copy,
+// descriptions, nav links, notes, small controls. Label: keys, plates, badges,
+// indices, counts, HUD readouts, metadata. Never write a raw size under 16px
+// and never scale small text with the viewport. Exceptions: decorative glyph
+// art (the GitHub rail's micro text, `.plus-marker`) and fluid display sizes
+// (titles, units beside big figures) whose clamp minimum dips below 16px.
+$font-size-small: 14px;
+$font-size-label: 12px;
 
 // Spacing scale
 $spacing-unit: 8px;

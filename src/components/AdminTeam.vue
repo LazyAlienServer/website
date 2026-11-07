@@ -249,7 +249,7 @@ const onAvatarError = (name: string): void => {
   background: $color-accent;
   color: $color-on-accent;
   font-family: $font-display;
-  font-size: 12px;
+  font-size: $font-size-label;
   font-weight: $font-weight-bold;
   line-height: 1;
 }
@@ -277,7 +277,7 @@ const onAvatarError = (name: string): void => {
 
 .admin-count-label {
   font-family: $font-display;
-  font-size: 11px;
+  font-size: $font-size-label;
   color: $color-fg-subtle;
 }
 
@@ -295,7 +295,7 @@ const onAvatarError = (name: string): void => {
   align-items: center;
   gap: 8px;
   font-family: $font-display;
-  font-size: 11px;
+  font-size: $font-size-label;
   color: $color-fg-muted;
 }
 
@@ -363,7 +363,7 @@ const onAvatarError = (name: string): void => {
   top: 12px;
   right: 14px;
   font-family: $font-display;
-  font-size: 10px;
+  font-size: $font-size-label;
   color: $color-fg-subtle;
 }
 
@@ -411,7 +411,7 @@ const onAvatarError = (name: string): void => {
   align-items: center;
   gap: 6px;
   font-family: $font-display;
-  font-size: 11px;
+  font-size: $font-size-label;
   color: $color-fg-subtle;
 }
 
@@ -442,7 +442,7 @@ const onAvatarError = (name: string): void => {
   right: 14px;
   bottom: 12px;
   font-family: $font-display;
-  font-size: 11px;
+  font-size: $font-size-label;
   color: $color-fg-subtle;
   transition: color $transition-fast;
 }
@@ -474,10 +474,6 @@ const onAvatarError = (name: string): void => {
 
   .admin-header {
     grid-template-columns: 1fr;
-  }
-
-  .op-subtitle {
-    font-size: 10px;
   }
 }
 </style>

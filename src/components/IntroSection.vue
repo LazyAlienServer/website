@@ -117,7 +117,7 @@ import ParticleLogo from "./ParticleLogo.vue";
     display: flex;
     align-items: center;
     padding: 3px 8px;
-    font-size: 12px;
+    font-size: $font-size-label;
     line-height: 1.2;
     white-space: nowrap;
   }
@@ -165,7 +165,7 @@ import ParticleLogo from "./ParticleLogo.vue";
 
   .deco-text {
     writing-mode: vertical-rl;
-    font-size: 11px;
+    font-size: $font-size-label;
     color: $color-fg-subtle;
   }
 

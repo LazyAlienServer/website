@@ -156,7 +156,7 @@ const pad = (n: number): string => String(n).padStart(2, "0");
 
 .hw-subtitle {
   margin-top: 12px;
-  font-size: 14px;
+  font-size: $font-size-small;
   color: $color-fg-muted;
 }
 
@@ -180,7 +180,7 @@ const pad = (n: number): string => String(n).padStart(2, "0");
   display: flex;
   align-items: center;
   padding: 3px 8px;
-  font-size: 12px;
+  font-size: $font-size-label;
   line-height: 1.2;
   white-space: nowrap;
 }
@@ -221,13 +221,13 @@ const pad = (n: number): string => String(n).padStart(2, "0");
   padding: 6px 12px;
   background: $color-accent;
   color: $color-on-accent;
-  font-size: 12px;
+  font-size: $font-size-label;
   font-weight: $font-weight-bold;
   line-height: 1;
 }
 
 .hw-spec-index {
-  font-size: 12px;
+  font-size: $font-size-label;
   color: $color-fg-subtle;
 }
 
@@ -285,7 +285,7 @@ const pad = (n: number): string => String(n).padStart(2, "0");
 
 .hw-desc {
   margin-top: 12px;
-  font-size: 14px;
+  font-size: $font-size-small;
   line-height: 1.8;
   color: $color-fg-muted;
   overflow-wrap: break-word;

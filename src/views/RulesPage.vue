@@ -253,7 +253,7 @@ onUnmounted(() => {
   gap: 10px;
   margin-bottom: 24px;
   font-family: $font-display;
-  font-size: 13px;
+  font-size: $font-size-small;
   font-weight: $font-weight-bold;
   color: $color-fg-subtle;
 }
@@ -284,7 +284,7 @@ onUnmounted(() => {
 
   dt {
     font-family: $font-display;
-    font-size: 10px;
+    font-size: $font-size-label;
     color: $color-fg-subtle;
   }
 
@@ -361,7 +361,7 @@ onUnmounted(() => {
 .chapter-meta {
   margin-bottom: 6px;
   font-family: $font-display;
-  font-size: 12px;
+  font-size: $font-size-label;
   color: $color-fg-subtle;
 }
 
@@ -378,7 +378,7 @@ onUnmounted(() => {
 
   h3 {
     padding-top: 3px;
-    font-size: 14px;
+    font-size: $font-size-small;
     color: $color-fg-subtle;
   }
 }
@@ -431,7 +431,7 @@ onUnmounted(() => {
     border-left: 2px solid $color-accent-ink-deep;
     background: fade($color-accent-bright, 0.06);
     color: $color-fg-subtle;
-    font-size: 14px;
+    font-size: $font-size-small;
   }
 
   :deep(a) {
@@ -476,7 +476,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 12px;
   font-family: $font-display;
-  font-size: 11px;
+  font-size: $font-size-label;
   color: $color-fg-subtle;
 
   &::before {
@@ -489,7 +489,7 @@ onUnmounted(() => {
 
 .signoff-date {
   font-family: $font-display;
-  font-size: 13px;
+  font-size: $font-size-small;
   color: $color-fg-subtle;
 }
 
@@ -530,7 +530,7 @@ onUnmounted(() => {
     gap: 10px;
     padding: 7px 0;
     color: $color-fg-subtle;
-    font-size: 13px;
+    font-size: $font-size-small;
     transition: color $transition-med;
 
     &:hover {
@@ -568,7 +568,7 @@ onUnmounted(() => {
   padding: 1px 5px;
   border: 1px solid $color-line;
   font-family: $font-display;
-  font-size: 10px;
+  font-size: $font-size-label;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
   color: $color-fg-subtle;

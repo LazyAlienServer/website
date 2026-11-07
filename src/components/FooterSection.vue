@@ -92,7 +92,7 @@ const year = new Date().getFullYear();
 .footer-credits,
 .footer-contact {
   p {
-    font-size: 14px;
+    font-size: $font-size-small;
     color: $color-fg-muted;
     line-height: 2;
   }
@@ -114,7 +114,7 @@ const year = new Date().getFullYear();
   gap: $spacing-sm;
   max-width: $content-max-width;
   margin: 0 auto;
-  font-size: 11px;
+  font-size: $font-size-label;
   color: $color-fg-subtle;
 }
 

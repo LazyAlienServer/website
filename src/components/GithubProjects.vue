@@ -478,7 +478,7 @@ onUnmounted(() => clearInterval(autoplayId));
 
 .github-title-kicker {
   font-family: $font-display;
-  font-size: 9px;
+  font-size: $font-size-label;
   color: $color-fg-subtle;
 }
 
@@ -526,7 +526,7 @@ onUnmounted(() => clearInterval(autoplayId));
   align-items: baseline;
   gap: $spacing-sm;
   font-family: $font-display;
-  font-size: 14px;
+  font-size: $font-size-small;
   color: $color-fg-subtle;
 }
 
@@ -691,7 +691,7 @@ onUnmounted(() => clearInterval(autoplayId));
 .card-desc {
   flex: 1;
   margin-top: $spacing-sm;
-  font-size: 15px;
+  font-size: $font-size-small;
   color: $color-fg-muted;
   line-height: 1.6;
   display: -webkit-box;
@@ -710,7 +710,7 @@ onUnmounted(() => clearInterval(autoplayId));
 
 .lang-text {
   font-family: $font-display;
-  font-size: 11px;
+  font-size: $font-size-label;
   color: $color-accent-ink;
 }
 
@@ -719,7 +719,7 @@ onUnmounted(() => clearInterval(autoplayId));
   align-items: center;
   gap: 6px;
   font-family: $font-display;
-  font-size: 14px;
+  font-size: $font-size-small;
   font-weight: $font-weight-bold;
   color: $color-accent-ink;
 }
@@ -797,7 +797,7 @@ onUnmounted(() => clearInterval(autoplayId));
   align-items: center;
   gap: 8px;
   font-family: $font-display;
-  font-size: 14px;
+  font-size: $font-size-small;
   color: $color-fg-muted;
 
   .counter-divider {
@@ -815,7 +815,7 @@ onUnmounted(() => clearInterval(autoplayId));
   background: $color-surface;
   border: 1px solid $color-line;
   color: $color-fg;
-  font-size: 15px;
+  font-size: $font-size-small;
   font-weight: $font-weight-medium;
   transition:
     border-color $transition-fast,
@@ -949,7 +949,7 @@ onUnmounted(() => clearInterval(autoplayId));
   color: $color-on-accent;
   border: none;
   padding: 12px 36px;
-  font-size: 14px;
+  font-size: $font-size-small;
   font-weight: $font-weight-medium;
   clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
   transition:
@@ -1004,10 +1004,6 @@ onUnmounted(() => clearInterval(autoplayId));
     margin-bottom: clamp(24px, calc(4.29vw - 3.52px), 48px);
   }
 
-  .github-title-kicker {
-    font-size: clamp(8px, calc(0.18vw + 6.85px), 9px);
-  }
-
   .github-title-mark {
     width: clamp(32px, calc(2.86vw + 13.66px), 48px);
     height: clamp(14px, calc(0.72vw + 9.41px), 18px);
@@ -1027,7 +1023,6 @@ onUnmounted(() => clearInterval(autoplayId));
 
   .feature-meta {
     gap: clamp(8px, calc(1.43vw - 1.17px), 16px);
-    font-size: clamp(11px, calc(0.54vw + 7.56px), 14px);
   }
 
   .feature-name {
@@ -1068,20 +1063,11 @@ onUnmounted(() => clearInterval(autoplayId));
 
   .card-desc {
     margin-top: clamp(8px, calc(1.43vw - 1.17px), 16px);
-    font-size: clamp(12px, calc(0.54vw + 8.56px), 15px);
   }
 
   .card-meta {
     gap: clamp(12px, calc(2.15vw - 1.78px), 24px);
     margin-top: clamp(12px, calc(2.15vw - 1.78px), 24px);
-  }
-
-  .lang-text {
-    font-size: clamp(9px, calc(0.36vw + 6.71px), 11px);
-  }
-
-  .repo-stars {
-    font-size: clamp(12px, calc(0.36vw + 9.71px), 14px);
   }
 
   .deck-controls {
@@ -1096,14 +1082,12 @@ onUnmounted(() => clearInterval(autoplayId));
 
   .deck-counter {
     gap: clamp(6px, calc(0.36vw + 3.71px), 8px);
-    font-size: clamp(12px, calc(0.36vw + 9.71px), 14px);
   }
 
   .more-btn {
     gap: clamp(18px, calc(0.72vw + 5.41px), 24px);
     height: clamp(38px, calc(1.43vw + 28.84px), 46px);
     padding-inline: clamp(32px, calc(2.15vw + 2.22px), 40px);
-    font-size: clamp(13px, calc(0.36vw + 10.71px), 15px);
 
     &::before {
       height: clamp(14px, calc(0.72vw + 9.41px), 18px);
@@ -1131,7 +1115,7 @@ onUnmounted(() => clearInterval(autoplayId));
   }
 
   .gh-rail-text {
-    font-size: 15px;
+    font-size: $font-size-body;
   }
 
   .gh-rail-labels {
@@ -1272,7 +1256,7 @@ onUnmounted(() => clearInterval(autoplayId));
     align-items: baseline;
     gap: $spacing-sm;
     font-family: $font-display;
-    font-size: 12px;
+    font-size: $font-size-label;
     color: $color-fg-subtle;
   }
 
@@ -1301,7 +1285,7 @@ onUnmounted(() => clearInterval(autoplayId));
   .deck-counter {
     flex-shrink: 0;
     gap: clamp(4px, 1.2vw, 8px);
-    font-size: clamp(11px, 2.8vw, 14px);
+    font-size: $font-size-small;
     white-space: nowrap;
   }
 
@@ -1310,7 +1294,7 @@ onUnmounted(() => clearInterval(autoplayId));
     height: clamp(36px, 8vw, 44px);
     padding-inline: clamp(12px, 2.5vw, 18px);
     gap: clamp(8px, 2vw, 12px);
-    font-size: clamp(12px, 2.8vw, 14px);
+    font-size: $font-size-small;
     white-space: nowrap;
 
     &::before {

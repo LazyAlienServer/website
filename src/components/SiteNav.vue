@@ -81,7 +81,7 @@ const toggleLabel = computed(() => (theme.value === "light" ? "切换至深色�
   a {
     position: relative;
     padding-bottom: 6px;
-    font-size: 14px;
+    font-size: $font-size-small;
     font-weight: $font-weight-medium;
     color: $color-fg-subtle;
     transition: color $transition-fast;

@@ -96,7 +96,7 @@ const capabilities: Capability[] = [
 
 .infra-description {
   color: $color-fg-subtle;
-  font-size: 13px;
+  font-size: $font-size-small;
   line-height: 1.7;
   overflow-wrap: anywhere;
 }
