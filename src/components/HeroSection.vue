@@ -293,10 +293,16 @@ h1 {
   pointer-events: none;
 }
 
+// The core starts 2px left of the visual's clipped edge (`left: -2px`, the
+// extra 2px in its width and polygon), so the parent clip alone cuts its left
+// edge. If the two edges coincided, the core's own antialiased edge would let
+// the photo underneath bleed through as a dark hairline before the parent
+// clip fades it out. Visible thickness is unchanged: 6px from the edge.
 .seam {
-  width: calc(8% + 6px);
+  left: -2px;
+  width: calc(8% + 8px);
   z-index: 4;
-  clip-path: polygon(calc(100% - 6px) 0, 100% 0, 6px 100%, 0 100%);
+  clip-path: polygon(calc(100% - 8px) 0, 100% 0, 8px 100%, 0 100%);
   background: $color-accent-bright;
 }
 
@@ -315,6 +321,12 @@ h1 {
   overflow: hidden;
   clip-path: polygon(8% 0, 100% 0, 100% 100%, 0 100%);
   background: $color-photo-scrim;
+
+  // Antialiasing along the clipped edge can let this backdrop through as a
+  // fringe: black is invisible on the dark page but draws a hairline on white.
+  @include light {
+    background: transparent;
+  }
 }
 
 // Dark dims the shot and covers it with a brand wash from the right and a
