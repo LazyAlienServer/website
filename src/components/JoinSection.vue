@@ -285,8 +285,9 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 // ---------- Group panel and plate (right) ----------
 // Negative margins carry the panel through the shell padding to the section's
 // top, bottom, and right edges. The tint is a skewed pseudo-element clipped by
-// the panel, so only the left edge slants: uniform blue in dark, solid yellow
-// in light, where the controls on it turn black.
+// the panel, so only the left edge slants: uniform blue in dark, translucent
+// yellow in light (so it reads apart from the footer's solid yellow accent
+// right below it on mobile), where the controls on it turn black.
 .group-panel {
   grid-column: 3;
   grid-row: 1 / -1;
@@ -305,7 +306,7 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
     transform: skewX(calc(-1 * var(--hero-slant)));
 
     @include light {
-      background: $color-accent;
+      background: fade($color-accent, 0.5);
     }
   }
 }
