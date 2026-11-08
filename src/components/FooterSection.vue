@@ -354,10 +354,48 @@ const year = new Date().getFullYear();
     padding-inline: $spacing-sm;
   }
 
+  // the brand keeps the logo and name only
+  .footer-about {
+    display: none;
+  }
+
   .footer-column {
     grid-column: 1 / -1;
     padding-left: 0;
     border-left: 0;
+
+    // two links per row, each its name over its value, to save height
+    ul {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: $spacing-sm $spacing-md;
+    }
+
+    li {
+      display: block;
+      grid-column: auto;
+    }
+  }
+
+  .footer-link {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  // Fixed two-line legal block instead of free wrapping, which left the
+  // version alone on a third line: copyright over the rights notice at the
+  // left, the version pinned to the top right.
+  .footer-meta {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 4px $spacing-md;
+    width: 100%;
+    margin-left: 0;
+
+    span:last-child {
+      grid-column: 2;
+      grid-row: 1;
+    }
   }
 
   .footer-wordmark {
