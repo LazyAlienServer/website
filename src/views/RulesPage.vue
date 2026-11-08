@@ -206,6 +206,39 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang="scss">
+// Links in the document (owner names in the clauses, the sign-off credits).
+// A hairline underline is always on, so a link reads as one in running text;
+// hover makes it solid and 2px. Light: black text and underline, since
+// yellow is fill-only there; hover lays a yellow fill behind the black text.
+@mixin rules-link {
+  color: $color-accent-ink;
+  text-decoration: underline 1px fade($color-accent-ink, 0.4);
+  text-underline-offset: 0.25em;
+  transition:
+    text-decoration-color $transition-fast,
+    background-color $transition-fast;
+
+  &:hover {
+    text-decoration-color: $color-accent-ink;
+    text-decoration-thickness: 2px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent-ink;
+    outline-offset: 2px;
+  }
+
+  @include light {
+    color: $color-fg;
+    text-decoration-color: fade($color-fg, 0.5);
+
+    &:hover {
+      background: $color-accent;
+      text-decoration-color: $color-fg;
+    }
+  }
+}
+
 .rules-page {
   background: $color-bg;
   min-height: 100vh;
@@ -425,24 +458,24 @@ onUnmounted(() => {
     }
   }
 
+  // Plain gray aside under its clause, led by a hanging "-" so wrapped lines
+  // align with the text, not the mark.
   :deep(p.note) {
+    position: relative;
     margin-top: 6px;
-    padding: 6px 12px;
-    border-left: 2px solid $color-accent-ink-deep;
-    background: fade($color-accent-bright, 0.06);
+    padding-left: 1.25em;
     color: $color-fg-subtle;
     font-size: $font-size-small;
+
+    &::before {
+      content: "-";
+      position: absolute;
+      left: 0;
+    }
   }
 
   :deep(a) {
-    color: $color-accent-ink;
-    text-decoration: underline;
-    text-decoration-color: transparent;
-    transition: text-decoration-color $transition-fast;
-
-    &:hover {
-      text-decoration-color: $color-accent-ink;
-    }
+    @include rules-link;
   }
 
   :deep(ol) {
@@ -467,7 +500,7 @@ onUnmounted(() => {
   color: $color-fg-muted;
 
   a {
-    color: $color-accent-ink;
+    @include rules-link;
   }
 }
 
