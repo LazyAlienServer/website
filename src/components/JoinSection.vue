@@ -326,16 +326,17 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
   color: $color-accent-ink;
 }
 
-// Data plate in the list's row: label under a scribed rule (right-aligned
-// under the mark), the number, and the controls pushed down onto the list's
-// last rule. Rows stretch to the widest one (the number), so the plate ends
-// flush at the shell's content edge.
+// Data plate in the list's row, every row right-aligned to the shell's
+// content edge: label under a scribed rule, the number, and the controls at
+// their natural width, pushed down onto the list's last rule.
 .group-inner {
   grid-column: 3;
   grid-row: 2;
   position: relative;
   display: flex;
   flex-direction: column;
+  align-items: stretch;
+  text-align: right;
   // clears the slanted left edge, which leans further right higher up
   padding-left: $spacing-lg * 1.3;
 }
@@ -345,7 +346,6 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
   border-top: 1px solid $color-accent-ink;
   font-size: $font-size-small;
   line-height: 1;
-  text-align: right;
   color: $color-fg-muted;
 }
 
@@ -362,14 +362,13 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
 
 .group-actions {
   display: flex;
+  justify-content: flex-end;
   gap: $spacing-xs;
   margin-top: auto;
 }
 
-// Fills the row beside the copy square. On the yellow panel in light it is a
-// black block.
+// On the yellow panel in light it is a black block.
 .join-btn {
-  flex: 1;
   text-align: center;
 
   @include light {

@@ -141,7 +141,7 @@ Operator data is local and typed. Avatar URLs point to the LAS website source di
 
 ### `JoinSection.vue`
 
-The section is one two-row grid: the heading on top, then the path list beside the group plate, with the hatched divider and the group panel spanning both rows. The two rules links are rows of a ruled list (index, title, arrow, description) that route to `/rules` with query values `path=01` or `path=02` and a chapter hash. The group plate (label under a scribed rule, the QQ group number `835047145`, and a row of the full-width join link plus a square copy button) shares the list's row, so its top rule continues the list's first rule and its controls sit on the list's last rule. Copying uses `navigator.clipboard` first and a temporary textarea fallback second; timer cleanup belongs in `onBeforeUnmount`.
+The section is one two-row grid: the heading on top, then the path list beside the group plate, with the hatched divider and the group panel spanning both rows. The two rules links are rows of a ruled list (index, title, arrow, description) that route to `/rules` with query values `path=01` or `path=02` and a chapter hash. The `JOIN US` mark and the group plate (label under a scribed rule, the QQ group number `835047145`, and the join link plus a square copy button at their natural width) are right-aligned to the shell's content edge on every breakpoint. The plate shares the list's row, so its top rule continues the list's first rule and its controls sit on the list's last rule. Copying uses `navigator.clipboard` first and a temporary textarea fallback second; timer cleanup belongs in `onBeforeUnmount`.
 
 ### `FooterSection.vue`
 
