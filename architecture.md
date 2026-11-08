@@ -125,7 +125,7 @@ This is the most stateful landing section. Keep the following contracts intact:
 - `current` is the single carousel source of truth. `active` derives the current repository; `slotOf()` derives desktop visual slots.
 - `go()`, `next()`, and `prev()` wrap with modulo arithmetic. User actions apply a five-second auto-switch cooldown.
 - Auto-play runs every six seconds unless reduced motion is requested, the section is hovered/focused, the document is hidden, or the manual cooldown is active.
-- Desktop and mobile intentionally use separate DOM trees. The desktop deck owns the transform carousel; the mobile list owns the full-width card plus external caption layout. Both read the same `current` state.
+- Desktop and mobile intentionally use separate DOM trees. The desktop deck owns the transform carousel; the mobile list owns the full-width card plus external caption layout and renders only the current and next repositories (`mobileRepos`) in a `TransitionGroup`, so a switch slides the next card up into the current place while the old one leaves. The `direction` ref (shorter way round the circle) picks the forward or back variant. Both read the same `current` state.
 - Preview repository links prevent navigation and promote the preview to the active slot. The active link opens the repository in a new tab.
 - Loading, error, and empty states are part of the observable contract. Preserve the retry path and do not silently swallow a failed repository request.
 

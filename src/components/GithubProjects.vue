@@ -144,66 +144,71 @@
             @focusin="hoverPaused = true"
             @focusout="hoverPaused = false"
           >
-            <div
-              v-for="(repo, i) in repos"
-              :key="`mobile-${repo.name}`"
-              class="mobile-card-item"
-              :data-slot="slotOf(i)"
-              :aria-hidden="slotOf(i) > 1 ? 'true' : undefined"
+            <!-- Only the current and next repos render; on a switch the next
+                 card slides up into the current place while the old one leaves -->
+            <TransitionGroup
+              tag="div"
+              class="mobile-card-track"
+              :name="direction > 0 ? 'stack-next' : 'stack-prev'"
             >
-              <div class="card-caption">
-                <span class="caption-meta">
-                  <span class="caption-tag">// {{ repo.language ?? "misc" }}</span>
-                  <time>{{ formatDate(repo.pushed_at) }}</time>
-                </span>
-                <span class="caption-name">{{ repo.name }}</span>
-              </div>
-
-              <a
-                class="mobile-repo-card"
-                :href="repo.html_url"
-                target="_blank"
-                rel="noopener noreferrer"
-                :aria-current="slotOf(i) === 0 ? 'true' : undefined"
-                :tabindex="slotOf(i) > 1 ? -1 : undefined"
-                @click="onRepoClick($event, i)"
+              <div
+                v-for="{ repo, i, slot } in mobileRepos"
+                :key="`mobile-${repo.name}`"
+                class="mobile-card-item"
               >
-                <div class="card-body">
-                  <span class="card-index" aria-hidden="true">{{ pad(i + 1) }}</span>
-                  <h4 class="card-name">{{ repo.name }}</h4>
-                  <p class="card-desc">{{ repo.description || "No description provided." }}</p>
-                  <div class="card-meta">
-                    <span v-if="repo.language" class="lang-text">{{ repo.language }}</span>
-                    <span class="repo-stars">
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        width="14"
-                        height="14"
-                        aria-hidden="true"
-                      >
-                        <path
-                          d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"
-                        />
-                      </svg>
-                      {{ repo.stargazers_count }}
-                    </span>
-                    <span v-if="slotOf(i) === 0" class="repo-link" aria-hidden="true">
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        width="16"
-                        height="16"
-                      >
-                        <path d="M7 17L17 7M9 7h8v8" />
-                      </svg>
-                    </span>
-                  </div>
+                <div class="card-caption">
+                  <span class="caption-meta">
+                    <span class="caption-tag">// {{ repo.language ?? "misc" }}</span>
+                    <time>{{ formatDate(repo.pushed_at) }}</time>
+                  </span>
+                  <span class="caption-name">{{ repo.name }}</span>
                 </div>
-              </a>
-            </div>
+
+                <a
+                  class="mobile-repo-card"
+                  :href="repo.html_url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  :aria-current="slot === 0 ? 'true' : undefined"
+                  @click="onRepoClick($event, i)"
+                >
+                  <div class="card-body">
+                    <span class="card-index" aria-hidden="true">{{ pad(i + 1) }}</span>
+                    <h4 class="card-name">{{ repo.name }}</h4>
+                    <p class="card-desc">{{ repo.description || "No description provided." }}</p>
+                    <div class="card-meta">
+                      <span v-if="repo.language" class="lang-text">{{ repo.language }}</span>
+                      <span class="repo-stars">
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          width="14"
+                          height="14"
+                          aria-hidden="true"
+                        >
+                          <path
+                            d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"
+                          />
+                        </svg>
+                        {{ repo.stargazers_count }}
+                      </span>
+                      <span v-if="slot === 0" class="repo-link" aria-hidden="true">
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          width="16"
+                          height="16"
+                        >
+                          <path d="M7 17L17 7M9 7h8v8" />
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </TransitionGroup>
           </div>
 
           <div class="deck-controls" v-reveal>
@@ -337,11 +342,29 @@ const active = computed(() => repos.value[current.value] ?? repos.value[0]);
 // Invisible slots absorb the wrap-around jump so visible cards always slide.
 const slotOf = (i: number): number => (i - current.value + repos.value.length) % repos.value.length;
 
+// Mobile renders the current repo and the next one (one when there is only
+// one repo), in slot order, so the list stays current-first across the wrap.
+const mobileRepos = computed(() => {
+  const count = repos.value.length;
+  return Array.from({ length: Math.min(2, count) }, (_, slot) => {
+    const i = (current.value + slot) % count;
+    return { repo: repos.value[i], i, slot };
+  });
+});
+
+// Travel direction of the last switch (1 forward, -1 back): picks the mobile
+// stack transition. Taken as the shorter way round the circular list.
+const direction = ref<1 | -1>(1);
+
 const go = (i: number, userInitiated = false) => {
   if (userInitiated) {
     autoSwitchCooldownUntil = Date.now() + AUTO_SWITCH_COOLDOWN_MS;
   }
-  current.value = (i + repos.value.length) % repos.value.length;
+  const count = repos.value.length;
+  const target = (i + count) % count;
+  const delta = (target - current.value + count) % count;
+  direction.value = delta <= count / 2 ? 1 : -1;
+  current.value = target;
 };
 
 const onRepoClick = (event: MouseEvent, i: number) => {
@@ -1147,9 +1170,7 @@ onUnmounted(() => clearInterval(autoplayId));
   }
 
   .mobile-card-list {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-lg;
+    display: block;
     outline: none;
 
     &:focus-visible {
@@ -1158,16 +1179,60 @@ onUnmounted(() => clearInterval(autoplayId));
     }
   }
 
+  .mobile-card-track {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+  }
+
   .mobile-card-item {
     display: flex;
     flex-direction: column;
     gap: $spacing-xs;
+  }
 
-    &[data-slot="2"],
-    &[data-slot="3"],
-    &[data-slot="4"] {
-      display: none;
-    }
+  // Stack switch, same easing as the desktop deck. Forward: the old current
+  // card rises and fades from the top, the next card moves up into its place,
+  // and the new next card rises in at the bottom. Back mirrors it. Leaving
+  // cards are taken out of flow, pinned to the edge they leave from, so the
+  // staying card's move starts at once.
+  .stack-next-move,
+  .stack-prev-move,
+  .stack-next-enter-active,
+  .stack-prev-enter-active,
+  .stack-next-leave-active,
+  .stack-prev-leave-active {
+    transition:
+      transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.4s ease;
+  }
+
+  .stack-next-leave-active,
+  .stack-prev-leave-active {
+    position: absolute;
+    left: 0;
+    width: 100%;
+  }
+
+  .stack-next-leave-active {
+    top: 0;
+  }
+
+  .stack-prev-leave-active {
+    bottom: 0;
+  }
+
+  .stack-next-enter-from,
+  .stack-prev-leave-to {
+    opacity: 0;
+    transform: translateY($spacing-md);
+  }
+
+  .stack-next-leave-to,
+  .stack-prev-enter-from {
+    opacity: 0;
+    transform: translateY(-$spacing-md);
   }
 
   .mobile-repo-card {
@@ -1309,7 +1374,13 @@ onUnmounted(() => clearInterval(autoplayId));
   }
 
   .head-swap-enter-active,
-  .head-swap-leave-active {
+  .head-swap-leave-active,
+  .stack-next-move,
+  .stack-prev-move,
+  .stack-next-enter-active,
+  .stack-prev-enter-active,
+  .stack-next-leave-active,
+  .stack-prev-leave-active {
     transition: none;
   }
 
