@@ -33,9 +33,9 @@ const router = createRouter({
 // `--page-dir` on `<html>`: 1 when moving right in the navbar order (the new
 // page comes in from the right), -1 when moving left.
 //
-// Navbar travel: on mobile home the navbar is docked under the hero image,
-// elsewhere it is fixed at the top. When its viewport top differs between
-// the two pages, `data-nav-move` (`up`/`down`) plus `--nav-from` and
+// Navbar travel: on tablet and mobile home the navbar is docked under the hero
+// image, elsewhere it is fixed at the top. When its viewport top differs
+// between the two pages, `data-nav-move` (`up`/`down`) plus `--nav-from` and
 // `--nav-to` drive a blue-trail move; otherwise the navbar stays still.
 const PAGE_VARS = ["--page-dir", "--nav-from", "--nav-to"];
 let finishPageUpdate: (() => void) | undefined;

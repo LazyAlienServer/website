@@ -226,6 +226,14 @@ onUnmounted(() => {
     width: 100%;
     transition: none;
   }
+
+  // Home: dock in flow right under the stacked hero image, then stick to the
+  // viewport top once scrolled there. `HeroSection.vue` pulls its image up
+  // into this top margin; other routes keep the fixed bar.
+  .nav.nav--home {
+    position: sticky;
+    margin-top: $hero-visual-height-tablet;
+  }
 }
 @include mobile {
   .nav,
@@ -233,11 +241,7 @@ onUnmounted(() => {
     --nav-inline: #{$spacing-sm};
   }
 
-  // Home: dock in flow right under the stacked hero image, then stick to the
-  // viewport top once scrolled there. `HeroSection.vue` pulls its image up
-  // into this top margin; other routes keep the fixed bar.
   .nav.nav--home {
-    position: sticky;
     margin-top: $hero-visual-height-mobile;
   }
 }
