@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vp dev",
-    "build": "vue-tsc && vp build",
+    "build": "vp build",
     "preview": "vp preview",
     "prepare": "vp config"
   },
@@ -16,12 +16,13 @@
   "devDependencies": {
     "@types/node": "^26.6.6",
     "@vitejs/plugin-vue": "^6.0.10",
+    "@vue/content-mapper": "4.0.0-alpha.3",
+    "cf": "1.0.0-beta.28",
     "react-doctor": "^0.9.22",
     "sass": "^1.108.0",
     "skills": "^1.7.6",
-    "typescript": "~6.0.3",
-    "vite-plus": "catalog:",
-    "vue-tsc": "^3.3.14"
+    "typescript": "7.1.0-beta",
+    "vite-plus": "catalog:"
   },
   "packageManager": "pnpm@12.18.0"
 }
