@@ -4,11 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vp dev",
     "build": "vp build",
-    "preview": "vp preview",
-    "prepare": "vp config",
-    "deploy": "cf deploy"
+    "deploy": "cf deploy --mode production",
+    "deploy:preview": "cf previews deploy --mode production"
   },
   "dependencies": {
     "vue": "^3.5.45",
