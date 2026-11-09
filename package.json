@@ -4,14 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vp dev",
-    "build": "tsc -b && vp build && node scripts/build-output.mjs",
-    "build:preview": "CLOUDFLARE_PREVIEW_BUILD=true pnpm run build",
-    "lint": "vp lint",
-    "preview": "vp preview",
-    "deploy": "pnpm run build && cf deploy --prebuilt --mode production",
-    "deploy:preview": "pnpm run build:preview && cf previews deploy --prebuilt --mode production",
-    "prepare": "vp config"
+    "build": "vp build",
+    "deploy": "cf deploy --mode production",
+    "deploy:preview": "cf previews deploy --mode production"
   },
   "dependencies": {
     "motion": "^14.9.0",
@@ -19,8 +14,8 @@
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
-    "@cloudflare/build-output-utils": "0.9.8",
     "@cloudflare/config": "0.30.0",
+    "@cloudflare/vite-plugin": "^2.0.0-beta.v.12",
     "@types/node": "^24.19.2",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
