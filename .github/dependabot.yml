@@ -6,34 +6,19 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "Asia/Shanghai"
-    open-pull-requests-limit: 10
-    labels:
-      - "dependencies"
-    commit-message:
-      prefix: "chore"
-      include: "scope"
     groups:
-      minor-and-patch:
+      npm:
         patterns:
           - "*"
-        update-types:
-          - "minor"
-          - "patch"
+    ignore:
+      - dependency-name: "vite-plus"
 
   # Keep GitHub Actions up to date (future-proof; no workflows yet)
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "Asia/Shanghai"
-    open-pull-requests-limit: 5
-    labels:
-      - "dependencies"
-    commit-message:
-      prefix: "chore"
-      include: "scope"
+    groups:
+      actions:
+        patterns:
+          - "*"
