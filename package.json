@@ -20,7 +20,7 @@
     "sass": "^1.108.0",
     "skills": "^1.7.6",
     "typescript": "~6.0.3",
-    "vite-plus": "1.5.0",
+    "vite-plus": "catalog:",
     "vue-tsc": "^3.3.14"
   },
   "packageManager": "pnpm@12.14.0"
