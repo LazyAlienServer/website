@@ -7,13 +7,15 @@
     "dev": "vp dev",
     "build": "vp build",
     "preview": "vp preview",
-    "prepare": "vp config"
+    "prepare": "vp config",
+    "deploy": "cf deploy"
   },
   "dependencies": {
     "vue": "^3.5.45",
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "2.0.0-beta.v.12",
     "@types/node": "^26.6.6",
     "@vitejs/plugin-vue": "^6.0.10",
     "@vue/content-mapper": "4.0.0-alpha.3",
