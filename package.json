@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "vue": "^3.5.45",
-    "vue-router": "^4.6.4"
+    "vue-router": "^5.4.0"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "2.0.0-beta.v.12",
@@ -22,7 +22,7 @@
     "react-doctor": "^0.9.22",
     "sass": "^1.108.0",
     "skills": "^1.7.6",
-    "typescript": "7.1.0-beta",
+    "typescript": "7.1.0-dev.20261106.1",
     "vite-plus": "catalog:"
   },
   "packageManager": "pnpm@12.18.0"
