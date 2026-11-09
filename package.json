@@ -4,11 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vp dev",
     "build": "vp build",
-    "preview": "vp preview",
-    "prepare": "vp config",
-    "deploy": "cf deploy"
+    "build:preview": "CLOUDFLARE_PREVIEW_BUILD=true vp build",
+    "deploy": "cf deploy --prebuilt",
+    "deploy:preview": "cf previews deploy --prebuilt"
   },
   "dependencies": {
     "vue": "^3.5.45",
