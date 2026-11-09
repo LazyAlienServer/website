@@ -195,3 +195,9 @@ vp run build
 ```
 
 Use `vp run <script>` when a project script or Vite task is being invoked. Avoid broad formatting of unrelated CRLF files; target the changed files when possible. Browser-based verification is governed by `AGENTS.md` and requires explicit user permission.
+
+## Deployment
+
+Production deploys with `pnpm deploy` (`cf deploy --prebuilt`). Branch Previews deploy with `pnpm build:preview` followed by `pnpm deploy:preview` (`cf previews deploy --prebuilt`). A Preview is named after the current Git branch and is scoped to the `las-web` Worker from `cloudflare.config.ts`.
+
+`.github/workflows/preview-cleanup.yml` deletes the branch Preview when its pull request closes. It requires the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` repository secrets, skips pull requests from forks, and treats an already-absent Preview as success.
