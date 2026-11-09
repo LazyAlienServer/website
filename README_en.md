@@ -19,7 +19,7 @@ The official website of Lazy Alien Server (LAS), a Chinese Minecraft organizatio
 - Home: `/`
 - Rules: `/rules`
 
-Visit the live site at [beta-2.lzalien.org](https://beta-2.lzalien.org/).
+Visit the live site at <https://lzalien.org>.
 
 ## Tech stack
 

@@ -19,7 +19,7 @@ Lazy Alien Server（LAS）官方网站，LAS 是以学生群体为主的 Minecra
 - 首页：`/`
 - 规章制度：`/rules`
 
-在线访问：[beta-2.lzalien.org](https://beta-2.lzalien.org/)
+在线访问：<https://lzalien.org>
 
 ## 技术栈
 
