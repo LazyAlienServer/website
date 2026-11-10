@@ -7,11 +7,18 @@
       </h2>
 
       <ul class="hw-grid" v-reveal>
-        <li v-for="tile in tiles" :key="tile.key" class="hw-tile">
+        <li
+          v-for="tile in tiles"
+          :key="tile.key"
+          class="hw-tile"
+          :class="[`hw-tile--${tile.key}`, `hw-tile--${tile.kind}`]"
+        >
           <template v-if="tile.kind === 'figure'">
-            <p class="hw-text">{{ tile.lead }}</p>
-            <p class="hw-figure">{{ tile.figure }}</p>
-            <p class="hw-text">{{ tile.note }}</p>
+            <p class="hw-lead">{{ tile.lead }}</p>
+            <p class="hw-figure">
+              {{ tile.value }}<span class="hw-unit">{{ tile.unit }}</span>
+            </p>
+            <p class="hw-note">{{ tile.note }}</p>
           </template>
           <template v-else>
             <span class="hw-icon" aria-hidden="true" v-html="tile.icon"></span>
@@ -50,19 +57,20 @@ const icons = {
   </svg>`,
 };
 
-// Two tile kinds: a headline figure between a lead line and a note, or an
-// icon over one sentence whose opening phrase is set bright.
+// Two tile kinds: a figure (lead line, value with unit, note) or an icon
+// beside one sentence whose opening phrase is set bright. `key` names the
+// tile's grid area, so the order here is only the reading order.
 type Tile =
-  | { kind: "figure"; key: string; lead: string; figure: string; note: string }
+  | { kind: "figure"; key: string; lead: string; value: string; unit: string; note: string }
   | { kind: "icon"; key: string; icon: string; strong: string; text: string };
 
-// Figure and icon tiles alternate, so the 3 × 2 grid reads as a checkerboard.
 const tiles: Tile[] = [
   {
     kind: "figure",
     key: "cpu",
     lead: "i9-13900K 主频最高",
-    figure: "5.8 GHz",
+    value: "5.8",
+    unit: "GHz",
     note: "24 核 32 线程，单核与多核兼顾。",
   },
   {
@@ -75,9 +83,18 @@ const tiles: Tile[] = [
   {
     kind: "figure",
     key: "storage",
-    lead: "RAID 10 阵列可用容量",
-    figure: "4 TB",
-    note: "4 块 2TB NVMe，任一盘故障数据仍完整。",
+    lead: "RAID 10 可用容量",
+    value: "4",
+    unit: "TB",
+    note: "4 块 2TB NVMe。",
+  },
+  {
+    kind: "figure",
+    key: "uptime",
+    lead: "服务器在线率",
+    value: "99",
+    unit: "%",
+    note: "多节点负载容灾。",
   },
   {
     kind: "icon",
@@ -85,13 +102,6 @@ const tiles: Tile[] = [
     icon: icons.network,
     strong: "BGP 多线与香港 CN2",
     text: " 线路接入，海外延迟平均降低 100-200ms。",
-  },
-  {
-    kind: "figure",
-    key: "uptime",
-    lead: "服务器在线率",
-    figure: "99%",
-    note: "多节点负载容灾，稳定在线。",
   },
   {
     kind: "icon",
@@ -104,10 +114,13 @@ const tiles: Tile[] = [
 </script>
 
 <style scoped lang="scss">
-// Feature tiles after Apple's product pages: a two-tone heading (muted lead,
-// bright line) over a 3 × 2 grid of square, rounded black tiles on a raised
-// band, each centred on one fact. Dark in both themes: in light it continues
-// the timer's dark block, and brand ink (the icons) turns yellow.
+// Bento grid of unequal tiles. A two-tone heading (muted lead, bright line)
+// over a 4-column grid: the CPU takes a 2 × 2 tile in brand fill with an
+// oversized figure, memory, network and plugins take wide icon tiles,
+// storage and uptime small figure tiles.
+//
+// Dark in both themes: in light it continues the timer's dark block; the CPU
+// tile turns yellow with black text and the icons turn yellow.
 .hardware-section {
   @include dark-surface;
   background-color: $color-surface;
@@ -130,7 +143,12 @@ const tiles: Tile[] = [
 
 .hw-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-areas:
+    "cpu cpu ram ram"
+    "cpu cpu storage uptime"
+    "network network plugin plugin";
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: minmax(200px, auto);
   gap: $spacing-md;
   margin-top: $spacing-lg;
   list-style: none;
@@ -139,37 +157,36 @@ const tiles: Tile[] = [
 .hw-tile {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: $spacing-sm;
-  aspect-ratio: 1;
   min-width: 0;
-  padding: $spacing-lg $spacing-md;
-  border: 1px solid fade($color-fg, 0.06);
-  border-radius: 28px;
+  padding: 32px;
   background: $color-bg;
-  text-align: center;
-}
 
-// sentences in muted gray; the opening phrase of icon tiles is set bright
-.hw-text {
-  max-width: 15em;
-  font-size: $font-size-lead;
-  font-weight: $font-weight-medium;
-  line-height: 1.4;
-  color: $color-fg-subtle;
-  overflow-wrap: break-word;
-  // even lines, so no single character is left alone on the last one
-  text-wrap: balance;
-
-  strong {
-    font-weight: $font-weight-bold;
-    color: $color-fg;
+  @each $area in cpu, ram, storage, uptime, network, plugin {
+    &--#{$area} {
+      grid-area: $area;
+    }
   }
 }
 
+// ---------- Figure tiles ----------
+.hw-tile--figure {
+  justify-content: space-between;
+  gap: $spacing-sm;
+}
+
+.hw-lead,
+.hw-note {
+  font-size: $font-size-small;
+  line-height: 1.6;
+  color: $color-fg-subtle;
+}
+
 .hw-figure {
-  // about two thirds of a tile's width at most, leaving air on both sides
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: auto;
+  font-family: $font-display;
   font-size: clamp(48px, 4.4vw, 64px);
   font-weight: $font-weight-bold;
   line-height: 1;
@@ -178,9 +195,45 @@ const tiles: Tile[] = [
   white-space: nowrap;
 }
 
+.hw-unit {
+  font-size: $font-size-lead;
+  font-weight: $font-weight-medium;
+  color: $color-fg-subtle;
+}
+
+// The lead tile: brand fill, the figure set oversized
+.hw-tile--cpu {
+  background: $color-accent;
+  color: $color-on-accent;
+
+  .hw-lead,
+  .hw-note {
+    font-size: $font-size-body;
+    color: fade($color-on-accent, 0.75);
+  }
+
+  .hw-figure {
+    font-size: clamp(88px, 10vw, 144px);
+    color: $color-on-accent;
+  }
+
+  .hw-unit {
+    font-size: $font-size-h4;
+    color: fade($color-on-accent, 0.75);
+  }
+}
+
+// ---------- Icon tiles: icon beside the sentence ----------
+.hw-tile--icon {
+  flex-direction: row;
+  align-items: center;
+  gap: $spacing-md;
+}
+
 .hw-icon {
-  width: 72px;
-  height: 72px;
+  flex: none;
+  width: 64px;
+  height: 64px;
   color: $color-accent-ink;
 
   :deep(svg) {
@@ -190,37 +243,71 @@ const tiles: Tile[] = [
   }
 }
 
-@include tablet {
-  .hw-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+.hw-text {
+  font-size: $font-size-lead;
+  font-weight: $font-weight-medium;
+  line-height: 1.4;
+  color: $color-fg-subtle;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+
+  strong {
+    font-weight: $font-weight-bold;
+    color: $color-fg;
   }
 }
 
-// stacked: tiles size to their content rather than staying square
+// ---------- Tablet and mobile: two columns ----------
+@include tablet {
+  .hw-grid {
+    grid-template-areas:
+      "cpu cpu"
+      "ram ram"
+      "storage uptime"
+      "network network"
+      "plugin plugin";
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: minmax(160px, auto);
+  }
+
+  .hw-tile--cpu {
+    min-height: 280px;
+  }
+}
+
 @include mobile {
   .hw-title {
     font-size: $font-size-h4;
   }
 
   .hw-grid {
-    grid-template-columns: 1fr;
     gap: $spacing-sm;
     margin-top: $spacing-md;
   }
 
   .hw-tile {
-    aspect-ratio: auto;
-    min-height: 240px;
-    padding: $spacing-lg $spacing-md;
-    border-radius: 24px;
-  }
-
-  .hw-text {
-    font-size: $font-size-body-lg;
+    padding: $spacing-md;
   }
 
   .hw-figure {
-    font-size: 48px;
+    font-size: 40px;
+  }
+
+  .hw-tile--cpu {
+    min-height: 240px;
+
+    .hw-figure {
+      font-size: 72px;
+    }
+  }
+
+  .hw-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .hw-text {
+    font-size: $font-size-body;
   }
 }
 </style>

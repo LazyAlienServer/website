@@ -38,7 +38,7 @@ The Vite alias `@` resolves to `src/`. SCSS receives `src/styles/variables.scss`
 1. `HeroSection.vue` — fixed navigation, hero visual, scroll-driven seam/parallax. The hero shot follows the theme (`HERO_SHOTS`: gothic hall `/hero.webp` in dark, FTL pearl cannon `/ftl-ender-pearl.webp` in light).
 2. `IntroSection.vue` — LAS introduction, particle emblem (`ParticleLogo.vue`), and decorative technology rail.
 3. `LiveTimer.vue` — founding-date uptime counter, UTC+8 analog clock, image carousel, and parallax.
-4. `HardwareSection.vue` — tech support feature tiles (hardware and infrastructure).
+4. `HardwareSection.vue` — tech support bento tiles (hardware and infrastructure).
 5. `GithubProjects.vue` — remote GitHub repository index and carousel.
 6. `AdminTeam.vue` — operator cards, avatar fallback, and optional Bilibili links.
 7. `JoinSection.vue` — rules entry points, QQ group link, and clipboard action.
@@ -110,8 +110,8 @@ Standalone `aria-hidden` band repeating `LAZY ALIEN SERVER` (solid, outlined, bl
 
 ### `HardwareSection.vue`
 
-- Static feature tiles after Apple's product pages, no state or timers. The tile data (`tiles`) and SVG icon strings are local constants in the component.
-- A two-tone `h2` (muted “技术支持” over the bright slogan line) above a 3 × 2 grid of square, rounded tiles (`$color-bg` on the section's `$color-surface` band; two columns on tablet, one column with content-height tiles on mobile). Each tile centres one fact: figure tiles (CPU 5.8 GHz, RAID 10 4 TB, 99% uptime) set a large figure between a muted lead line and a note; icon tiles (RAM, BGP and Hong Kong CN2 network, in-house plugins) set a brand-ink line drawing over one muted sentence whose opening phrase is bright. The two kinds alternate so the grid reads as a checkerboard.
+- Static bento tiles, no state or timers. The tile data (`tiles`) and SVG icon strings are local constants in the component; each tile's `key` is its grid area.
+- A two-tone `h2` (muted “技术支持” over the bright slogan line) above a bento grid on the section's `$color-surface` band. Desktop: 4 columns, the CPU in a 2 × 2 tile in brand fill (`$color-accent`, on-accent text; yellow with black text in light) with an oversized figure, memory beside it as a wide icon tile, storage (4 TB) and uptime (99%) as small figure tiles under that, network and plugins as wide icon tiles in the last row. Tablet and mobile: 2 columns, the CPU, memory, network and plugin tiles full width, storage and uptime side by side.
 
 ### `GithubProjects.vue`
 
@@ -158,7 +158,7 @@ Both routes render the same footer, dark in both themes. Its main row is a set o
 - Industrial mixins: `clipped-panel`, `corner-brackets`, and `hatch-strip`.
 - Hero slant: `src/styles/global.scss` defines `--hero-slant` and `--hero-slant-tan` on `:root`, the viewport-dependent angle of the hero image's clipped left edge (`atan2(4.8vw, max(100vh, 640px))`), with fixed 1920×1080 fallbacks. Every slant uses it (the AGENTS.md tilt rule): kicker marks (rules, gallery), the hero primary button (skewed `::before` clipped by `overflow: hidden`), ticker marks, and the join divider and group tint.
 
-Section headings are intentionally bespoke and owned by each section component (hero “We are” kicker with a ↘ arrow block, intro title with flat-square key/value shield badges, timer founding timeline, hardware two-tone title over the feature tiles, GitHub title with the same ↘ arrow block as the hero kicker, admin “Crew manifest” nameplate with a scribed rule plus roster manifest, join title level with a “JOIN US” display mark on the group panel, over the ruled path list). The hero carries no section index. There is no shared section-header component or global header class; derive header data from the section's own constants (`tiles`, `operators`, `establishedDate`, `paths`).
+Section headings are intentionally bespoke and owned by each section component (hero “We are” kicker with a ↘ arrow block, intro title with flat-square key/value shield badges, timer founding timeline, hardware two-tone title over the bento tiles, GitHub title with the same ↘ arrow block as the hero kicker, admin “Crew manifest” nameplate with a scribed rule plus roster manifest, join title level with a “JOIN US” display mark on the group panel, over the ruled path list). The hero carries no section index. There is no shared section-header component or global header class; derive header data from the section's own constants (`tiles`, `operators`, `establishedDate`, `paths`).
 
 `src/styles/global.scss` owns resets, body defaults, typography scale, utility panels, blueprint grids, section shells, reveal transitions, and the global reduced-motion rules. Prefer existing tokens/mixins over local duplicate values.
 
@@ -171,7 +171,7 @@ Section headings are intentionally bespoke and owned by each section component (
 | Add or reorder homepage content             | `src/views/HomePage.vue`                              | Section component imports and anchor targets     |
 | Change hero/nav scroll behavior             | `src/components/HeroSection.vue`                      | Reduced-motion styles and listener cleanup       |
 | Change founding timer or image carousel     | `src/components/LiveTimer.vue`                        | Timer interval, cooldown, and public image paths |
-| Change hardware data or feature tiles       | `src/components/HardwareSection.vue`                  | Tile kinds and grid breakpoints                  |
+| Change hardware data or bento tiles         | `src/components/HardwareSection.vue`                  | Grid areas and breakpoints                       |
 | Change GitHub repository fields or carousel | `src/components/GithubProjects.vue`                   | Type guards, cache, desktop deck, mobile list    |
 | Change rules content                        | `src/data/rules.ts`                                   | `RulesPage.vue` query/hash highlighting          |
 | Change gallery images                       | `src/data/gallery.ts`, `public/`                      | Intrinsic image sizes, frame layout rhythm       |
