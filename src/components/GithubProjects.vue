@@ -16,8 +16,12 @@
         <div class="github-title" v-reveal>
           <p class="github-title-kicker">Lazy Alien Server</p>
           <div class="github-title-en-row">
-            <span class="github-title-mark" aria-hidden="true"></span>
-            <span class="github-title-en">Open source</span>
+            <span class="github-title-block" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M5 5 19 19M19 7v12H7" />
+              </svg>
+            </span>
+            <span>Open source</span>
           </div>
           <h2 class="github-title-cn">开源项目</h2>
         </div>
@@ -156,14 +160,6 @@
                 :key="`mobile-${repo.name}`"
                 class="mobile-card-item"
               >
-                <div class="card-caption">
-                  <span class="caption-meta">
-                    <span class="caption-tag">// {{ repo.language ?? "misc" }}</span>
-                    <time>{{ formatDate(repo.pushed_at) }}</time>
-                  </span>
-                  <span class="caption-name">{{ repo.name }}</span>
-                </div>
-
                 <a
                   class="mobile-repo-card"
                   :href="repo.html_url"
@@ -192,6 +188,7 @@
                         </svg>
                         {{ repo.stargazers_count }}
                       </span>
+                      <time class="card-date">{{ formatDate(repo.pushed_at) }}</time>
                       <span v-if="slot === 0" class="repo-link" aria-hidden="true">
                         <svg
                           viewBox="0 0 24 24"
@@ -212,35 +209,37 @@
           </div>
 
           <div class="deck-controls" v-reveal>
-            <button type="button" class="page-btn" aria-label="上一个项目" @click="prev(true)">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                width="18"
-                height="18"
-                aria-hidden="true"
-              >
-                <path d="M15 6l-6 6 6 6" />
-              </svg>
-            </button>
-            <span class="deck-counter" aria-live="polite">
-              {{ current + 1 }}<span class="counter-divider">/</span>{{ repos.length }}
-            </span>
-            <button type="button" class="page-btn" aria-label="下一个项目" @click="next(true)">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                width="18"
-                height="18"
-                aria-hidden="true"
-              >
-                <path d="M9 6l6 6-6 6" />
-              </svg>
-            </button>
+            <div class="deck-pager">
+              <button type="button" class="page-btn" aria-label="上一个项目" @click="prev(true)">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  width="18"
+                  height="18"
+                  aria-hidden="true"
+                >
+                  <path d="M15 6l-6 6 6 6" />
+                </svg>
+              </button>
+              <span class="deck-counter" aria-live="polite">
+                {{ current + 1 }}<span class="counter-divider">/</span>{{ repos.length }}
+              </span>
+              <button type="button" class="page-btn" aria-label="下一个项目" @click="next(true)">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  width="18"
+                  height="18"
+                  aria-hidden="true"
+                >
+                  <path d="M9 6l6 6-6 6" />
+                </svg>
+              </button>
+            </div>
             <a
               class="more-btn"
               href="https://github.com/LazyAlienServer"
@@ -410,8 +409,10 @@ onUnmounted(() => clearInterval(autoplayId));
 </script>
 
 <style scoped lang="scss">
+// Clips the deck and the head rule, which run on to the viewport's right edge.
 .github-section {
   background-color: $color-bg;
+  overflow-x: clip;
 }
 
 .gh-shell {
@@ -505,45 +506,55 @@ onUnmounted(() => clearInterval(autoplayId));
   color: $color-fg-subtle;
 }
 
+// Kicker after the Endfield headings, same build as the hero's "We are" row
+// (HeroSection.vue): a block with a ↘ arrow at its right end, sized in em of
+// the row's font size. Dark: blue block, white arrow; light: gray block,
+// black arrow.
 .github-title-en-row {
   display: flex;
   align-items: center;
-  gap: $spacing-xs;
+  gap: 0.3em;
   margin-top: 2px;
-}
-
-.github-title-mark {
-  width: 48px;
-  height: 18px;
-  background: transparent;
-  background-image: repeating-linear-gradient(
-    45deg,
-    $color-fg 0,
-    $color-fg 2px,
-    transparent 2px,
-    transparent 7px
-  );
-  border: none;
-}
-
-.github-title-en {
   font-family: $font-display;
   font-size: 20px;
   font-weight: $font-weight-medium;
+  line-height: 1;
   color: $color-fg;
 }
 
+.github-title-block {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: flex-end;
+  width: 3em;
+  height: 0.9em;
+  padding-right: 0.1em;
+  background: $color-accent;
+  color: $color-on-accent;
+
+  @include light {
+    background: $color-line;
+  }
+
+  svg {
+    width: 0.62em;
+    height: 0.62em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3;
+    stroke-linecap: square;
+  }
+}
+
 .github-title-cn {
-  margin-top: 2px;
-  font-size: $font-size-h2;
+  margin-top: $spacing-xs;
+  font-size: $font-size-h3;
   color: $color-fg;
 }
 
 // ---------- Dynamic title row (desktop) ----------
-.feature-head {
-  min-height: 108px;
-}
-
+// One line: tag and date, the featured repo's name, then a full-width rule.
 .feature-meta {
   display: flex;
   align-items: baseline;
@@ -563,20 +574,21 @@ onUnmounted(() => clearInterval(autoplayId));
 
 .feature-name {
   margin-top: $spacing-xs;
-  font-size: $font-size-h3;
+  font-size: $font-size-h4;
+  font-weight: $font-weight-medium;
   color: $color-fg;
   text-transform: none;
-  display: -webkit-box;
-  line-clamp: 2;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+// runs on to the viewport's right edge, like the deck below it
 .feature-rule {
   height: 1px;
   margin-top: $spacing-sm;
-  background: linear-gradient(90deg, $color-line 0%, fade($color-line, 0) 100%);
+  margin-right: -100vw;
+  background: $color-line;
 }
 
 .head-swap-enter-active,
@@ -639,7 +651,7 @@ onUnmounted(() => clearInterval(autoplayId));
   .deck-card {
     position: absolute;
     top: 0;
-    width: 41%;
+    width: 50%;
     min-width: 360px;
     transform-origin: left center;
     will-change: transform, opacity;
@@ -655,25 +667,37 @@ onUnmounted(() => clearInterval(autoplayId));
       @include corner-brackets;
     }
 
+    // Peeks at 82%, centred on the featured card and dimmed like the
+    // reference's washed-out previews; hover or focus lifts them.
+    &[data-slot="1"],
+    &[data-slot="2"] {
+      opacity: 0.45;
+
+      &:hover,
+      &:focus-visible {
+        opacity: 0.8;
+      }
+    }
+
     &[data-slot="1"] {
-      transform: translate3d(104%, 0, 0) scale(0.72);
+      transform: translate3d(104%, 0, 0) scale(0.82);
       z-index: 2;
     }
 
     &[data-slot="2"] {
-      transform: translate3d(182%, 0, 0) scale(0.72);
+      transform: translate3d(190%, 0, 0) scale(0.82);
       z-index: 1;
     }
 
     // Offstage slots absorb wrap-around while remaining invisible.
     &[data-slot="3"] {
-      transform: translate3d(259%, 0, 0) scale(0.72);
+      transform: translate3d(276%, 0, 0) scale(0.82);
       opacity: 0;
       pointer-events: none;
     }
 
     &[data-slot="4"] {
-      transform: translate3d(-110%, 0, 0) scale(0.72);
+      transform: translate3d(-110%, 0, 0) scale(0.82);
       opacity: 0;
       pointer-events: none;
     }
@@ -747,6 +771,13 @@ onUnmounted(() => clearInterval(autoplayId));
   color: $color-accent-ink;
 }
 
+// mobile cards only: the date the head row shows on desktop
+.card-date {
+  font-family: $font-display;
+  font-size: $font-size-label;
+  color: $color-fg-subtle;
+}
+
 .repo-link {
   margin-left: auto;
   display: inline-flex;
@@ -772,16 +803,25 @@ onUnmounted(() => clearInterval(autoplayId));
   display: none;
 }
 
-.card-caption {
-  display: none;
-}
-
 // ---------- Controls ----------
+// After the reference: a pager capsule (both arrows and the count in one
+// pill), then the dark "more" button with a brand bar.
 .deck-controls {
   display: flex;
   align-items: center;
-  gap: $spacing-sm;
+  gap: $spacing-md;
   margin-top: $spacing-md;
+}
+
+.deck-pager {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: 4px;
+  border: 1px solid $color-line;
+  border-radius: 999px;
+  background: $color-surface;
 }
 
 .page-btn {
@@ -789,7 +829,7 @@ onUnmounted(() => clearInterval(autoplayId));
   height: 46px;
   border-radius: 50%;
   border: 1px solid $color-line;
-  background: transparent;
+  background: $color-bg;
   color: $color-fg;
   display: inline-flex;
   align-items: center;
@@ -828,11 +868,17 @@ onUnmounted(() => clearInterval(autoplayId));
   }
 }
 
+// Dark in both themes, like the reference's: in light it takes the dark
+// neutrals, so the bar turns yellow on it. The focus ring is drawn inside,
+// on the dark fill, where the yellow ink reads. Label centred, bar pinned at
+// the left edge; wide enough to read as a button beside the pager.
 .more-btn {
-  margin-left: 16px;
+  @include dark-surface;
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 24px;
+  justify-content: center;
+  min-width: 176px;
   height: 46px;
   padding: 0 28px;
   background: $color-surface;
@@ -846,7 +892,8 @@ onUnmounted(() => clearInterval(autoplayId));
 
   &::before {
     content: "";
-    margin-left: -12px;
+    position: absolute;
+    left: 12px;
     width: 4px;
     height: 18px;
     background: $color-accent-ink;
@@ -855,12 +902,13 @@ onUnmounted(() => clearInterval(autoplayId));
   &:hover,
   &:focus-visible {
     border-color: $color-accent-ink;
-    background: fade($color-accent-bright, 0.08);
+    // opaque mix, so the white label never ends up over the light page
+    background: color-mix(in srgb, $color-accent-bright 8%, $color-surface);
   }
 
   &:focus-visible {
     outline: 2px solid $color-accent-ink;
-    outline-offset: 2px;
+    outline-offset: -4px;
   }
 }
 
@@ -926,11 +974,6 @@ onUnmounted(() => clearInterval(autoplayId));
   width: 40px;
 }
 
-.sk-caption-line {
-  width: 70%;
-  margin-top: $spacing-sm;
-}
-
 @keyframes sk-pulse {
   0%,
   100% {
@@ -991,10 +1034,12 @@ onUnmounted(() => clearInterval(autoplayId));
 
 // ---------- Responsive ----------
 @include desktop {
+  // Rail up to 80px wide. Like the reference's yellow rail it runs well past
+  // the content, overhanging it by up to 72px top and bottom.
   .gh-shell {
-    --gh-rail-width: clamp(40px, calc(5.72vw + 3.33px), 72px);
+    --gh-rail-width: clamp(40px, calc(5.72vw + 3.33px), 80px);
     --gh-column-gap: clamp(16px, calc(5.72vw - 20.67px), 48px);
-    --gh-overhang: clamp(18px, calc(2.5vw + 1.97px), 32px);
+    --gh-overhang: clamp(18px, calc(3.75vw + 2px), 72px);
 
     grid-template-columns: var(--gh-rail-width) minmax(0, 1fr);
     gap: var(--gh-column-gap);
@@ -1004,44 +1049,41 @@ onUnmounted(() => clearInterval(autoplayId));
 
   .gh-rail {
     margin-block: calc(0px - var(--gh-overhang));
-    padding-block: clamp(12px, calc(2.15vw - 1.78px), 24px);
+    padding-block: clamp(12px, calc(2.15vw - 1.78px), 32px);
   }
 
   .gh-rail-logo {
-    width: clamp(28px, calc(2.86vw + 9.66px), 44px);
+    width: clamp(28px, calc(2.86vw + 9.66px), 48px);
   }
 
   .gh-rail-text {
-    font-size: clamp(16px, calc(1.43vw + 6.83px), 24px);
+    font-size: clamp(16px, calc(1.43vw + 6.83px), 26px);
   }
 
   .gh-rail-labels {
     gap: 0;
   }
 
+  // two lines of decorative micro text: the slot is as wide as both
+  .gh-rail-detail {
+    width: 2.2em;
+    font-size: clamp(6px, calc(0.36vw + 4.71px), 10px);
+  }
+
   .gh-rail-detail-desktop {
-    font-size: clamp(6px, calc(0.36vw + 4.71px), 8px);
+    font-size: 1em;
   }
 
   .github-title {
     margin-bottom: clamp(24px, calc(4.29vw - 3.52px), 48px);
   }
 
-  .github-title-mark {
-    width: clamp(32px, calc(2.86vw + 13.66px), 48px);
-    height: clamp(14px, calc(0.72vw + 9.41px), 18px);
-  }
-
-  .github-title-en {
+  .github-title-en-row {
     font-size: clamp(15px, calc(0.89vw + 9.29px), 20px);
   }
 
   .github-title-cn {
-    font-size: clamp(32px, calc(2.86vw + 13.66px), 48px);
-  }
-
-  .feature-head {
-    min-height: clamp(84px, calc(4.29vw + 56.48px), 108px);
+    font-size: clamp(28px, calc(1.43vw + 18.83px), 36px);
   }
 
   .feature-meta {
@@ -1049,18 +1091,23 @@ onUnmounted(() => clearInterval(autoplayId));
   }
 
   .feature-name {
-    font-size: clamp(24px, calc(2.15vw + 10.22px), 36px);
+    font-size: clamp(20px, calc(0.72vw + 15.41px), 24px);
   }
 
+  // The featured card takes half the content width. The deck is clipped at
+  // its left edge only: the peeks run on to the viewport's right edge (the
+  // section clips them there), as in the reference.
   .deck {
     height: auto;
     min-height: 202.5px;
     margin-top: clamp(12px, calc(2.15vw - 1.78px), 24px);
+    overflow: visible;
+    clip-path: inset(-8px -100vw -8px -8px);
 
     &::before {
       content: "";
       display: block;
-      width: 41%;
+      width: 50%;
       min-width: 360px;
       aspect-ratio: 16 / 9;
     }
@@ -1094,7 +1141,6 @@ onUnmounted(() => clearInterval(autoplayId));
   }
 
   .deck-controls {
-    gap: clamp(8px, calc(1.43vw - 1.17px), 16px);
     margin-top: clamp(12px, calc(2.15vw - 1.78px), 24px);
   }
 
@@ -1108,7 +1154,6 @@ onUnmounted(() => clearInterval(autoplayId));
   }
 
   .more-btn {
-    gap: clamp(18px, calc(0.72vw + 5.41px), 24px);
     height: clamp(38px, calc(1.43vw + 28.84px), 46px);
     padding-inline: clamp(32px, calc(2.15vw + 2.22px), 40px);
 
@@ -1123,26 +1168,40 @@ onUnmounted(() => clearInterval(autoplayId));
     width: 100%;
     max-width: 480px;
     margin-inline: 0 auto;
-    grid-template-columns: 36px minmax(0, 1fr);
+    grid-template-columns: 40px minmax(0, 1fr);
     gap: $spacing-sm;
   }
 
+  // overhangs the content by 24px top and bottom, like the desktop rail
   .gh-rail {
     position: relative;
     left: -$spacing-sm;
+    margin-block: -$spacing-md;
     padding: $spacing-sm 0;
   }
 
   .gh-rail-logo {
-    width: 24px;
+    width: 28px;
   }
 
   .gh-rail-text {
-    font-size: $font-size-body;
+    font-size: $font-size-body-lg;
   }
 
   .gh-rail-labels {
     gap: 0;
+  }
+
+  .github-title-en-row {
+    font-size: $font-size-body;
+  }
+
+  .github-title-cn {
+    font-size: $font-size-h4;
+  }
+
+  .github-title {
+    margin-bottom: $spacing-md;
   }
 
   .gh-rail-detail {
@@ -1160,7 +1219,7 @@ onUnmounted(() => clearInterval(autoplayId));
     font-weight: $font-weight-regular;
   }
 
-  // Stacked bulletin list — current + next, each with its own caption
+  // Stacked list: current + next, each card carrying its own date
   .feature-head {
     display: none;
   }
@@ -1183,13 +1242,7 @@ onUnmounted(() => clearInterval(autoplayId));
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: $spacing-lg;
-  }
-
-  .mobile-card-item {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-xs;
+    gap: $spacing-sm;
   }
 
   // Stack switch, same easing as the desktop deck. Forward: the old current
@@ -1282,64 +1335,45 @@ onUnmounted(() => clearInterval(autoplayId));
     }
   }
 
+  // Every card is the same height whatever its text, so the section (and the
+  // rail beside it) keeps one height while the carousel turns: one line of
+  // name, two lines' room for the description even when it is shorter.
   .card-name {
     font-size: clamp(16px, 5vw, 22px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
+  // content height instead of 16:9, so two cards and the controls fit one
+  // screen
   .card-body {
-    min-height: 0;
+    aspect-ratio: auto;
+    padding: $spacing-sm;
   }
 
   .card-desc {
-    margin-top: clamp(8px, 2.5vw, 12px);
+    flex: none;
+    height: 3.2em; // 2 lines at the 1.6 line height
+    margin-top: $spacing-xs;
     line-clamp: 2;
     -webkit-line-clamp: 2;
     text-overflow: ellipsis;
   }
 
   .card-meta {
-    gap: clamp(10px, 3vw, 16px);
-    margin-top: clamp(10px, 3vw, 16px);
+    gap: $spacing-sm;
+    margin-top: 12px;
   }
 
   .card-index {
-    font-size: 96px;
-    bottom: -14px;
-  }
-
-  .card-caption {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 0 2px $spacing-xs;
-    background: transparent;
-    border-bottom: 1px solid fade($color-fg, 0.12);
-  }
-
-  .caption-meta {
-    display: flex;
-    align-items: baseline;
-    gap: $spacing-sm;
-    font-family: $font-display;
-    font-size: $font-size-label;
-    color: $color-fg-subtle;
-  }
-
-  .caption-tag {
-    color: $color-accent-ink;
-  }
-
-  .caption-name {
-    font-family: $font-display;
-    font-size: 18px;
-    font-weight: $font-weight-bold;
-    color: $color-fg;
-    overflow-wrap: break-word;
+    font-size: 72px;
+    bottom: -10px;
   }
 
   .deck-controls {
     flex-wrap: nowrap;
-    gap: clamp(6px, 1.5vw, 10px);
+    gap: $spacing-sm;
   }
 
   .page-btn {
@@ -1354,17 +1388,14 @@ onUnmounted(() => clearInterval(autoplayId));
     white-space: nowrap;
   }
 
+  // fills the rest of the row, label centred, bar kept at the left edge
   .more-btn {
+    flex: 1;
     min-width: 0;
     height: clamp(36px, 8vw, 44px);
     padding-inline: clamp(12px, 2.5vw, 18px);
-    gap: clamp(8px, 2vw, 12px);
     font-size: $font-size-small;
     white-space: nowrap;
-
-    &::before {
-      margin-left: -4px;
-    }
   }
 }
 
