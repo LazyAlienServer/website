@@ -524,8 +524,8 @@ onUnmounted(() => {
   color: $color-fg;
 }
 
-// One block per day or half hour, oldest left. 28px tall, so the brand block may
-// be a fill in either theme; levels as in `levelOf`.
+// One block per day or half hour, oldest left; levels as in `levelOf`, in the
+// same green / red as the route state.
 .uptime-bar {
   grid-column: 2 / -1;
   display: flex;
@@ -540,7 +540,7 @@ onUnmounted(() => {
   transition: opacity $transition-fast;
 
   &.is-up {
-    background: $color-accent-ink;
+    background: $color-success;
   }
 
   &.is-degraded {
