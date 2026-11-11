@@ -6,10 +6,10 @@ LASweb-v2 is the official website for Lazy Alien Server (LAS), a Chinese Minecra
 
 - Vue 3 application using Composition API and `<script setup lang="ts">`.
 - TypeScript for application logic, SCSS for styling, and Vite+ for development, builds, checking, and package management.
-- `src/views/` contains route-level pages: `HomePage.vue` composes the landing-page sections and `RulesPage.vue` renders the rules data.
+- `src/views/` contains route-level pages: `HomePage.vue` composes the landing-page sections, `RulesPage.vue` renders the rules data, `GalleryPage.vue` the image archive, and `MapPage.vue` embeds the BlueMap server map full screen (styled by `public/bluemap/las.css`, loaded on the BlueMap side).
 - `src/components/` contains reusable landing-page sections and interactive modules such as the live timer, tech support bento tiles, GitHub project listing, and join flow.
 - `src/data/rules.ts` is the source of truth for the rules page; `src/styles/` contains shared design tokens and global industrial UI styles.
-- `src/router/index.ts` defines the `/` home route and `/rules` rules route. The `@` alias resolves to `src/`.
+- `src/router/index.ts` defines the `/`, `/rules`, `/gallery`, and `/map` routes. The `@` alias resolves to `src/`.
 
 Detailed runtime boundaries, state ownership, data flows, and modification entry points are documented in [architecture.md](architecture.md).
 

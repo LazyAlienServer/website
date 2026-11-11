@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomePage from "@/views/HomePage.vue";
 import RulesPage from "@/views/RulesPage.vue";
 import GalleryPage from "@/views/GalleryPage.vue";
+import MapPage from "@/views/MapPage.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,6 +13,7 @@ const router = createRouter({
     { path: "/", name: "home", component: HomePage, meta: { navIndex: 0 } },
     { path: "/rules", name: "rules", component: RulesPage, meta: { navIndex: 1 } },
     { path: "/gallery", name: "gallery", component: GalleryPage, meta: { navIndex: 2 } },
+    { path: "/map", name: "map", component: MapPage, meta: { navIndex: 3 } },
   ],
   scrollBehavior(to, _from, savedPosition) {
     if (savedPosition) return savedPosition;

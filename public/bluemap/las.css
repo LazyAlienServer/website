@@ -1,0 +1,177 @@
+/*
+ * LAS theme for BlueMap (bluemap.lzalien.org, BlueMap 3.9 markup).
+ *
+ * Served at https://lzalien.org/bluemap/las.css. The BlueMap server loads it
+ * through its webapp.conf:  styles: ["https://lzalien.org/bluemap/las.css"]
+ * The site cannot inject CSS into the cross-origin frame on /map itself.
+ *
+ * Colors repeat the theme values in src/styles/global.scss; keep them in step.
+ * BlueMap's default theme follows prefers-color-scheme, which inside the /map
+ * frame follows the site's theme toggle (the frame inherits `color-scheme`
+ * from the site's <html>). A theme picked in BlueMap's own menu still wins;
+ * "contrast" keeps BlueMap's palette.
+ *
+ * Look: flat and square. No drop shadows or rounded corners; panels are solid
+ * with hairline edges, selected states are brand fills.
+ */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto+Condensed:wght@500;700&display=swap");
+
+:root {
+  color-scheme: light dark;
+}
+
+/* --theme-bg-hover is the site's hover plate: fg at 8% over bg. */
+:root,
+:root .theme-dark {
+  --theme-bg: #0a0a0a;
+  --theme-bg-hover: #1e1e1e;
+  --theme-bg-light: #2a2a2a;
+  --theme-fg: #ffffff;
+  --theme-fg-light: #aaaaaa;
+  --theme-switch-button-on: #0f66dd;
+  --las-accent: #0f66dd;
+  --las-on-accent: #ffffff;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --theme-bg: #ffffff;
+    --theme-bg-hover: #ebebeb;
+    --theme-bg-light: #d9d9d9;
+    --theme-fg: #010101;
+    --theme-fg-light: #666666;
+    --theme-switch-button-on: #fffa00;
+    --las-accent: #fffa00;
+    --las-on-accent: #010101;
+  }
+}
+
+:root .theme-light {
+  --theme-bg: #ffffff;
+  --theme-bg-hover: #ebebeb;
+  --theme-bg-light: #d9d9d9;
+  --theme-fg: #010101;
+  --theme-fg-light: #666666;
+  --theme-switch-button-on: #fffa00;
+  --las-accent: #fffa00;
+  --las-on-accent: #010101;
+}
+
+/* ---------- Type: Inter for text, Roboto Condensed for titles and figures */
+:root,
+:root .theme-light,
+:root .theme-dark,
+:root .theme-contrast {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-weight: 400;
+}
+
+h1,
+h2,
+.side-menu > .title,
+.side-menu .group > .title,
+.number-input,
+.side-menu .slider > .label > .value,
+.side-menu .marker-item .marker-button > .info .stats,
+.side-menu .marker-set > .info > .stats {
+  font-family: "Roboto Condensed", Inter, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+h1,
+h2,
+.side-menu > .title {
+  font-weight: 700;
+}
+
+/* ---------- Flat: no drop shadows. Controls are solid blocks; panels and
+   popups get a hairline edge. */
+.control-bar,
+#zoom-buttons,
+.side-menu,
+#map-container .bm-marker-html .bm-marker-poi-label,
+#map-container .bm-marker-labelpopup,
+#map-container .bm-marker-popup {
+  filter: none;
+}
+
+#zoom-buttons > :not(:first-child) {
+  border-top: 1px solid var(--theme-bg-light);
+}
+
+#map-container .bm-marker-html .bm-marker-poi-label,
+#map-container .bm-marker-labelpopup,
+#map-container .bm-marker-popup {
+  outline: 1px solid var(--theme-bg-light);
+  outline-offset: -1px;
+}
+
+.side-menu {
+  border-right: 1px solid var(--theme-bg-light);
+}
+
+.side-menu > .title {
+  border-bottom-color: var(--theme-bg-light);
+}
+
+.side-menu > .content hr {
+  border-bottom: 1px solid var(--theme-bg-light);
+}
+
+.side-menu .group {
+  border: 1px solid var(--theme-bg-light);
+}
+
+/* ---------- Square corners. Vendor pseudo-elements get their own rules: an
+   unknown one would invalidate a whole selector list. */
+kbd,
+#bm-app-err > div img,
+.side-menu .slider > label > input,
+.side-menu .switch,
+.side-menu .switch:after,
+.side-menu .map-button .sky {
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 0;
+}
+
+.side-menu .slider > label > input::-webkit-slider-thumb {
+  border-radius: 0;
+  border-color: var(--theme-fg);
+  background-color: var(--theme-fg);
+}
+
+.side-menu .slider > label > input::-moz-range-thumb {
+  border-radius: 0;
+  border-color: var(--theme-fg);
+  background-color: var(--theme-fg);
+}
+
+/* ---------- Selected states: brand fill with on-brand ink */
+.svg-button.active,
+.side-menu .simple-button.active,
+.side-menu .map-button.selected,
+.side-menu .marker-item > .follow-player-button.active {
+  background-color: var(--las-accent);
+  color: var(--las-on-accent);
+}
+
+.svg-button.active svg,
+.side-menu .simple-button.active > .submenu-icon > svg {
+  fill: var(--las-on-accent);
+}
+
+.side-menu .marker-item > .follow-player-button.active > svg {
+  fill: var(--las-on-accent);
+  stroke: var(--las-on-accent);
+}
+
+.side-menu .map-button.selected .id {
+  color: var(--las-on-accent);
+}
+
+.side-menu .switch.on:after {
+  background-color: var(--las-on-accent);
+}

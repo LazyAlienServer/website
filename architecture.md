@@ -23,6 +23,7 @@ src/router/index.ts
   /       -> src/views/HomePage.vue
   /rules  -> src/views/RulesPage.vue
   /gallery -> src/views/GalleryPage.vue
+  /map    -> src/views/MapPage.vue
 ```
 
 `createWebHistory(import.meta.env.BASE_URL)` is used. `scrollBehavior` restores saved positions, scrolls to hash targets with a 72px top offset, and otherwise returns to the top instantly (`behavior: "instant"`, overriding the global smooth scroll so the new page is not mid-scroll when the view transition captures it).
@@ -83,6 +84,12 @@ Gallery toolbar on mobile (≤640px): filter and view toggle stay on one row. Th
 Gallery motion: the empty state, grid, and index sit in one `<Transition name="swap" mode="out-in">`, keyed by view and filter, so either toggle fades the old layout out and re-mounts the new one. Frames and index rows replay a staggered `item-rise` entry via an inline `--i` index. The viewer `<dialog>` fades with `@starting-style` plus `display`/`overlay` `allow-discrete` (close fade where supported), the image opens as a `clip-path` shutter from its center line, and the info bar rises in after it. Inside the open viewer, the image is keyed in a `switch-${direction}` `<Transition>`: `step()` and `goTo()` set `direction` to `next`/`prev`, so the old image slides away and shrinks (40%, scale 0.8) while the new one slides in from the opposite side and grows to full size; `open()` resets it to `none` (no CSS), leaving only the shutter. Both images share one grid cell in a `contain: strict` stage, so the switch never moves the bar or strip. All of it is disabled under reduced motion.
 
 Viewer input beyond buttons, arrow keys, and the strip: with a mouse, the outer 20% of the image on each side (`trackEdge` → `edge`) shows a thin white chevron cursor and steps on click; the leaving image ignores pointer events. A vertical wheel on the dialog steps (down = next) once per burst; a 200ms gap (`WHEEL_GAP`) or 700ms of continuous scrolling (`WHEEL_REPEAT`) re-arms it, so trackpad inertia does not skip several images. Horizontal-dominant wheel events are left alone. Both are disabled with fewer than two visible images.
+
+## Map page composition
+
+`src/views/MapPage.vue` is one screen with no scroll and no footer: an `<iframe>` of BlueMap (`https://bluemap.lzalien.org/`) fills the viewport under the fixed navbar (`--site-nav-height`), with a visually hidden `<h1>` and a bottom-left shield link that opens BlueMap in a new tab (the corner BlueMap leaves free). Until the frame's `load` event, a `role="status"` overlay with an indeterminate bar covers the frame area, then fades out; `load` is the only signal a cross-origin frame gives, so BlueMap's tiles may still be streaming in after it. Under reduced motion the bar holds still and the overlay disappears without a fade.
+
+BlueMap is cross-origin, so the site cannot style it from the page. Its look comes from `public/bluemap/las.css` (served at `https://lzalien.org/bluemap/las.css`), which the BlueMap server loads through `styles` in its `webapp.conf`; edits deploy with the site but only show once that entry is in place. The file maps BlueMap's `--theme-*` variables to the site palette (hex values repeated from `global.scss`; keep them in step) and flattens the UI: no drop shadows or rounded corners, brand fills for selected states, Inter and Roboto Condensed. Theme sync needs no script: the frame inherits `color-scheme` from `<html>`, which sets `prefers-color-scheme` inside it, and BlueMap's default theme follows that query. A theme picked in BlueMap's own menu overrides it (BlueMap stores the pick).
 
 ## Stateful components and side effects
 
