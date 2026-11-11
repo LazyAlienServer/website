@@ -9,7 +9,6 @@
         <router-link to="/" :class="{ active: route.name === 'home' }">首页</router-link>
         <router-link to="/rules" :class="{ active: route.name === 'rules' }">规章</router-link>
         <router-link to="/gallery" :class="{ active: route.name === 'gallery' }">画廊</router-link>
-        <router-link to="/map" :class="{ active: route.name === 'map' }">地图</router-link>
         <!-- Disclosure, not a menu: a button that shows a panel. The panel is
              positioned against the fixed navbar (this wrapper stays static),
              so it hangs from the bar's bottom edge. -->
@@ -69,7 +68,10 @@ const toggleLabel = computed(() => (theme.value === "light" ? "切换至深色�
 
 // ---------- 更多 panel: secondary pages ----------
 // `name` is the route name; the toggle reads as active on any of them.
-const MORE_LINKS = [{ to: "/status", name: "status", label: "服务器状态" }];
+const MORE_LINKS = [
+  { to: "/map", name: "map", label: "地图" },
+  { to: "/status", name: "status", label: "服务器状态" },
+];
 
 const more = ref<HTMLElement | null>(null);
 const moreToggle = ref<HTMLButtonElement | null>(null);
