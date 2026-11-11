@@ -6,32 +6,40 @@
           <h1>服务器状态<span class="heading-en">Status</span></h1>
           <p class="heading-lead">各接入线路的连通性，每 5 分钟检测一次，连接失败时重试 3 次。</p>
         </div>
-        <dl class="status-spec">
-          <div class="spec-field">
-            <dt>线路</dt>
-            <dd>{{ report ? pad(allRoutes.length) : "--" }}</dd>
-          </div>
-          <div class="spec-field">
-            <dt>在线</dt>
-            <dd>{{ report ? pad(countOnline(allRoutes)) : "--" }}</dd>
-          </div>
-          <div class="spec-field">
-            <dt>检测时间</dt>
-            <dd>
-              <time v-if="report?.checkedAt" :datetime="report.checkedAt">
-                {{ formatTime(report.checkedAt) }}
-              </time>
-              <template v-else>--</template>
-            </dd>
-          </div>
-        </dl>
       </div>
     </header>
 
     <main class="status-shell status-body">
       <template v-if="report">
         <div class="range-bar">
-          <p class="range-note">每格 {{ RANGES[range].slot }}，悬停查看可用率。</p>
+          <dl class="range-summary">
+            <div>
+              <dt>在线分组</dt>
+              <dd>{{ pad(countOnlineGroups(report.groups)) }}/{{ pad(report.groups.length) }}</dd>
+            </div>
+            <div>
+              <dt>在线线路</dt>
+              <dd>{{ pad(countOnline(allRoutes)) }}/{{ pad(allRoutes.length) }}</dd>
+            </div>
+            <div>
+              <dt>检测时间</dt>
+              <dd>
+                <time v-if="report.checkedAt" :datetime="report.checkedAt">
+                  {{ formatTime(report.checkedAt) }}
+                </time>
+                <template v-else>--</template>
+              </dd>
+            </div>
+            <div>
+              <dt>下次检测</dt>
+              <dd>
+                <time v-if="nextCheckAt" :datetime="nextCheckAt">{{
+                  formatTime(nextCheckAt)
+                }}</time>
+                <template v-else>--</template>
+              </dd>
+            </div>
+          </dl>
           <div class="range-toggle" role="group" aria-label="统计范围">
             <button
               v-for="(option, key) in RANGES"
@@ -128,6 +136,8 @@ import FooterSection from "@/components/FooterSection.vue";
 // visible (the Worker caches for the same 60s); a failed refresh keeps the
 // last result on screen.
 const REFRESH_MS = 60_000;
+// keep in step with the cron schedule in cloudflare.config.ts (`*/5`)
+const CHECK_INTERVAL_MS = 5 * 60_000;
 
 // [successful checks, total checks]; null when a slot has no checks
 type Slot = [number, number] | null;
@@ -155,9 +165,9 @@ interface StatusReport {
 type Range = "day" | "halfHour";
 type State = "online" | "offline" | "pending";
 
-const RANGES: Record<Range, { label: string; slot: string; start: string; end: string }> = {
-  day: { label: "90 天", slot: "1 天", start: "90 天前", end: "今天" },
-  halfHour: { label: "24 小时", slot: "30 分钟", start: "24 小时前", end: "现在" },
+const RANGES: Record<Range, { label: string; start: string; end: string }> = {
+  day: { label: "90 天", start: "90 天前", end: "今天" },
+  halfHour: { label: "24 小时", start: "24 小时前", end: "现在" },
 };
 const STATE_LABEL: Record<State, string> = { online: "在线", offline: "离线", pending: "未检测" };
 
@@ -172,6 +182,16 @@ let timer: number | undefined;
 const pad = (value: number): string => String(value).padStart(2, "0");
 const countOnline = (routes: RouteReport[]): number =>
   routes.filter((item) => item.online === true).length;
+// a group is reachable while any of its routes is online
+const countOnlineGroups = (groups: GroupReport[]): number =>
+  groups.filter((group) => countOnline(group.routes) > 0).length;
+// checks run on the cron's boundaries, so the next one is one interval on
+const nextCheckAt = computed(() => {
+  const checkedAt = report.value?.checkedAt;
+  return checkedAt
+    ? new Date(new Date(checkedAt).getTime() + CHECK_INTERVAL_MS).toISOString()
+    : null;
+});
 const stateOf = (item: RouteReport): State =>
   item.online === null ? "pending" : item.online ? "online" : "offline";
 const slotsOf = (item: RouteReport): Slot[] =>
@@ -374,36 +394,6 @@ onUnmounted(() => {
   line-height: 1.8;
 }
 
-.status-spec {
-  grid-column: 9 / span 4;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  border-top: 3px solid $color-accent-ink;
-}
-
-.spec-field {
-  padding: 10px 12px 0 0;
-
-  & + & {
-    padding-left: 12px;
-    border-left: 1px solid $color-line;
-  }
-
-  dt {
-    font-family: $font-display;
-    font-size: $font-size-label;
-    color: $color-fg-subtle;
-  }
-
-  dd {
-    font-family: $font-display;
-    font-size: $font-size-body;
-    font-weight: $font-weight-bold;
-    font-variant-numeric: tabular-nums;
-    color: $color-fg;
-  }
-}
-
 // ---------- Route groups: a heavy-ruled head, then one ruled row per route ----------
 .status-body {
   padding-top: $spacing-lg;
@@ -568,18 +558,41 @@ onUnmounted(() => {
   color: $color-fg-subtle;
 }
 
-// ---------- Range switch above the groups ----------
+// ---------- Summary and range switch above the groups ----------
 .range-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: $spacing-md;
+  gap: $spacing-sm $spacing-md;
   margin-bottom: $spacing-lg;
 }
 
-.range-note {
-  font-size: $font-size-small;
-  color: $color-fg-subtle;
+// Sized to the range switch beside it: a 24px value on a 1.5 line box is
+// 36px, the switch's height (14px x 1.6 text, 6px padding, 1px border).
+.range-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px $spacing-md;
+
+  div {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  dt {
+    font-size: $font-size-body;
+    color: $color-fg-subtle;
+  }
+
+  dd {
+    font-family: $font-display;
+    font-size: $font-size-h4;
+    font-weight: $font-weight-bold;
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+    color: $color-fg;
+  }
 }
 
 // flat segments; the pressed one takes the brand fill
@@ -633,14 +646,8 @@ onUnmounted(() => {
 }
 
 @include tablet {
-  .heading-main,
-  .status-spec {
+  .heading-main {
     grid-column: 1 / -1;
-  }
-
-  .status-spec {
-    margin-top: 32px;
-    max-width: 420px;
   }
 }
 
@@ -679,12 +686,11 @@ onUnmounted(() => {
     height: 24px;
   }
 
+  // summary on its own rows, the switch under it
   .range-bar {
+    flex-direction: column;
+    align-items: flex-start;
     margin-bottom: $spacing-md;
-  }
-
-  .range-note {
-    display: none;
   }
 }
 </style>
