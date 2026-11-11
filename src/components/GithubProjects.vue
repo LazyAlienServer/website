@@ -3,6 +3,21 @@
     <div class="section-shell gh-shell">
       <!-- Left brand rail: LAS mark + vertical GITHUB label -->
       <div class="gh-rail" aria-hidden="true">
+        <!-- Wide screens: a scale split into one segment per repo; the mark
+             follows the featured repo, a ghost the hovered or focused card -->
+        <div
+          v-if="repos.length"
+          class="gh-scale"
+          :style="{ '--n': repos.length, '--at': current, '--to': hovered ?? current }"
+        >
+          <span
+            class="gh-scale-mark gh-scale-mark--ghost"
+            :class="{ 'is-on': hovered !== null && hovered !== current }"
+          ></span>
+          <span class="gh-scale-mark">
+            <span class="gh-scale-index">{{ pad(current + 1) }}</span>
+          </span>
+        </div>
         <img class="gh-rail-logo" :src="logoUrl" alt="" />
         <div class="gh-rail-labels">
           <span class="gh-rail-text">GitHub</span>
@@ -98,6 +113,10 @@
               :aria-hidden="slotOf(i) > 2 ? 'true' : undefined"
               :tabindex="slotOf(i) > 2 ? -1 : undefined"
               @click="onRepoClick($event, i)"
+              @mouseenter="hovered = i"
+              @mouseleave="hovered = null"
+              @focus="hovered = i"
+              @blur="hovered = null"
             >
               <div class="card-body">
                 <span class="card-index" aria-hidden="true">{{ pad(i + 1) }}</span>
@@ -328,6 +347,8 @@ const loadRepos = async () => {
 // ---------- Carousel ----------
 const current = ref(0);
 const hoverPaused = ref(false);
+// Desktop card under the pointer or focus, shown as a ghost on the gutter scale.
+const hovered = ref<number | null>(null);
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const AUTOPLAY_MS = 6_000;
@@ -1036,13 +1057,24 @@ onUnmounted(() => clearInterval(autoplayId));
 @include desktop {
   // Rail up to 80px wide. Like the reference's yellow rail it runs well past
   // the content, overhanging it by up to 72px top and bottom.
+  //
+  // The content column starts at the same edge as the other sections; the
+  // rail and its gap sit outside it, in the page gutter. The shell moves left
+  // by `--gh-shift` and grows by as much, so its right edge stays put. Where
+  // the gutter is too narrow for the rail (below 1200px plus twice its reach)
+  // the shift shrinks to the gutter, and the content steps right instead.
   .gh-shell {
     --gh-rail-width: clamp(40px, calc(5.72vw + 3.33px), 80px);
     --gh-column-gap: clamp(16px, calc(5.72vw - 20.67px), 48px);
     --gh-overhang: clamp(18px, calc(3.75vw + 2px), 72px);
+    --gh-gutter: max(0px, (100% - #{$content-max-width}) / 2);
+    --gh-shift: min(var(--gh-rail-width) + var(--gh-column-gap), var(--gh-gutter));
 
     grid-template-columns: var(--gh-rail-width) minmax(0, 1fr);
     gap: var(--gh-column-gap);
+    max-width: calc(#{$content-max-width} + var(--gh-shift));
+    margin-left: calc(var(--gh-gutter) - var(--gh-shift));
+    margin-right: auto;
     padding-block: clamp(64px, calc(10.02vw - 0.24px), 120px);
     padding-inline: clamp(16px, calc(1.43vw + 6.84px), 24px);
   }
@@ -1160,6 +1192,112 @@ onUnmounted(() => clearInterval(autoplayId));
     &::before {
       height: clamp(14px, calc(0.72vw + 9.41px), 18px);
     }
+  }
+}
+
+// ---------- Wide screens: drafting marks in the left gutter ----------
+// Once the gutter left of the rail is wide enough (about 96px from 1600px),
+// it carries a drawing-sheet treatment in hairlines: the rail's top and bottom
+// edges extend out to the viewport edge like dimension lines, and the head
+// rule continues behind the rail across the gutter, so it spans the whole
+// viewport. `.github-section` clips everything at the viewport edge.
+//
+// Beside the rail runs a scale linked to the carousel: a baseline with minor
+// ticks every 16px, split by longer ticks into one segment per repo (`--n`).
+// An ink mark fills the featured repo's segment (`--at`, from `current`) and
+// slides with the deck's easing when it switches, carrying the repo's index;
+// a fainter ghost slides to the segment of the card under the pointer or
+// focus (`--to`, from `hovered`).
+.gh-scale {
+  display: none;
+}
+
+@media (min-width: 1600px) {
+  // Positioned and raised: `v-reveal` leaves a transform on the head, which
+  // would otherwise paint its rule over the rail.
+  .gh-rail {
+    position: relative;
+    z-index: 1;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 100%;
+      bottom: 0;
+      width: 100vw;
+      pointer-events: none;
+      background:
+        linear-gradient($color-line, $color-line) top / 100% 1px no-repeat,
+        linear-gradient($color-line, $color-line) bottom / 100% 1px no-repeat;
+    }
+  }
+
+  // 40px box ending 16px left of the rail: baseline 8px in from its right,
+  // ticks reaching left from the baseline, marks between baseline and rail.
+  .gh-scale {
+    --segment: calc(100% / var(--n));
+    --tick: #{fade($color-fg-subtle, 0.5)};
+
+    position: absolute;
+    top: 0;
+    right: calc(100% + 16px);
+    bottom: 0;
+    display: block;
+    width: 40px;
+    pointer-events: none;
+    background:
+      linear-gradient($color-line, $color-line) right 8px top / 1px 100% no-repeat,
+      repeating-linear-gradient($color-line 0 1px, transparent 1px 16px) right 9px top / 4px 100%
+        no-repeat,
+      linear-gradient(var(--tick) 0 1px, transparent 1px) right 9px top / 10px var(--segment)
+        repeat-y,
+      linear-gradient(var(--tick), var(--tick)) right 9px bottom / 10px 1px no-repeat;
+  }
+
+  .gh-scale-mark {
+    position: absolute;
+    top: calc(var(--at) * var(--segment));
+    right: 4px;
+    width: 2px;
+    height: var(--segment);
+    background: $color-accent-ink;
+    transition: top 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+
+    &--ghost {
+      top: calc(var(--to) * var(--segment));
+      background: fade($color-accent-ink, 0.4);
+      opacity: 0;
+      transition:
+        top 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.3s ease;
+
+      &.is-on {
+        opacity: 1;
+      }
+    }
+  }
+
+  // left of the ticks, level with the top of the featured segment
+  .gh-scale-index {
+    position: absolute;
+    top: 4px;
+    right: calc(100% + 20px);
+    font-family: $font-display;
+    font-size: $font-size-label;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: $color-accent-ink;
+  }
+
+  .feature-rule {
+    margin-left: -100vw;
+  }
+}
+
+@media (min-width: 1600px) and (prefers-reduced-motion: reduce) {
+  .gh-scale-mark {
+    transition: none;
   }
 }
 
