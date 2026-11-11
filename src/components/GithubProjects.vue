@@ -523,7 +523,7 @@ onUnmounted(() => clearInterval(autoplayId));
 
 .github-title-kicker {
   font-family: $font-display;
-  font-size: $font-size-label;
+  font-size: $font-size-small;
   color: $color-fg-subtle;
 }
 
@@ -537,7 +537,7 @@ onUnmounted(() => clearInterval(autoplayId));
   gap: 0.3em;
   margin-top: 2px;
   font-family: $font-display;
-  font-size: 20px;
+  font-size: $font-size-h4;
   font-weight: $font-weight-medium;
   line-height: 1;
   color: $color-fg;
@@ -568,9 +568,9 @@ onUnmounted(() => clearInterval(autoplayId));
   }
 }
 
+// Global `h2` size, the same as the intro's "关于我们" at every width.
 .github-title-cn {
   margin-top: $spacing-xs;
-  font-size: $font-size-h3;
   color: $color-fg;
 }
 
@@ -1111,11 +1111,7 @@ onUnmounted(() => clearInterval(autoplayId));
   }
 
   .github-title-en-row {
-    font-size: clamp(15px, calc(0.89vw + 9.29px), 20px);
-  }
-
-  .github-title-cn {
-    font-size: clamp(28px, calc(1.43vw + 18.83px), 36px);
+    font-size: clamp(18px, calc(1.07vw + 11.12px), 24px);
   }
 
   .feature-meta {
@@ -1331,11 +1327,7 @@ onUnmounted(() => clearInterval(autoplayId));
   }
 
   .github-title-en-row {
-    font-size: $font-size-body;
-  }
-
-  .github-title-cn {
-    font-size: $font-size-h4;
+    font-size: $font-size-body-lg;
   }
 
   .github-title {
