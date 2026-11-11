@@ -138,9 +138,9 @@ Hand-written canvas particle swarm (no dependency). On mount it decodes `src` an
 
 ### `AdminTeam.vue`
 
-Operator data is local and typed. Avatar URLs point to the LAS website source directory. A failed avatar name is stored in a reactive `Set` and renders the initials fallback. Only operators with `bilibiliUrl` become links; preserve `noopener noreferrer` on external targets.
+Operator data is local and typed. Avatars are 192px WebP squares in `public/avatars/` (cut from `.design/resources/avatar/`); 4rcadia, with no local source, uses the GitHub avatar. A failed avatar name is stored in a reactive `Set` and renders the initials fallback. Each operator has zero or more profile `links` (Bilibili, GitHub), rendered as separate external links in the cell head; preserve `noopener noreferrer` on them. The cell itself is not a link.
 
-Layout: the header's nameplate rule spans the full width and ends in a tick; under it the title and the manifest (headcount at the title's size, then a one-line role legend after a short hairline) share the title's baseline. Operators are open cells (no card surfaces) in a 4-column grid (2 on tablet and mobile), each hanging from a hairline with a 4px role-colored tab at its left end; the tab runs the full width when a linked cell is hovered or focused. A cell holds its index and link label, a square avatar with crop marks on two corners, the name, and a status square, title and role.
+Layout: the header's nameplate rule spans the full width and ends in a tick; under it the title and the manifest (headcount at the title's size, then a one-line role legend after a short hairline) share the title's baseline. Operators are open cells (no card surfaces) in a 4-column grid (2 on tablet and mobile), each hanging from a hairline with a 4px role-colored tab at its left end; in cells with profile links the tab runs the full width on hover or while a link has focus. A cell holds its index and profile links, a square avatar with crop marks on two corners, the name, and a status square, title and role.
 
 ### `JoinSection.vue`
 

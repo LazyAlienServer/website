@@ -25,17 +25,21 @@
 
       <ol class="admin-grid">
         <li v-for="(op, i) in operators" :key="op.name" class="op-item" v-reveal>
-          <component
-            :is="op.bilibiliUrl ? 'a' : 'div'"
-            class="op-card"
-            :class="[`role-${op.role}`, { 'is-link': op.bilibiliUrl }]"
-            :href="op.bilibiliUrl ?? undefined"
-            :target="op.bilibiliUrl ? '_blank' : undefined"
-            :rel="op.bilibiliUrl ? 'noopener noreferrer' : undefined"
-          >
+          <div class="op-card" :class="[`role-${op.role}`, { 'has-links': op.links.length }]">
             <span class="op-head">
               <span class="op-index" aria-hidden="true">{{ pad(i + 1) }}</span>
-              <span v-if="op.bilibiliUrl" class="op-link">Bilibili ↗</span>
+              <span v-if="op.links.length" class="op-links">
+                <a
+                  v-for="link in op.links"
+                  :key="link.site"
+                  class="op-link"
+                  :href="link.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  :aria-label="`${op.name} on ${link.site}`"
+                  >{{ link.site }} ↗</a
+                >
+              </span>
             </span>
 
             <span class="op-frame">
@@ -63,7 +67,7 @@
               <span>{{ op.title }}</span>
               <span class="op-role">{{ roleLabel(op.role) }}</span>
             </span>
-          </component>
+          </div>
         </li>
       </ol>
     </div>
@@ -76,81 +80,93 @@ import { reactive } from "vue";
 type OperatorRole = "admin" | "tech" | "mod";
 type OperatorStatus = "online" | "away";
 
+type ProfileSite = "Bilibili" | "GitHub";
+
 interface Operator {
   name: string;
   title: string;
-  bilibiliUrl: string | null;
   avatarUrl: string;
   status: OperatorStatus;
   role: OperatorRole;
+  // shown in this order; Bilibili first, then GitHub
+  links: { site: ProfileSite; url: string }[];
 }
 
-const AVATAR_BASE = "https://lzalien.org/source/img/admins";
+const bilibili = (uid: string) => ({
+  site: "Bilibili" as const,
+  url: `https://space.bilibili.com/${uid}`,
+});
+const github = (user: string) => ({ site: "GitHub" as const, url: `https://github.com/${user}` });
+
+// Local avatars are 192px WebP squares in `public/avatars/`, cut from the
+// sources in `.design/resources/avatar/`.
+const avatar = (name: string) => `/avatars/${name}.webp`;
 
 const operators: Operator[] = [
   {
     name: "tanh_Heng",
     title: "物理服主",
-    bilibiliUrl: "https://space.bilibili.com/454721668",
-    avatarUrl: `${AVATAR_BASE}/tanh_Heng.png`,
+    avatarUrl: avatar("tanh_Heng"),
     status: "online",
     role: "admin",
+    links: [bilibili("454721668"), github("tanhHeng")],
   },
   {
     name: "CatCoinZHSM",
     title: "服主",
-    bilibiliUrl: "https://space.bilibili.com/401914568",
-    avatarUrl: `${AVATAR_BASE}/CatCoinZHSM.png`,
+    avatarUrl: avatar("CatCoinZHSM"),
     status: "online",
     role: "admin",
+    links: [bilibili("401914568")],
   },
   {
     name: "Fanzhitianyu",
     title: "技术管理/红石",
-    bilibiliUrl: null,
-    avatarUrl: `${AVATAR_BASE}/Fanzhitianyu.png`,
+    avatarUrl: avatar("Fanzhitianyu"),
     status: "online",
     role: "tech",
+    links: [bilibili("3461569335790303"), github("Fanzhitianyu")],
   },
   {
     name: "RCY_QWQ",
     title: "技术管理/红石",
-    bilibiliUrl: null,
-    avatarUrl: `${AVATAR_BASE}/RCY_QWQ.png`,
+    avatarUrl: avatar("RCY_QWQ"),
     status: "online",
     role: "tech",
+    links: [bilibili("1760949941")],
   },
   {
     name: "yizhi_jiyan_",
     title: "技术管理/建筑",
-    bilibiliUrl: null,
-    avatarUrl: `${AVATAR_BASE}/yizhi_jiyan_.png`,
+    avatarUrl: avatar("yizhi_jiyan_"),
     status: "online",
     role: "tech",
+    links: [github("yizhi9jiyan9")],
   },
   {
     name: "Eclipse_313",
     title: "寄术支持",
-    bilibiliUrl: null,
-    avatarUrl: `${AVATAR_BASE}/Eclipse_313.png`,
+    avatarUrl: avatar("Eclipse_313"),
     status: "online",
     role: "tech",
+    links: [],
   },
   {
     name: "bookban_7",
     title: "综合管理",
-    bilibiliUrl: null,
-    avatarUrl: `${AVATAR_BASE}/bookban_7.png`,
+    avatarUrl: avatar("bookban_7"),
     status: "online",
     role: "mod",
+    links: [],
   },
   {
     name: "4rcadia",
     title: "精神支持",
-    bilibiliUrl: "https://space.bilibili.com/499244418",
+    // no local source; GitHub serves the account's avatar
     avatarUrl: "https://avatars.githubusercontent.com/u/97033226",
     status: "away",
     role: "mod",
+    links: [bilibili("499244418"), github("Arcadi4")],
   },
 ];
 
@@ -326,7 +342,8 @@ const onAvatarError = (name: string): void => {
 }
 
 // Each cell hangs from a hairline. A 4px tab in the role color sits on its
-// left end and runs the full width when a linked cell is hovered or focused.
+// left end and runs the full width while a cell with profile links is
+// hovered or one of its links has focus.
 .op-card {
   position: relative;
   flex: 1;
@@ -348,20 +365,9 @@ const onAvatarError = (name: string): void => {
     transition: width $transition-med;
   }
 
-  &.is-link:hover,
-  &.is-link:focus-visible {
-    &::before {
-      width: 100%;
-    }
-
-    .op-link {
-      color: $color-accent-ink;
-    }
-  }
-
-  &:focus-visible {
-    outline: 2px solid $color-accent-ink;
-    outline-offset: 4px;
+  &.has-links:hover::before,
+  &.has-links:focus-within::before {
+    width: 100%;
   }
 }
 
@@ -372,6 +378,33 @@ const onAvatarError = (name: string): void => {
   font-family: $font-display;
   font-size: $font-size-label;
   line-height: 1;
+}
+
+.op-links {
+  display: flex;
+  gap: 12px;
+}
+
+// Links read as subtle labels until the cell is hovered (they brighten
+// together), then each takes brand ink under the pointer or focus.
+.op-link {
+  color: $color-fg-subtle;
+  transition: color $transition-fast;
+
+  .op-card:hover & {
+    color: $color-fg-muted;
+  }
+
+  &:hover,
+  &:focus-visible,
+  .op-card:hover &:hover {
+    color: $color-accent-ink;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent-ink;
+    outline-offset: 3px;
+  }
 }
 
 .op-index {
