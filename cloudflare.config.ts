@@ -10,8 +10,9 @@ export default defineConfig({
     assets: { notFoundHandling: "single-page-application", runWorkerFirst: ["/api/*"] },
     env: {
       // JSON array of groups, each { "name", "routes": [{ "name", "target":
-      // "host:port" }] }, probed by the cron below. Set it as a Worker secret,
-      // never in the repo: the addresses must not reach the browser.
+      // "host:port", "dns"?: failover hostname }] }, checked by the cron below
+      // (TCP, or DNS when "dns" is set). Set it as a Worker secret, never in
+      // the repo: the addresses must not reach the browser.
       STATUS_ROUTES: bindings.secret(),
       // Uptime history (latest result, hourly and daily rollups). No id: the
       // first `cf deploy` provisions the database.
