@@ -32,10 +32,14 @@
             </div>
             <div>
               <dt>下次检测</dt>
-              <dd>
-                <time v-if="nextCheckAt" :datetime="nextCheckAt">{{
-                  formatTime(nextCheckAt)
-                }}</time>
+              <dd aria-live="polite">
+                <template v-if="refreshing">刷新中</template>
+                <template v-else-if="nextCheckAt && now >= Date.parse(nextCheckAt)">
+                  {{ focused ? "检测中" : "待刷新" }}
+                </template>
+                <time v-else-if="nextCheckAt" :datetime="nextCheckAt">
+                  {{ formatTime(nextCheckAt) }}
+                </time>
                 <template v-else>--</template>
               </dd>
             </div>
@@ -132,12 +136,18 @@ import FooterSection from "@/components/FooterSection.vue";
 // Data comes from the site's Worker (`worker/index.ts`): a cron checks every
 // route each 5 minutes and keeps half-hourly and daily counts in D1; this page only
 // reads them. Group and route names, up/down, and counts are the only data,
-// the addresses stay server side. Polled every REFRESH_MS while the tab is
-// visible (the Worker caches for the same 60s); a failed refresh keeps the
-// last result on screen.
-const REFRESH_MS = 60_000;
-// keep in step with the cron schedule in cloudflare.config.ts (`*/5`)
+// the addresses stay server side.
+//
+// Refreshes follow the checks: the page fetches once a check's results should
+// be in (CHECK_INTERVAL_MS after the last one, plus SETTLE_MS; the Worker
+// caches until the same moment, so keep both constants in step with
+// `worker/index.ts` and the `*/5` cron in cloudflare.config.ts). A failed
+// fetch, or one that brings no newer check, retries after RETRY_MS, keeping
+// the last result on screen. Fetches run only while the window is focused; a
+// refresh that came due meanwhile runs on focus.
 const CHECK_INTERVAL_MS = 5 * 60_000;
+const SETTLE_MS = 30_000;
+const RETRY_MS = 60_000;
 
 // [successful checks, total checks]; null when a slot has no checks
 type Slot = [number, number] | null;
@@ -176,6 +186,10 @@ const failed = ref(false);
 const range = ref<Range>("day");
 const hovered = ref<{ group: number; route: number; slot: number } | null>(null);
 const allRoutes = computed(() => report.value?.groups.flatMap((group) => group.routes) ?? []);
+const refreshing = ref(false);
+const focused = ref(document.hasFocus() && !document.hidden);
+// wall clock, advanced by the refresh timer; drives the 下次检测 label
+const now = ref(Date.now());
 let fetchedAt = 0;
 let timer: number | undefined;
 
@@ -291,10 +305,34 @@ const isStatusReport = (value: unknown): value is StatusReport => {
   );
 };
 
+// When the next fetch should run: once the check after the shown one has
+// settled, or RETRY_MS after the last fetch when that moment has already
+// passed (failed fetch, late or missed check, no data yet).
+const dueAt = (): number => {
+  const checkedAt = report.value?.checkedAt;
+  const expected = checkedAt ? Date.parse(checkedAt) + CHECK_INTERVAL_MS + SETTLE_MS : 0;
+  return expected > fetchedAt ? expected : fetchedAt + RETRY_MS;
+};
+
+// One timer: wake at the next check time (to flip the label) or when the
+// fetch is due, whichever comes first. Unfocused, the timer stops; focus
+// restarts it.
+const schedule = () => {
+  clearTimeout(timer);
+  now.value = Date.now();
+  if (!focused.value) return;
+  const nextCheck = nextCheckAt.value ? Date.parse(nextCheckAt.value) : Infinity;
+  const wakeAt = nextCheck > now.value ? Math.min(nextCheck, dueAt()) : dueAt();
+  timer = window.setTimeout(onWake, Math.max(wakeAt - now.value, 0));
+};
+
 const refresh = async () => {
+  if (refreshing.value) return;
+  refreshing.value = true;
   fetchedAt = Date.now();
   try {
-    const response = await fetch("/api/status");
+    // the Worker's edge cache already expires with each check
+    const response = await fetch("/api/status", { cache: "no-store" });
     if (!response.ok) throw new Error(`status ${response.status}`);
     const body: unknown = await response.json();
     if (!isStatusReport(body)) throw new Error("unexpected body");
@@ -302,26 +340,36 @@ const refresh = async () => {
     failed.value = false;
   } catch {
     failed.value = true;
+  } finally {
+    refreshing.value = false;
+    schedule();
   }
 };
 
-const tick = () => {
-  if (!document.hidden) void refresh();
+const onWake = () => {
+  if (Date.now() >= dueAt()) void refresh();
+  else schedule();
 };
 
-const onVisibility = () => {
-  if (!document.hidden && Date.now() - fetchedAt >= REFRESH_MS) void refresh();
+const onFocusChange = () => {
+  focused.value = document.hasFocus() && !document.hidden;
+  if (focused.value) onWake();
+  else schedule();
 };
 
 onMounted(() => {
+  // the first load runs focused or not; later ones wait for focus
   void refresh();
-  timer = window.setInterval(tick, REFRESH_MS);
-  document.addEventListener("visibilitychange", onVisibility);
+  window.addEventListener("focus", onFocusChange);
+  window.addEventListener("blur", onFocusChange);
+  document.addEventListener("visibilitychange", onFocusChange);
 });
 
 onUnmounted(() => {
-  clearInterval(timer);
-  document.removeEventListener("visibilitychange", onVisibility);
+  clearTimeout(timer);
+  window.removeEventListener("focus", onFocusChange);
+  window.removeEventListener("blur", onFocusChange);
+  document.removeEventListener("visibilitychange", onFocusChange);
 });
 </script>
 

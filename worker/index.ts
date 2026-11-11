@@ -43,9 +43,14 @@ const SLOT_MS = 1_800_000;
 const SLOTS = 48;
 const KEEP_DAYS = 100;
 const KEEP_SLOTS = 96;
-// shared per Cloudflare data center (Cache API) and in the browser; data only
-// changes every 5 minutes
-const CACHE_SECONDS = 60;
+// /api/status is cached per Cloudflare data center (Cache API) until the next
+// cron's results should be in: a run starts on the CHECK_INTERVAL_MS boundary
+// (keep in step with `*/5` in cloudflare.config.ts) and finishes well within
+// SETTLE_MS. Data that missed its run is cached briefly, so a late run shows
+// up soon. StatusPage.vue schedules its refreshes on the same two constants.
+const CHECK_INTERVAL_MS = 5 * 60_000;
+const SETTLE_MS = 30_000;
+const STALE_CACHE_SECONDS = 30;
 // days are calendar days in UTC+8, the community's time zone
 const DAY_OFFSET_MS = 8 * 3_600_000;
 
@@ -436,8 +441,17 @@ export default {
     const cached = await cache.match(key);
     if (cached) return cached;
 
-    const response = Response.json(await report(env.STATUS_DB, groups, Date.now()), {
-      headers: { "Cache-Control": `public, max-age=${CACHE_SECONDS}` },
+    const now = Date.now();
+    const body = await report(env.STATUS_DB, groups, now);
+    // start of the last run whose results should be in by now
+    const settled = Math.floor((now - SETTLE_MS) / CHECK_INTERVAL_MS) * CHECK_INTERVAL_MS;
+    const checkedAt = body.checkedAt ? Date.parse(body.checkedAt) : 0;
+    const maxAge =
+      checkedAt < settled
+        ? STALE_CACHE_SECONDS
+        : Math.ceil((settled + CHECK_INTERVAL_MS + SETTLE_MS - now) / 1000);
+    const response = Response.json(body, {
+      headers: { "Cache-Control": `public, max-age=${maxAge}` },
     });
     ctx.waitUntil(cache.put(key, response.clone()));
     return response;
