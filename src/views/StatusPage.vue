@@ -615,8 +615,6 @@ onUnmounted(() => {
   margin-bottom: $spacing-lg;
 }
 
-// Sized to the range switch beside it: a 24px value on a 1.5 line box is
-// 36px, the switch's height (14px x 1.6 text, 6px padding, 1px border).
 .range-summary {
   display: flex;
   flex-wrap: wrap;
@@ -635,9 +633,8 @@ onUnmounted(() => {
 
   dd {
     font-family: $font-display;
-    font-size: $font-size-h4;
+    font-size: $font-size-body;
     font-weight: $font-weight-bold;
-    line-height: 1.5;
     font-variant-numeric: tabular-nums;
     color: $color-fg;
   }
