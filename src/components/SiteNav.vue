@@ -11,8 +11,15 @@
         <router-link to="/gallery" :class="{ active: route.name === 'gallery' }">画廊</router-link>
         <!-- Disclosure, not a menu: a button that shows a panel. The panel is
              positioned against the fixed navbar (this wrapper stays static),
-             so it hangs from the bar's bottom edge. -->
-        <div ref="more" class="nav-more" @keydown.esc="closeMore(true)">
+             so it hangs from the bar's bottom edge. A mouse opens it on hover;
+             the panel is a DOM child, so moving onto it keeps it open. -->
+        <div
+          ref="more"
+          class="nav-more"
+          @keydown.esc="closeMore(true)"
+          @pointerenter="onMoreEnter"
+          @pointerleave="onMoreLeave"
+        >
           <button
             ref="moreToggle"
             type="button"
@@ -20,24 +27,27 @@
             :class="{ active: moreActive }"
             aria-controls="nav-more-panel"
             :aria-expanded="moreOpen"
-            @click="moreOpen = !moreOpen"
+            @pointerdown="onTogglePointerDown"
+            @click="onToggleClick"
           >
             更多
             <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false">
               <path d="M2 3.5 5 6.5 8 3.5" />
             </svg>
           </button>
-          <ul v-show="moreOpen" id="nav-more-panel" class="nav-more-panel">
-            <li v-for="link in MORE_LINKS" :key="link.name">
-              <router-link
-                :to="link.to"
-                :class="{ active: route.name === link.name }"
-                @click="closeMore()"
-              >
-                {{ link.label }}
-              </router-link>
-            </li>
-          </ul>
+          <Transition name="nav-more">
+            <ul v-show="moreOpen" id="nav-more-panel" class="nav-more-panel">
+              <li v-for="link in MORE_LINKS" :key="link.name">
+                <router-link
+                  :to="link.to"
+                  :class="{ active: route.name === link.name }"
+                  @click="closeMore()"
+                >
+                  {{ link.label }}
+                </router-link>
+              </li>
+            </ul>
+          </Transition>
         </div>
       </div>
       <button
@@ -78,10 +88,47 @@ const moreToggle = ref<HTMLButtonElement | null>(null);
 const moreOpen = ref(false);
 const moreActive = computed(() => MORE_LINKS.some((link) => link.name === route.name));
 
+// Hover-open is mouse only (touch and pen keep click-to-toggle). Leaving
+// closes after a delay so the pointer can cross the bar's padding between the
+// toggle and the panel, which lies outside the wrapper's box.
+const HOVER_CLOSE_DELAY = 200;
+let hoverCloseTimer: ReturnType<typeof setTimeout> | undefined;
+// Set on the toggle's pointerdown, read by the click that follows it.
+let toggleByMouse = false;
+
+const cancelHoverClose = () => {
+  clearTimeout(hoverCloseTimer);
+  hoverCloseTimer = undefined;
+};
+
 const closeMore = (refocus = false) => {
+  cancelHoverClose();
   if (!moreOpen.value) return;
   moreOpen.value = false;
   if (refocus) moreToggle.value?.focus();
+};
+
+const onMoreEnter = (event: PointerEvent) => {
+  if (event.pointerType !== "mouse") return;
+  cancelHoverClose();
+  moreOpen.value = true;
+};
+
+const onMoreLeave = (event: PointerEvent) => {
+  if (event.pointerType !== "mouse") return;
+  cancelHoverClose();
+  hoverCloseTimer = setTimeout(() => closeMore(), HOVER_CLOSE_DELAY);
+};
+
+const onTogglePointerDown = (event: PointerEvent) => {
+  toggleByMouse = event.pointerType === "mouse";
+};
+
+// A mouse has already opened the panel by hovering, so its click keeps it
+// open instead of toggling it shut; keyboard and touch clicks toggle.
+const onToggleClick = () => {
+  moreOpen.value = toggleByMouse || !moreOpen.value;
+  toggleByMouse = false;
 };
 
 const onPointerDown = (event: PointerEvent) => {
@@ -96,7 +143,10 @@ watch(
   () => route.fullPath,
   () => closeMore(),
 );
-onUnmounted(() => document.removeEventListener("pointerdown", onPointerDown));
+onUnmounted(() => {
+  cancelHoverClose();
+  document.removeEventListener("pointerdown", onPointerDown);
+});
 </script>
 
 <style scoped lang="scss">
@@ -259,6 +309,26 @@ onUnmounted(() => document.removeEventListener("pointerdown", onPointerDown));
       outline: 2px solid $color-accent-ink;
       outline-offset: -2px;
     }
+  }
+}
+
+// Expand: the panel unrolls down from the bar's bottom edge (clip from the
+// bottom up) and rolls back up on close. Under reduced motion there is no
+// transition, so Vue shows or hides it at once.
+.nav-more-enter-active,
+.nav-more-leave-active {
+  transition: clip-path $transition-fast;
+}
+
+.nav-more-enter-from,
+.nav-more-leave-to {
+  clip-path: inset(0 0 100% 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-more-enter-active,
+  .nav-more-leave-active {
+    transition: none;
   }
 }
 
