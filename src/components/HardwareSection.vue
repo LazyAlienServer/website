@@ -19,26 +19,33 @@
       </h2>
 
       <ul class="hw-grid" v-reveal>
+        <!-- The cell holds the grid area and the hit box; only the tile
+             inside it tilts, so a receding edge never slips out from under
+             the pointer and re-fires enter/leave. -->
         <li
           v-for="tile in tiles"
           :key="tile.key"
-          class="hw-tile"
-          :class="[`hw-tile--${tile.key}`, `hw-tile--${tile.kind}`]"
+          class="hw-cell"
+          :class="`hw-cell--${tile.key}`"
+          @pointermove="tilt"
+          @pointerleave="untilt"
         >
-          <template v-if="tile.kind === 'figure'">
-            <p class="hw-lead">{{ tile.lead }}</p>
-            <p class="hw-figure">
-              {{ tile.value }}<span class="hw-unit">{{ tile.unit }}</span>
-            </p>
-            <p class="hw-note">{{ tile.note }}</p>
-          </template>
-          <template v-else>
-            <span class="hw-icon" aria-hidden="true" v-html="tile.icon"></span>
-            <p class="hw-text">
-              <strong>{{ tile.strong }}</strong
-              >{{ tile.text }}
-            </p>
-          </template>
+          <div class="hw-tile" :class="[`hw-tile--${tile.key}`, `hw-tile--${tile.kind}`]">
+            <template v-if="tile.kind === 'figure'">
+              <p class="hw-lead">{{ tile.lead }}</p>
+              <p class="hw-figure">
+                {{ tile.value }}<span class="hw-unit">{{ tile.unit }}</span>
+              </p>
+              <p class="hw-note">{{ tile.note }}</p>
+            </template>
+            <template v-else>
+              <span class="hw-icon" aria-hidden="true" v-html="tile.icon"></span>
+              <p class="hw-text">
+                <strong>{{ tile.strong }}</strong
+                >{{ tile.text }}
+              </p>
+            </template>
+          </div>
         </li>
       </ul>
     </div>
@@ -177,6 +184,31 @@ const rainColumns = Array.from({ length: RAIN_COLUMNS }, () => {
     delay: -Math.round(random() * duration),
   };
 });
+
+// Pointer tilt: the tile turns to face a mouse pointer (the hovered side
+// recedes) by up to TILT_MAX at its edges, and a sheen follows the pointer.
+// Touch and pen leave the tiles flat; so does reduced motion. Written straight
+// to the element's custom properties: no reactive state per pointer move.
+const TILT_MAX = 3; // degrees
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+const tilt = (event: PointerEvent) => {
+  if (event.pointerType !== "mouse" || reducedMotion.matches) return;
+  const tile = (event.currentTarget as HTMLElement).firstElementChild as HTMLElement;
+  const box = (event.currentTarget as HTMLElement).getBoundingClientRect();
+  const x = (event.clientX - box.left) / box.width;
+  const y = (event.clientY - box.top) / box.height;
+  tile.style.setProperty("--tilt-x", `${((0.5 - y) * 2 * TILT_MAX).toFixed(2)}deg`);
+  tile.style.setProperty("--tilt-y", `${((x - 0.5) * 2 * TILT_MAX).toFixed(2)}deg`);
+  tile.style.setProperty("--sheen-x", `${(x * 100).toFixed(1)}%`);
+  tile.style.setProperty("--sheen-y", `${(y * 100).toFixed(1)}%`);
+  tile.classList.add("is-tilted");
+};
+
+const untilt = (event: PointerEvent) => {
+  const tile = (event.currentTarget as HTMLElement).firstElementChild as HTMLElement;
+  tile.classList.remove("is-tilted");
+};
 </script>
 
 <style scoped lang="scss">
@@ -275,17 +307,71 @@ const rainColumns = Array.from({ length: RAIN_COLUMNS }, () => {
   list-style: none;
 }
 
-.hw-tile {
+.hw-cell {
   display: flex;
-  flex-direction: column;
   min-width: 0;
-  padding: 32px;
-  background: $color-bg;
+  perspective: 1000px;
 
   @each $area in cpu, ram, storage, uptime, network, plugin {
     &--#{$area} {
       grid-area: $area;
     }
+  }
+}
+
+// At rest the tile is flat with no transform. Tilted, its content floats
+// 20px off the face (preserve-3d), so the figures and icons shift against
+// the tile as it turns. Entering and following the pointer use a short ease;
+// letting go settles back slowly.
+.hw-tile {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  padding: 32px;
+  background: $color-bg;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  > * {
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  // sheen: a soft spot of the text color under the pointer
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at var(--sheen-x, 50%) var(--sheen-y, 50%),
+      fade($color-fg, 0.1),
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity $transition-med;
+    pointer-events: none;
+  }
+
+  &.is-tilted {
+    transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+    transition-duration: 0.15s;
+
+    > * {
+      transform: translateZ(20px);
+      transition-duration: 0.3s;
+    }
+
+    &::after {
+      opacity: 1;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hw-tile,
+  .hw-tile > * {
+    transition: none;
   }
 }
 
