@@ -313,11 +313,17 @@ onUnmounted(() => {
 }
 
 // Expand: the panel unrolls down from the bar's bottom edge (clip from the
-// bottom up) and rolls back up on close. Under reduced motion there is no
-// transition, so Vue shows or hides it at once.
+// bottom up) and rolls back up on close. Both ends must be `inset()`: the
+// panel's own `clip-path: none` does not interpolate, so it would jump. Under
+// reduced motion there is no transition, so Vue shows or hides it at once.
 .nav-more-enter-active,
 .nav-more-leave-active {
   transition: clip-path $transition-fast;
+}
+
+.nav-more-enter-to,
+.nav-more-leave-from {
+  clip-path: inset(0);
 }
 
 .nav-more-enter-from,
