@@ -14,12 +14,12 @@ export default defineConfig({
       // (TCP, or DNS when "dns" is set). Set it as a Worker secret, never in
       // the repo: the addresses must not reach the browser.
       STATUS_ROUTES: bindings.secret(),
-      // Uptime history (latest result, hourly and daily rollups). No id: the
+      // Uptime history (latest result, half-hourly and daily rollups). No id: the
       // first `cf deploy` provisions the database.
       STATUS_DB: bindings.d1({ name: "las-web-status" }),
     },
     // Route checks run here, not per request (worker/index.ts `scheduled`).
-    triggers: [triggers.scheduled({ schedule: "*/10 * * * *" })],
+    triggers: [triggers.scheduled({ schedule: "*/5 * * * *" })],
     domains: ["lzalien.org"],
     workersDev: true,
     previewUrls: true,

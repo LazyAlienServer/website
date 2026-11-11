@@ -5,9 +5,9 @@ import { connect } from "cloudflare:sockets";
 // Routes come from the STATUS_ROUTES secret, a JSON array of groups in display
 // order:
 //   [{ "name": "group name", "routes": [{ "name": "route name", "target": "host:port" }] }]
-// The cron (`scheduled`, every 10 minutes in cloudflare.config.ts) checks
+// The cron (`scheduled`, every 5 minutes in cloudflare.config.ts) checks
 // every route and records the result in D1 (STATUS_DB): the latest result per
-// route plus hourly and daily counts of successful / total checks. GET
+// route plus half-hourly and daily counts of successful / total checks. GET
 // /api/status only reads D1.
 //
 // A route is checked one of two ways:
@@ -38,11 +38,13 @@ const RETRY_DELAY_MS = 1000;
 const DOH_URL = "https://cloudflare-dns.com/dns-query";
 // history shown on the page; rollups are kept a little longer, then pruned
 const DAYS = 90;
-const HOURS = 24;
+// 30-minute slots: 48 cover the 24-hour view
+const SLOT_MS = 1_800_000;
+const SLOTS = 48;
 const KEEP_DAYS = 100;
-const KEEP_HOURS = 48;
+const KEEP_SLOTS = 96;
 // shared per Cloudflare data center (Cache API) and in the browser; data only
-// changes every 10 minutes
+// changes every 5 minutes
 const CACHE_SECONDS = 60;
 // days are calendar days in UTC+8, the community's time zone
 const DAY_OFFSET_MS = 8 * 3_600_000;
@@ -105,7 +107,7 @@ const routeKey = async (target: string): Promise<string> => {
 };
 
 const dayOf = (time: number): string => new Date(time + DAY_OFFSET_MS).toISOString().slice(0, 10);
-const hourOf = (time: number): number => Math.floor(time / 3_600_000);
+const slotOf = (time: number): number => Math.floor(time / SLOT_MS);
 
 const tcping = async (target: string): Promise<boolean> => {
   let timer: number | null = null;
@@ -298,7 +300,7 @@ const ensureSchema = (db: D1Database) =>
       "CREATE TABLE IF NOT EXISTS latest (route TEXT PRIMARY KEY, online INTEGER NOT NULL, checked_at INTEGER NOT NULL) WITHOUT ROWID",
     ),
     db.prepare(
-      "CREATE TABLE IF NOT EXISTS hourly (route TEXT NOT NULL, hour INTEGER NOT NULL, up INTEGER NOT NULL, total INTEGER NOT NULL, PRIMARY KEY (route, hour)) WITHOUT ROWID",
+      "CREATE TABLE IF NOT EXISTS half_hourly (route TEXT NOT NULL, slot INTEGER NOT NULL, up INTEGER NOT NULL, total INTEGER NOT NULL, PRIMARY KEY (route, slot)) WITHOUT ROWID",
     ),
     db.prepare(
       "CREATE TABLE IF NOT EXISTS daily (route TEXT NOT NULL, day TEXT NOT NULL, up INTEGER NOT NULL, total INTEGER NOT NULL, PRIMARY KEY (route, day)) WITHOUT ROWID",
@@ -333,7 +335,7 @@ const record = async (db: D1Database, groups: Group[], now: number) => {
     online === null ? [] : [{ key, up: online ? 1 : 0 }],
   );
   const day = dayOf(now);
-  const hour = hourOf(now);
+  const slot = slotOf(now);
   await ensureSchema(db);
   await db.batch([
     ...results.flatMap(({ key, up }) => [
@@ -344,16 +346,16 @@ const record = async (db: D1Database, groups: Group[], now: number) => {
         .bind(key, up, now),
       db
         .prepare(
-          "INSERT INTO hourly (route, hour, up, total) VALUES (?1, ?2, ?3, 1) ON CONFLICT (route, hour) DO UPDATE SET up = up + excluded.up, total = total + 1",
+          "INSERT INTO half_hourly (route, slot, up, total) VALUES (?1, ?2, ?3, 1) ON CONFLICT (route, slot) DO UPDATE SET up = up + excluded.up, total = total + 1",
         )
-        .bind(key, hour, up),
+        .bind(key, slot, up),
       db
         .prepare(
           "INSERT INTO daily (route, day, up, total) VALUES (?1, ?2, ?3, 1) ON CONFLICT (route, day) DO UPDATE SET up = up + excluded.up, total = total + 1",
         )
         .bind(key, day, up),
     ]),
-    db.prepare("DELETE FROM hourly WHERE hour < ?1").bind(hour - KEEP_HOURS + 1),
+    db.prepare("DELETE FROM half_hourly WHERE slot < ?1").bind(slot - KEEP_SLOTS + 1),
     db.prepare("DELETE FROM daily WHERE day < ?1").bind(dayOf(now - (KEEP_DAYS - 1) * 86_400_000)),
   ]);
 };
@@ -372,22 +374,22 @@ interface CountRow {
 }
 
 const report = async (db: D1Database, groups: Group[], now: number) => {
-  // slot labels, oldest first; the last slot is the current day / hour
+  // slot labels, oldest first; the last slot is the current day / half hour
   const days = Array.from({ length: DAYS }, (_, i) => dayOf(now - (DAYS - 1 - i) * 86_400_000));
-  const hourNow = hourOf(now);
-  const hours = Array.from({ length: HOURS }, (_, i) => hourNow - (HOURS - 1) + i);
+  const slotNow = slotOf(now);
+  const slots = Array.from({ length: SLOTS }, (_, i) => slotNow - (SLOTS - 1) + i);
 
   await ensureSchema(db);
-  const [latest, hourly, daily] = await db.batch<LatestRow | CountRow>([
+  const [latest, halfHourly, daily] = await db.batch<LatestRow | CountRow>([
     db.prepare("SELECT route, online, checked_at FROM latest"),
-    db.prepare("SELECT route, hour AS slot, up, total FROM hourly WHERE hour >= ?1").bind(hours[0]),
+    db.prepare("SELECT route, slot, up, total FROM half_hourly WHERE slot >= ?1").bind(slots[0]),
     db.prepare("SELECT route, day AS slot, up, total FROM daily WHERE day >= ?1").bind(days[0]),
   ]);
 
   const latestBy = new Map((latest.results as LatestRow[]).map((row) => [row.route, row]));
   const countsBy = (rows: CountRow[]) =>
     new Map(rows.map((row) => [`${row.route}|${row.slot}`, [row.up, row.total] as Slot]));
-  const hourlyBy = countsBy(hourly.results as CountRow[]);
+  const halfHourlyBy = countsBy(halfHourly.results as CountRow[]);
   const dailyBy = countsBy(daily.results as CountRow[]);
 
   let checkedAt = 0;
@@ -403,7 +405,7 @@ const report = async (db: D1Database, groups: Group[], now: number) => {
             name: route.name.trim(),
             online: last ? last.online === 1 : null,
             daily: days.map((day) => dailyBy.get(`${key}|${day}`) ?? null),
-            hourly: hours.map((hour) => hourlyBy.get(`${key}|${hour}`) ?? null),
+            halfHourly: slots.map((slot) => halfHourlyBy.get(`${key}|${slot}`) ?? null),
           };
         }),
       ),
@@ -413,7 +415,7 @@ const report = async (db: D1Database, groups: Group[], now: number) => {
   return {
     checkedAt: checkedAt ? new Date(checkedAt).toISOString() : null,
     days,
-    hours: hours.map((hour) => new Date(hour * 3_600_000).toISOString()),
+    halfHours: slots.map((slot) => new Date(slot * SLOT_MS).toISOString()),
     groups: reported,
   };
 };

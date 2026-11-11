@@ -4,7 +4,7 @@
       <div class="status-shell heading-grid">
         <div class="heading-main">
           <h1>服务器状态<span class="heading-en">Status</span></h1>
-          <p class="heading-lead">各接入线路的连通性，每 10 分钟检测一次，连接失败时重试 3 次。</p>
+          <p class="heading-lead">各接入线路的连通性，每 5 分钟检测一次，连接失败时重试 3 次。</p>
         </div>
         <dl class="status-spec">
           <div class="spec-field">
@@ -122,7 +122,7 @@ import { computed, onMounted, onUnmounted, ref } from "vue";
 import FooterSection from "@/components/FooterSection.vue";
 
 // Data comes from the site's Worker (`worker/index.ts`): a cron checks every
-// route each 10 minutes and keeps hourly and daily counts in D1; this page only
+// route each 5 minutes and keeps half-hourly and daily counts in D1; this page only
 // reads them. Group and route names, up/down, and counts are the only data,
 // the addresses stay server side. Polled every REFRESH_MS while the tab is
 // visible (the Worker caches for the same 60s); a failed refresh keeps the
@@ -136,7 +136,7 @@ interface RouteReport {
   name: string;
   online: boolean | null;
   daily: Slot[];
-  hourly: Slot[];
+  halfHourly: Slot[];
 }
 
 interface GroupReport {
@@ -146,18 +146,18 @@ interface GroupReport {
 
 interface StatusReport {
   checkedAt: string | null;
-  // slot labels, oldest first: "YYYY-MM-DD" days (UTC+8) and hour starts (ISO)
+  // slot labels, oldest first: "YYYY-MM-DD" days (UTC+8) and half-hour starts (ISO)
   days: string[];
-  hours: string[];
+  halfHours: string[];
   groups: GroupReport[];
 }
 
-type Range = "day" | "hour";
+type Range = "day" | "halfHour";
 type State = "online" | "offline" | "pending";
 
 const RANGES: Record<Range, { label: string; slot: string; start: string; end: string }> = {
   day: { label: "90 天", slot: "1 天", start: "90 天前", end: "今天" },
-  hour: { label: "24 小时", slot: "1 小时", start: "24 小时前", end: "现在" },
+  halfHour: { label: "24 小时", slot: "30 分钟", start: "24 小时前", end: "现在" },
 };
 const STATE_LABEL: Record<State, string> = { online: "在线", offline: "离线", pending: "未检测" };
 
@@ -174,7 +174,8 @@ const countOnline = (routes: RouteReport[]): number =>
   routes.filter((item) => item.online === true).length;
 const stateOf = (item: RouteReport): State =>
   item.online === null ? "pending" : item.online ? "online" : "offline";
-const slotsOf = (item: RouteReport): Slot[] => (range.value === "day" ? item.daily : item.hourly);
+const slotsOf = (item: RouteReport): Slot[] =>
+  range.value === "day" ? item.daily : item.halfHourly;
 const isHovered = (group: number, route: number, slot: number): boolean =>
   hovered.value?.group === group && hovered.value.route === route && hovered.value.slot === slot;
 
@@ -211,7 +212,7 @@ const timeFormat = new Intl.DateTimeFormat("zh-CN", {
   minute: "2-digit",
   second: "2-digit",
 });
-const hourFormat = new Intl.DateTimeFormat("zh-CN", {
+const slotFormat = new Intl.DateTimeFormat("zh-CN", {
   hour12: false,
   timeZone: "Asia/Shanghai",
   month: "2-digit",
@@ -226,7 +227,7 @@ const slotLabel = (index: number): string => {
   if (!report.value) return "";
   return range.value === "day"
     ? (report.value.days[index] ?? "")
-    : hourFormat.format(new Date(report.value.hours[index] ?? 0));
+    : slotFormat.format(new Date(report.value.halfHours[index] ?? 0));
 };
 
 const slotSummary = (slot: Slot): string =>
@@ -248,8 +249,8 @@ const isRouteReport = (value: unknown): value is RouteReport => {
     (item.online === null || typeof item.online === "boolean") &&
     Array.isArray(item.daily) &&
     item.daily.every(isSlot) &&
-    Array.isArray(item.hourly) &&
-    item.hourly.every(isSlot)
+    Array.isArray(item.halfHourly) &&
+    item.halfHourly.every(isSlot)
   );
 };
 
@@ -259,7 +260,7 @@ const isStatusReport = (value: unknown): value is StatusReport => {
     typeof value === "object" &&
     value !== null &&
     Array.isArray(body.days) &&
-    Array.isArray(body.hours) &&
+    Array.isArray(body.halfHours) &&
     Array.isArray(body.groups) &&
     body.groups.every(
       (group) =>
@@ -523,7 +524,7 @@ onUnmounted(() => {
   color: $color-fg;
 }
 
-// One block per day or hour, oldest left. 28px tall, so the brand block may
+// One block per day or half hour, oldest left. 28px tall, so the brand block may
 // be a fill in either theme; levels as in `levelOf`.
 .uptime-bar {
   grid-column: 2 / -1;
