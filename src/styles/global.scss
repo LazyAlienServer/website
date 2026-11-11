@@ -30,6 +30,7 @@
   --color-on-accent: #ffffff;
   --color-glow: #1e90ff;
   --color-danger: #ff4444;
+  --color-success: #3ecf6e;
 }
 
 :root[data-theme="light"] {
@@ -48,6 +49,7 @@
   --color-on-accent: #010101;
   --color-glow: transparent;
   --color-danger: #c62828;
+  --color-success: #2e7d32;
 }
 
 // Hero slant: the single tilt for every slanted mark, edge, and panel (see

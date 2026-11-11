@@ -10,6 +10,36 @@
         <router-link to="/rules" :class="{ active: route.name === 'rules' }">规章</router-link>
         <router-link to="/gallery" :class="{ active: route.name === 'gallery' }">画廊</router-link>
         <router-link to="/map" :class="{ active: route.name === 'map' }">地图</router-link>
+        <!-- Disclosure, not a menu: a button that shows a panel. The panel is
+             positioned against the fixed navbar (this wrapper stays static),
+             so it hangs from the bar's bottom edge. -->
+        <div ref="more" class="nav-more" @keydown.esc="closeMore(true)">
+          <button
+            ref="moreToggle"
+            type="button"
+            class="nav-more-toggle"
+            :class="{ active: moreActive }"
+            aria-controls="nav-more-panel"
+            :aria-expanded="moreOpen"
+            @click="moreOpen = !moreOpen"
+          >
+            更多
+            <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false">
+              <path d="M2 3.5 5 6.5 8 3.5" />
+            </svg>
+          </button>
+          <ul v-show="moreOpen" id="nav-more-panel" class="nav-more-panel">
+            <li v-for="link in MORE_LINKS" :key="link.name">
+              <router-link
+                :to="link.to"
+                :class="{ active: route.name === link.name }"
+                @click="closeMore()"
+              >
+                {{ link.label }}
+              </router-link>
+            </li>
+          </ul>
+        </div>
       </div>
       <button
         type="button"
@@ -29,13 +59,42 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onUnmounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import logoUrl from "@/assets/logo.svg";
 import { theme, toggleTheme } from "@/composables/theme";
 
 const route = useRoute();
 const toggleLabel = computed(() => (theme.value === "light" ? "切换至深色模式" : "切换至浅色模式"));
+
+// ---------- 更多 panel: secondary pages ----------
+// `name` is the route name; the toggle reads as active on any of them.
+const MORE_LINKS = [{ to: "/status", name: "status", label: "服务器状态" }];
+
+const more = ref<HTMLElement | null>(null);
+const moreToggle = ref<HTMLButtonElement | null>(null);
+const moreOpen = ref(false);
+const moreActive = computed(() => MORE_LINKS.some((link) => link.name === route.name));
+
+const closeMore = (refocus = false) => {
+  if (!moreOpen.value) return;
+  moreOpen.value = false;
+  if (refocus) moreToggle.value?.focus();
+};
+
+const onPointerDown = (event: PointerEvent) => {
+  if (!more.value?.contains(event.target as Node)) closeMore();
+};
+
+watch(moreOpen, (open) => {
+  if (open) document.addEventListener("pointerdown", onPointerDown);
+  else document.removeEventListener("pointerdown", onPointerDown);
+});
+watch(
+  () => route.fullPath,
+  () => closeMore(),
+);
+onUnmounted(() => document.removeEventListener("pointerdown", onPointerDown));
 </script>
 
 <style scoped lang="scss">
@@ -79,7 +138,9 @@ const toggleLabel = computed(() => (theme.value === "light" ? "切换至深色�
   display: flex;
   gap: 28px;
 
-  a {
+  // direct children only: the 更多 panel's links are styled on their own
+  > a,
+  .nav-more-toggle {
     position: relative;
     // symmetric so the text, not text plus underline gap, sits on the row's
     // center line with the logo and the theme toggle
@@ -112,6 +173,89 @@ const toggleLabel = computed(() => (theme.value === "light" ? "切换至深色�
     &:hover::after,
     &.active::after {
       transform: scaleX(1);
+    }
+  }
+}
+
+// ---------- 更多: toggle styled as a link, panel hung from the bar ----------
+.nav-more-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-inline: 0;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  line-height: inherit;
+  cursor: pointer;
+
+  svg {
+    width: 10px;
+    height: 10px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    transition: transform $transition-fast;
+  }
+
+  &[aria-expanded="true"] {
+    color: $color-fg;
+
+    &::after {
+      transform: scaleX(1);
+    }
+
+    svg {
+      transform: scaleY(-1);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent-ink;
+    outline-offset: 2px;
+  }
+}
+
+// Containing block is the fixed `.nav` (every ancestor up to it is static or
+// `display: contents`): top edge on the bar's bottom, right edge on the
+// content inset. `$color-bg` is the bar's own fill (gray in light).
+.nav-more-panel {
+  position: absolute;
+  top: 100%;
+  right: var(--nav-inline);
+  min-width: 180px;
+  padding-block: 6px;
+  border: 1px solid $color-line;
+  background: $color-bg;
+  list-style: none;
+
+  a {
+    display: block;
+    padding: 8px $spacing-sm;
+    font-size: $font-size-small;
+    font-weight: $font-weight-medium;
+    color: $color-fg-subtle;
+    transition:
+      color $transition-fast,
+      background-color $transition-fast;
+
+    &:hover,
+    &.active {
+      color: $color-fg;
+    }
+
+    &:hover {
+      background: fade($color-fg, 0.08);
+    }
+
+    // current page: a brand-ink bar on the left edge
+    &.active {
+      box-shadow: inset 2px 0 $color-accent-ink;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-accent-ink;
+      outline-offset: -2px;
     }
   }
 }

@@ -1,0 +1,17 @@
+{
+  // Worker runtime, not the browser: no DOM lib. Env and runtime types come
+  // from .cloudflare/types, generated from cloudflare.config.ts by the
+  // Cloudflare Vite plugin on `vp dev` / `vp build`.
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "lib": ["ES2022"],
+    "types": []
+  },
+  "include": ["./**/*.ts", "../.cloudflare/types/index.d.ts"]
+}
