@@ -341,9 +341,10 @@ const onAvatarError = (name: string): void => {
   display: flex;
 }
 
-// Each cell hangs from a hairline. A 4px tab in the role color sits on its
-// left end and runs the full width while a cell with profile links is
-// hovered or one of its links has focus.
+// Dark: each cell hangs from a hairline, open on the band. Light: a
+// borderless white card on the gray band, no hairline. A 4px tab in the role
+// color sits at the left of the top edge and runs the full width while a cell
+// with profile links is hovered or one of its links has focus.
 .op-card {
   position: relative;
   flex: 1;
@@ -354,6 +355,12 @@ const onAvatarError = (name: string): void => {
   border-top: 1px solid $color-line;
   color: $color-fg;
 
+  @include light {
+    padding: $spacing-md;
+    border-top: 0;
+    background: $color-bg;
+  }
+
   &::before {
     content: "";
     position: absolute;
@@ -363,6 +370,10 @@ const onAvatarError = (name: string): void => {
     height: 4px;
     background: var(--role-color);
     transition: width $transition-med;
+
+    @include light {
+      top: 0;
+    }
   }
 
   &.has-links:hover::before,
@@ -520,6 +531,12 @@ const onAvatarError = (name: string): void => {
 
   .admin-grid {
     gap: $spacing-md $spacing-sm;
+  }
+
+  .op-card {
+    @include light {
+      padding: $spacing-sm;
+    }
   }
 
   .op-avatar {
