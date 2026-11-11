@@ -1,5 +1,17 @@
 <template>
   <section class="hardware-section" aria-labelledby="hw-title">
+    <!-- Background: columns of binary falling at their own depth and speed.
+         v-text keeps template whitespace out of the pre-formatted columns. -->
+    <div class="hw-rain" aria-hidden="true">
+      <span
+        v-for="(column, i) in rainColumns"
+        :key="i"
+        class="hw-rain-column"
+        :class="`hw-rain-column--${column.tier}`"
+        :style="{ '--duration': `${column.duration}s`, '--delay': `${column.delay}s` }"
+        v-text="column.text"
+      ></span>
+    </div>
     <div class="section-shell">
       <h2 id="hw-title" class="hw-title" v-reveal>
         <span class="hw-title-lead">技术支持</span>
@@ -111,6 +123,60 @@ const tiles: Tile[] = [
     text: "，由开发团队持续迭代。",
   },
 ];
+
+// Background rain: columns of binary, each a fixed pseudo-random run of digits
+// broken by gaps (seeded, so every visit draws the same field). A column holds
+// its run twice and slides down by one run per loop, so the loop is seamless;
+// one run (RAIN_LENGTH lines at 20px) is taller than the section on any width.
+// Columns sit at three depths: far ones faint and slow, near ones brighter and
+// faster, a few in brand ink fastest.
+const RAIN_COLUMNS = 112;
+const RAIN_LENGTH = 112;
+
+type RainTier = "far" | "near" | "brand";
+
+// speed range in lines per second for each depth
+const RAIN_SPEED: Record<RainTier, [number, number]> = {
+  far: [0.6, 1],
+  near: [1, 1.6],
+  brand: [1.6, 2.4],
+};
+
+const seeded = (seed: number) => () => {
+  seed = (seed + 0x6d2b79f5) | 0;
+  let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+};
+
+const random = seeded(0x1a5);
+const between = (min: number, max: number) => min + random() * (max - min);
+
+// Digit runs of 3-14 lines separated by gaps of 1-8 blank lines.
+const rainRun = (): string => {
+  const lines: string[] = [];
+  while (lines.length < RAIN_LENGTH) {
+    const digits = Math.round(between(3, 14));
+    for (let i = 0; i < digits; i++) lines.push(random() < 0.5 ? "0" : "1");
+    const gap = Math.round(between(1, 8));
+    for (let i = 0; i < gap; i++) lines.push(" ");
+  }
+  return lines.slice(0, RAIN_LENGTH).join("\n");
+};
+
+const rainColumns = Array.from({ length: RAIN_COLUMNS }, () => {
+  const roll = random();
+  const tier: RainTier = roll < 0.1 ? "brand" : roll < 0.45 ? "near" : "far";
+  const run = rainRun();
+  const duration = RAIN_LENGTH / between(...RAIN_SPEED[tier]);
+  return {
+    tier,
+    text: `${run}\n${run}`,
+    duration: Math.round(duration),
+    // negative, so every column is already mid-fall on first paint
+    delay: -Math.round(random() * duration),
+  };
+});
 </script>
 
 <style scoped lang="scss">
@@ -121,9 +187,64 @@ const tiles: Tile[] = [
 //
 // Dark in both themes: in light it continues the timer's dark block; the CPU
 // tile turns yellow with black text and the icons turn yellow.
+//
+// Behind the tiles, columns of binary fall down the band at three depths and
+// fade out at its top and bottom. The tiles are opaque, so the rain shows in
+// the gutters and around the heading. Reduced motion: the columns stand still.
 .hardware-section {
   @include dark-surface;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   background-color: $color-surface;
+}
+
+// Columns on a fixed 24px pitch from the left edge; the row is clipped at the
+// right, so narrow screens show fewer columns rather than denser ones. Columns
+// keep their content height (not stretched), so -50% is exactly one run.
+.hw-rain {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  display: flex;
+  align-items: flex-start;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  mask-image: linear-gradient(transparent, #000 15%, #000 85%, transparent);
+}
+
+.hw-rain-column {
+  flex: none;
+  width: 24px;
+  font-family: $font-display;
+  font-size: $font-size-label;
+  line-height: 20px;
+  text-align: center;
+  white-space: pre;
+  color: fade($color-fg, 0.05);
+  animation: hw-rain-fall var(--duration) linear var(--delay) infinite;
+
+  &--near {
+    color: fade($color-fg, 0.1);
+  }
+
+  &--brand {
+    color: fade($color-accent-ink, 0.3);
+  }
+}
+
+// starts one run up, ends in place: the second copy takes the first's spot
+@keyframes hw-rain-fall {
+  from {
+    transform: translateY(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hw-rain-column {
+    animation: none;
+  }
 }
 
 .hw-title {

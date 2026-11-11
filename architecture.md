@@ -112,6 +112,7 @@ Standalone `aria-hidden` band repeating `LAZY ALIEN SERVER` (solid, outlined, bl
 
 - Static bento tiles, no state or timers. The tile data (`tiles`) and SVG icon strings are local constants in the component; each tile's `key` is its grid area.
 - A two-tone `h2` (muted “技术支持” over the bright slogan line) above a bento grid on the section's `$color-surface` band. Desktop: 4 columns, the CPU in a 2 × 2 tile in brand fill (`$color-accent`, on-accent text; yellow with black text in light) with an oversized figure, memory beside it as a wide icon tile, storage (4 TB) and uptime (99%) as small figure tiles under that, network and plugins as wide icon tiles in the last row. Tablet and mobile: 2 columns, the CPU, memory, network and plugin tiles full width, storage and uptime side by side.
+- Background: binary rain behind the tiles on an isolated stacking context. `rainColumns` are seeded (fixed digits per visit) columns on a 24px pitch, each holding its run of digits and gaps twice and falling one run per loop, at three depths (faint and slow, brighter, brand ink fastest), faded at the band's top and bottom. Reduced motion stops it. The rain is `aria-hidden` decoration.
 
 ### `GithubProjects.vue`
 
