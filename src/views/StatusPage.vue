@@ -4,7 +4,6 @@
       <div class="status-shell heading-grid">
         <div class="heading-main">
           <h1>服务器状态<span class="heading-en">Status</span></h1>
-          <p class="heading-lead">各接入线路的连通性，每 5 分钟检测一次，连接失败时重试 3 次。</p>
         </div>
       </div>
     </header>
@@ -432,14 +431,6 @@ onUnmounted(() => {
   font-size: $font-size-small;
   font-weight: $font-weight-bold;
   color: $color-accent-ink;
-}
-
-.heading-lead {
-  max-width: 34em;
-  margin-top: $spacing-sm;
-  color: $color-fg-muted;
-  font-size: $font-size-body;
-  line-height: 1.8;
 }
 
 // ---------- Route groups: a heavy-ruled head, then one ruled row per route ----------
