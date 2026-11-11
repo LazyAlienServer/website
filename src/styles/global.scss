@@ -124,6 +124,12 @@ h1 {
 }
 h2 {
   font-size: $font-size-h2;
+
+  // phones step section titles down one size; components that set the h2
+  // size themselves (join title, group mark, admin count) do the same
+  @include mobile {
+    font-size: $font-size-h3;
+  }
 }
 h3 {
   font-size: $font-size-h3;

@@ -547,6 +547,11 @@ const onAvatarError = (name: string): void => {
   .op-name {
     font-size: $font-size-body;
   }
+
+  // follows the title, which takes the global `h2` step on phones
+  .admin-count-num {
+    font-size: $font-size-h3;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

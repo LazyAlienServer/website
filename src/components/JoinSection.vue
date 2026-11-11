@@ -471,6 +471,12 @@ onBeforeUnmount(() => clearTimeout(resetCopiedTimer));
     padding: $spacing-lg 0 0;
   }
 
+  // the global `h2` step on phones
+  .join-title,
+  .group-mark {
+    font-size: $font-size-h3;
+  }
+
   .group-inner {
     grid-row: 4;
     padding: $spacing-md 0 0;
