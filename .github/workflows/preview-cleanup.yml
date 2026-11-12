@@ -17,12 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
+      - uses: pnpm/setup@v3
       - name: Delete branch Preview
         # `cf previews deploy` names a Preview after the Git branch, so the
         # closing pull request's head branch identifies its Preview. The
