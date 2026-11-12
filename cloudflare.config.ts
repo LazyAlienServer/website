@@ -1,6 +1,10 @@
 import { bindings, defineConfig, triggers } from "cf/config";
 
-export default defineConfig({
+// The site is a client-side React app: `vp build` writes `dist/index.html` plus
+// hashed assets, and the Worker only serves those static files.
+// `isPreview` is set by `cf previews deploy`. Previews reject the `triggers`
+// field, and Cron Triggers only ever target production, so it is omitted there.
+export default defineConfig(({ isPreview }) => ({
   accountId: "9a69f1d9357de40a684b037f0a7405ae",
   worker: {
     name: "las-web",
@@ -19,10 +23,10 @@ export default defineConfig({
       STATUS_DB: bindings.d1({ name: "las-web-status" }),
     },
     // Route checks run here, not per request (worker/index.ts `scheduled`).
-    triggers: [triggers.scheduled({ schedule: "*/5 * * * *" })],
+    ...(isPreview ? {} : { triggers: [triggers.scheduled({ schedule: "*/5 * * * *" })] }),
     domains: ["lzalien.org"],
     workersDev: true,
     previewUrls: true,
     observability: { enabled: true, issues: { enabled: true } },
   },
-});
+}));
