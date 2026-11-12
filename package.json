@@ -1,6 +1,6 @@
 {
-  "name": "lasweb-v2",
-  "version": "2.0.0",
+  "name": "las-web",
+  "version": "3.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,18 +9,20 @@
     "deploy:preview": "cf previews deploy --mode production"
   },
   "dependencies": {
-    "vue": "^3.5.45",
-    "vue-router": "^5.4.0"
+    "motion": "^14.9.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "2.0.0-beta.v.12",
-    "@types/node": "^26.6.6",
-    "@vitejs/plugin-vue": "^6.0.10",
-    "@vue/content-mapper": "4.0.0-alpha.3",
-    "cf": "1.0.0-beta.28",
-    "sass": "^1.108.0",
-    "skills": "^1.7.6",
-    "typescript": "7.1.0-dev.20261106.1",
+    "@cloudflare/config": "0.30.0",
+    "@cloudflare/vite-plugin": "^2.0.0-beta.v.12",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "cf": "1.0.0-beta.27",
+    "typescript": "7.1.0-beta",
+    "vite": "catalog:",
     "vite-plus": "catalog:"
   },
   "packageManager": "pnpm@12.18.0"
