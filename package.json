@@ -23,5 +23,5 @@
     "typescript": "7.1.0-dev.20261106.1",
     "vite-plus": "catalog:"
   },
-  "packageManager": "pnpm@12.18.0"
+  "packageManager": "pnpm@12.21.0"
 }

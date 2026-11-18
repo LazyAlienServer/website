@@ -12,3 +12,5 @@ peerDependencyRules:
     - vite
   allowedVersions:
     vite: "*"
+lockfile:
+  format: v13
